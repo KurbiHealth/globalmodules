@@ -1,0 +1,17 @@
+<span class="post-timestamp">{{post.created | date:'short'}}</span>
+<a href="#" class="post-person">
+	<img src="http://placehold.it/70x70" alt="{{post.author}}" class="profile-mid" />
+	<h3>{{post.author}}</h3>
+</a>
+<div class="post-content">
+	<p>{{post.message}}</p>
+</div><!--END .post-content-->
+
+<!-- ng-if="post.comments.length > 0" -->
+
+<div class="social-block">
+	<span ><a class="comments-open pull-left" ng-click ="limit = post.comments.length"><span>{{post.comments.length}}</span> Comments</a>
+	<!--<i class="fa fa-comment-o pull-right"></i>-->
+	<i class="fa fa-heart-o pull-right"></i>
+	<div class="clear"></div>
+</div><!--END .social-block-->

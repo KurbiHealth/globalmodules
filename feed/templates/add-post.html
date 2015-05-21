@@ -1,0 +1,7 @@
+<form name="postForm" id="add-post" ng-submit="postForm.$valid && addPost()" novalidate>
+  <div class="form-group">
+		<label for="feed" class="sr-only">So, how are you doing?</label>
+		<input type="text" class="form-control" id="feed" placeholder="So, how are you doing?" ng-model="message" required>
+		<button type="submit" class="btn btn-default">Post it</button>
+   </div><!--END .form-group-->
+</form><!--END #add-post-->

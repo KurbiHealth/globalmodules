@@ -1,0 +1,22 @@
+<div ng-repeat="post in posts | orderBy : '-created'">
+	<div class="post-item">
+
+			<div post-detail></div>
+			
+			<div class="comment-block">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						
+						<div ng-repeat="comment in post.comments | orderBy : '-published' : reverse=true | limitTo: limit">
+							<blockquote>
+								<div comment-detail></div>
+							</blockquote>
+						</div>
+						
+						<div add-comment></div>
+					</div><!--END .columns-->
+				</div><!--END .row-->
+			</div><!--END .comment-block-->
+	
+	</div><!--END .post-item-->
+</div>
