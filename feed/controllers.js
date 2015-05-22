@@ -3,7 +3,6 @@ function ($scope, $q, posts, api, user) {
 
 console.log('in PostController');
 
-	$scope.currentTime = new Date();
 	$scope.limit = -3;
 
 	$scope.addPost = function(){

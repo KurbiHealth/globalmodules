@@ -7,7 +7,7 @@
 				<div class="row">
 					<div class="col-md-10 col-md-offset-1">
 						
-						<div ng-repeat="comment in post.comments | orderBy : '-published' : reverse=true | limitTo: limit">
+						<div ng-repeat="comment in post.comments | orderBy : '-published' | limitTo: limit">
 							<blockquote>
 								<div comment-detail></div>
 							</blockquote>

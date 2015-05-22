@@ -4,7 +4,7 @@
 kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 	
 	// set up core configurations (root url, etc)
-	urlRoot = 'http://localhost:3000/v1/';
+	urlRoot = 'http://api.gokurbi.com/v1/';
 	token = '613623aa358e466e19f0e899509d0367b9e3acd6c5e494547346db2356bfb674232b6b145aee27139bf9607bdea7c3c7';
 	userEml = 'matteckman@gmail.com';
 	userPass = 'argentina';
