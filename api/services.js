@@ -1,13 +1,11 @@
 // https://docs.angularjs.org/api/ng/service/$http
 // NOTE: take a look at the security concerns in documentation
 
-kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
+kurbiApp.factory('api', ['$http', '$q', '$log', 
+function ($http, $q, $log) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = 'http://api.gokurbi.com/v1/';
-	token = '613623aa358e466e19f0e899509d0367b9e3acd6c5e494547346db2356bfb674232b6b145aee27139bf9607bdea7c3c7';
-	userEml = 'matteckman@gmail.com';
-	userPass = 'argentina';
 	var lastResult = '';
 
 	return {
@@ -28,7 +26,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 	  CORE QUERIES  
 	------------------------------------------------*/
 
-	function logIn(userEml,userPass){
+	function logIn(promise,userEml,userPass){
 		config = {
 			method: 'POST',
 			url: urlRoot + 'login',
@@ -38,7 +36,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 				password: userPass
 			}
 		}
-		promise = $q.defer();
+
 		$http(config)
 		.success(function(data){
 			promise.resolve(data);
@@ -72,7 +70,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function getList(promise,tableName) {
+	function getList(promise,tableName,userEml,token) {
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',
@@ -92,7 +90,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function getOne(promise,tableName,id){
+	function getOne(promise,tableName,id,userEml,token){
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/' + id,
@@ -112,7 +110,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function addRecord(promise,tableName,obj){
+	function addRecord(promise,tableName,obj,userEml,token){
 		config = {
 			method: 'POST',
 			url: urlRoot + 'db/' + tableName + '/',
@@ -132,7 +130,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function query(promise,tableName,obj){
+	function query(promise,tableName,obj,userEml,token){
 		config = {
 			method: 'POST',
 			url: urlRoot + 'query/' + tableName + '/',
@@ -165,7 +163,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 			field: 'messages.user_id|eq|' + user.id,
 			field: 'messages.parent_message_id|eq|0',
 			orderBy: 'messages.created|desc' 
-		});
+		}, user.email,user.token);
 		messageRequest1.then(function(data){
 			list = [];
 			for(i in data){
@@ -192,7 +190,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		messageRequest2 = query(promise,'message_recipients/messages',{
 			field: 'message_recipients.user_id|eq|' + user.id,
 			orderBy: 'messages.created|desc' 
-		});
+		}, user.email,user.token);
 		messageRequest2.then(function(data){
 			list = [];
 			for (i in data){
@@ -238,7 +236,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 						{
 							field: 'messages.parent_message_id|eq|' + temp[i].messageId,
 							orderBy: 'messages.created|desc' 
-						}).then(
+						}, user.email,user.token).then(
 							function(data){
 								if(data.length > 0){
 									commentList = [];
@@ -281,11 +279,13 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 		);
 	}
 
-	function careTeamInit(user,$scope){
-		promise = $q.defer();
-		careTeamRequest = query(promise,'care_teams/care_team_members/users',{
+	function careTeamInit(user){
+		returnPromise = $q.defer();
+		queryPromise = $q.defer();
+
+		careTeamRequest = query(queryPromise,'care_teams/care_team_members/users',{
 			field: 'care_teams.user_id|eq|' + user.id,
-		});
+		}, user.email,user.token);
 		careTeamRequest.then(function(data){
 			list = [];
 			for(i in data){
@@ -305,11 +305,13 @@ kurbiApp.factory('api', ['$http', '$q', '$log', function ($http, $q, $log) {
 
 				list.push(tempUser);
 			} 
-			$scope.careTeamList = list;
+			returnPromise.resolve(list);
 		});
 		careTeamRequest.catch(function(error){
 			console.log('error in mainController',error);
 		});
+
+		return returnPromise.promise;
 	}
 
 }]);
