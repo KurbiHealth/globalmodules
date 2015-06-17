@@ -1,12 +1,15 @@
 /* Directives */
 
-var loginDirectives = angular.module('postDirectives', []);
+var loginDirectives = angular.module('loginDirectives', []);
 
 // Login Form
 loginDirectives.directive('loginForm', function() {
 	return {
-		restrict: 'A',
+		restrict: 'AE',
 		templateUrl: '/modules/login/templates/login-form.html',
-		controller: 'LoginController'
+		controller: 'LoginController',
+		link: function(){
+			console.log('in loginDirectives, loginForm');
+		}
 	};
 });

@@ -1,8 +1,8 @@
 // https://docs.angularjs.org/api/ng/service/$http
 // NOTE: take a look at the security concerns in documentation
 
-kurbiApp.factory('api', ['$http', '$q', '$log', 
-function ($http, $q, $log) {
+kurbiApp.factory('api', ['$http', '$q', '$log', 'user',
+function ($http, $q, $log, user) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = 'http://api.gokurbi.com/v1/';
@@ -70,13 +70,13 @@ function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function getList(promise,tableName,userEml,token) {
+	function getList(promise,tableName) {
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',
 			headers: {
-				'x-custom-username': userEml,
-				'x-custom-token': token
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
 			},
 			data: {}
 		}
@@ -90,13 +90,13 @@ function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function getOne(promise,tableName,id,userEml,token){
+	function getOne(promise,tableName,id){
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/' + id,
 			headers: {
-				'x-custom-username': userEml,
-				'x-custom-token': token
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
 			},
 			data: {}
 		}
@@ -110,13 +110,13 @@ function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function addRecord(promise,tableName,obj,userEml,token){
+	function addRecord(promise,tableName,obj){
 		config = {
 			method: 'POST',
 			url: urlRoot + 'db/' + tableName + '/',
 			headers: {
-				'x-custom-username': userEml,
-				'x-custom-token': token
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
 			},
 			data: obj
 		}
@@ -130,13 +130,16 @@ function ($http, $q, $log) {
 		return( promise.promise );
 	}
 
-	function query(promise,tableName,obj,userEml,token){
+	function query(promise,tableName,obj){
+console.log('in query, in service');
+console.log('email:', user.email,'- token: ', user.token);
+console.log(user);
 		config = {
 			method: 'POST',
 			url: urlRoot + 'query/' + tableName + '/',
 			headers: {
-				'x-custom-username': userEml,
-				'x-custom-token': token
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
 			},
 			data: obj
 		}
@@ -154,7 +157,7 @@ function ($http, $q, $log) {
 		SPECIAL QUERIES 
 	------------------------------------------------*/
 
-	function postsInit(user,$scope){
+	function postsInit($scope){
 		tempPosts1 = [];
 		tempPosts2 = [];
 
@@ -163,7 +166,7 @@ function ($http, $q, $log) {
 			field: 'messages.user_id|eq|' + user.id,
 			field: 'messages.parent_message_id|eq|0',
 			orderBy: 'messages.created|desc' 
-		}, user.email,user.token);
+		});
 		messageRequest1.then(function(data){
 			list = [];
 			for(i in data){
@@ -190,7 +193,7 @@ function ($http, $q, $log) {
 		messageRequest2 = query(promise,'message_recipients/messages',{
 			field: 'message_recipients.user_id|eq|' + user.id,
 			orderBy: 'messages.created|desc' 
-		}, user.email,user.token);
+		});
 		messageRequest2.then(function(data){
 			list = [];
 			for (i in data){
@@ -236,7 +239,7 @@ function ($http, $q, $log) {
 						{
 							field: 'messages.parent_message_id|eq|' + temp[i].messageId,
 							orderBy: 'messages.created|desc' 
-						}, user.email,user.token).then(
+						}).then(
 							function(data){
 								if(data.length > 0){
 									commentList = [];
@@ -279,13 +282,14 @@ function ($http, $q, $log) {
 		);
 	}
 
-	function careTeamInit(user){
+	function careTeamInit(){
 		returnPromise = $q.defer();
 		queryPromise = $q.defer();
-
+console.log('in careTeamInit');
+console.log(user);
 		careTeamRequest = query(queryPromise,'care_teams/care_team_members/users',{
 			field: 'care_teams.user_id|eq|' + user.id,
-		}, user.email,user.token);
+		});
 		careTeamRequest.then(function(data){
 			list = [];
 			for(i in data){

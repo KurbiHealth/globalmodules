@@ -3,7 +3,7 @@
 var journalDirectives = angular.module('journalDirectives', []);
 
 // Main 
-journalDirectives.directive('journalList', function(){
+journalDirectives.directive('journal-list', function(){
 	return {
 		restrict: 'A',
 		templateUrl: '/modules/journal/templates/entry-list.html'
@@ -11,7 +11,7 @@ journalDirectives.directive('journalList', function(){
 });
 
 // Add post
-journalDirectives.directive('addPost', function() {
+journalDirectives.directive('add-post', function() {
 	return {
 		restrict: 'A',
 		templateUrl: '/modules/journal/templates/add-entry.html',
