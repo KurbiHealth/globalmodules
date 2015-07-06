@@ -1,0 +1,34 @@
+<div style="padding: 60px 0;">
+	
+	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
+		<b>Exercise Category: {{goal.category}}</b>
+		{{goal.body}}
+	</div>
+
+	<form name="goalForm" class="add-goal" ng-submit="addGoal()" ng-controller="GoalController as goalCtrl">
+	  <div class="form-group">
+	  	<label for="goal-category">Goal Category:</label>
+	  	<select class="form-control" ng-model="goalCtrl.goal.category">
+	  	  <option></option>
+	  	  <option>Exercise</option>
+	  	  <option>Travel</option>
+	  	  <option>Sleep</option>
+	  	  <option>Diet</option>
+	  	  <option>Make</option>
+	  	  <option>Work</option>
+	  	  <option>Learn</option>
+	  	  <option>Find</option>
+	  	</select>
+	  </div><!--END /.form-group-->
+	  
+	  <div class="form-group">
+	  	<label for="goal" class="sr-only">What's your goal?</label>
+	  	<input type="text" class="form-control" id="goal" placeholder="What's your goal?" ng-model="goalCtrl.goal.body">
+	  </div><!--END /.form-group-->
+	  
+	  <div id="form-group">
+	  	<button type="submit" class="btn btn-default">Add Goal</button>
+	  </div><!--END /.form-group-->
+	</form>
+
+</div>

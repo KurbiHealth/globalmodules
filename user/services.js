@@ -5,12 +5,12 @@
 kurbiApp.factory('user', ['api', function (api) {
 
 	// set up core configurations (root url, etc)
-	loggedIn 	= false;
+	loggedIn 	= true;
 	eml 		= 'matteckman@gmail.com';
 	firstName 	= 'Matt';
 	lastName 	= 'Eckman';
 	id 			= 1;
-	token 		= '613623aa358e466e19f0e899509d0367b9e3acd6c5e494547346db2356bfb674232b6b145aee27139bf9607bdea7c3c7';
+	token 		= '92bac9c4bccfbc1aba229896e05d12facf9455cf6e5b4d67e76e634184c539840871a5a39dc58e7719426678990008a6';
 	password 	= 'argentina';
 
 	return {
