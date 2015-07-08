@@ -2,17 +2,7 @@
 // this should build on top of api, so token, userEml, and userPass
 // should go in api
 
-kurbiApp.factory('user', [function () {
-
-	// set up core configurations (root url, etc)
-	
-/*	loggedIn 	= false;
-	email 		= 'matteckman@gmail.com';
-	firstName 	= 'Matt';
-	lastName 	= 'Eckman';
-	id 			= 1;
-	token 		= '613623aa358e466e19f0e899509d0367b9e3acd6c5e494547346db2356bfb674232b6b145aee27139bf9607bdea7c3c7';
-	password 	= 'argentina'; */
+kurbiApp.factory('user', ['$cookies', function ($cookies) {
 
 	loggedIn 	= false;
 	email 		= '';
@@ -20,19 +10,81 @@ kurbiApp.factory('user', [function () {
 	lastName 	= '';
 	id 			= 0;
 	token 		= '';
-	password 	= '';
 
 	return {
 
 		firstName: firstName,
 		lastName: lastName,
 		id: id,
-		loggedIn: true,
 		email: email,
 		token: token,
-		password: password,
-		loggedIn: loggedIn
+		loggedIn: loggedIn,
+		setToken: setToken,
+		saveUser: saveUser,
+		getUser: getUser
 
+	}
+
+	function saveUser(email,firstName,lastName,id){
+		// set local values
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.id = id;
+
+		// set values in cookie
+		$cookies.userEmail = email;
+		$cookies.userFirstName = firstName;
+		$cookies.userLastName = lastName;
+		$cookies.userId = id;
+	}
+
+	function getUser(){
+		var tempObj = {
+			'email': '',
+			'firstName': '',
+			'lastName': '',
+			'id': '',
+			'token': ''
+		};
+
+		// Email
+		if(this.email != ''){
+			tempObj.email = this.email;
+		}else{
+			tempObj.email = this.email = $cookies.userEmail;
+		}
+		// First Name
+		if(this.firstName != ''){
+			tempObj.firstName = this.firstName;
+		}else{
+			tempObj.firstName = this.firstName = $cookies.userFirstName;
+		}
+		// Last Name
+		if(this.lastName != ''){
+			tempObj.lastName = this.lastName;
+		}else{
+			tempObj.lastName = this.lastName = $cookies.userLastName;
+		}
+		// User ID
+		if(this.id != ''){
+			tempObj.id = this.id;
+		}else{
+			tempObj.id = this.id = $cookies.userId;
+		}
+		// Token
+		if(this.token != ''){
+			tempObj.token = this.token;
+		}else{
+			tempObj.token = this.token = $cookies.token;
+		}
+
+		return tempObj;
+	}
+
+	function setToken(token){
+		this.token = token;
+		$cookies.token = token;
 	}
 
 }]);

@@ -1,0 +1,30 @@
+	<div class="card-front" ng-class="{ 'hidden': reversed }">
+		<div class="card-title grey-text text-darken-4" >
+			<span class="card-title-text">{{card.title}}</span><i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
+
+		</div>
+		<div class="card-content">
+			<div class="card-image waves-effect waves-block waves-light">
+				<img class="activator" src="http://materializecss.com/images/office.jpg">
+			</div>
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>
+	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">Edit: {{card.title}}</span><i class="md md-close pull-right activator" ng-click="reversed = ! reversed"></i>
+		</div>
+		<div class="card-content">
+		    <button class="btn btn-default" ngf-select ng-model="files">Upload using model $watch</button>
+		    <button class="btn btn-default" ngf-select ngf-change="upload($files)">Upload on file change</button>
+		    <div ngf-drop ng-model="files" class="drop-box" 
+		        ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+		        ngf-accept="'image/*,application/pdf'">Drop Images or PDFs files here</div>
+		    <div ngf-no-file-drop>Not Supported</div>
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>

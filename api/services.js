@@ -19,7 +19,6 @@ function ($http, $q, $log, user) {
 		// SPECIAL QUERIES
 		postsInit: postsInit,
 		careTeamInit: careTeamInit
-
 	};
 
 	/*------------------------------------------------
@@ -71,6 +70,7 @@ function ($http, $q, $log, user) {
 	}
 
 	function getList(promise,tableName) {
+		user.getUser();
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',
@@ -91,6 +91,7 @@ function ($http, $q, $log, user) {
 	}
 
 	function getOne(promise,tableName,id){
+		user.getUser();
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/' + id,
@@ -111,6 +112,7 @@ function ($http, $q, $log, user) {
 	}
 
 	function addRecord(promise,tableName,obj){
+		user.getUser();
 		config = {
 			method: 'POST',
 			url: urlRoot + 'db/' + tableName + '/',
@@ -131,9 +133,7 @@ function ($http, $q, $log, user) {
 	}
 
 	function query(promise,tableName,obj){
-console.log('in query, in service');
-console.log('email:', user.email,'- token: ', user.token);
-console.log(user);
+		user.getUser();
 		config = {
 			method: 'POST',
 			url: urlRoot + 'query/' + tableName + '/',
@@ -285,8 +285,6 @@ console.log(user);
 	function careTeamInit(){
 		returnPromise = $q.defer();
 		queryPromise = $q.defer();
-console.log('in careTeamInit');
-console.log(user);
 		careTeamRequest = query(queryPromise,'care_teams/care_team_members/users',{
 			field: 'care_teams.user_id|eq|' + user.id,
 		});
@@ -312,6 +310,53 @@ console.log(user);
 			returnPromise.resolve(list);
 		});
 		careTeamRequest.catch(function(error){
+			console.log('error in mainController',error);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function getJournalCards(){
+// journal_entries
+//	  "id","date","note","wellness_score","user_id","created"
+// journal_entry_components
+//    "id","severity","symptom_id","note_id","journal_entry_id",
+//    "date","created"
+// notes
+//    "id","text","created"
+// symptoms
+//    "id","technical_name","colloquial_name","description",
+//    "long_description","symptom_category_id","disease_id",
+//    "disease_condition_symptom_id","created"
+// NOTE: need to add a table for images (?)
+		returnPromise = $q.defer();
+		queryPromise = $q.defer();
+cardsRequest = query(queryPromise,'journal_entries/journal_entry_components/',{
+	field: 'care_teams.user_id|eq|' + user.id,
+});
+		cardsRequest.then(function(data){
+// process the data before returning to controller
+			list = [];
+			for(i in data){
+				tempUser = {};
+				// Split timestamp into [ Y, M, D, h, m, s ]
+				var t = data[i].care_team_members.created.split(/[- :T]/);
+				t[5] = t[5].replace('.000Z', '');
+				// Apply each element to the Date function
+				var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+				tempUser.joined = d;
+				tempUser.firstName = data[i].users.first_name;
+				tempUser.lastName = data[i].users.last_name;
+				tempUser.avatar = data[i].users.image_file_name;
+				tempUser.bio = data[i].users.bio;
+				tempUser.role = data[i].care_team_members.role;
+				tempUser.userId = data[i].users.id; 
+
+				list.push(tempUser);
+			} 
+			returnPromise.resolve(list);
+		});
+		cardsRequest.catch(function(error){
 			console.log('error in mainController',error);
 		});
 

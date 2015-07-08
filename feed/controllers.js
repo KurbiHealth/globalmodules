@@ -1,9 +1,11 @@
 kurbiApp.controller('PostController', ['$scope', '$q', 'posts', 'api', 'user', 
 function ($scope, $q, posts, api, user) {
 
-console.log('in PostController');
+	api.postsInit($scope);
 
-	$scope.limit = -3;
+	api.careTeamInit().then(function(data){
+		$scope.careTeamList = data;
+	});
 
 	$scope.addPost = function(){
 		newPost = {
@@ -27,6 +29,7 @@ console.log('in PostController');
 	$scope.incrementLikes = function(post) {
 		post.likes += 1;
 	};
+
 }]);
 
 kurbiApp.controller('CommentController', ['$scope', 'posts', function ($scope, posts) {

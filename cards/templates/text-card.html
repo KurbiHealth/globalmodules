@@ -1,0 +1,25 @@
+	<div class="card-front" ng-class="{ 'hidden': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">{{card.title}}</span>
+			<i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
+
+		</div>
+		<div class="card-content">
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>
+	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">Edit: {{card.title}}</span><i class="md md-close pull-right activator" ng-click="reversed = ! reversed"></i>
+		</div>
+		<div class="card-content">
+			<textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
+			<input type="submit" name="submit" value="Save" />
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>

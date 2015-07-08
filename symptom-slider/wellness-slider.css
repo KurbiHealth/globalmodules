@@ -1,0 +1,59 @@
+/* app css stylesheet */
+.rotationSlider { 
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    background: green;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 3;
+}
+/**********************************/
+circle {
+  fill: #f1f1f1;
+  stroke: #FFFFFF;
+  stroke-width: 0;
+}
+path.slice1 {
+  fill: green;
+}
+path.slice2 {
+  fill: yellow;
+}
+path.slice3 {
+  fill: red;
+}
+svg.pie {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+}
+.outterCircle {
+  position:relative;
+  height:220px;
+  width: 220px;
+}
+.middleCircle {
+  position:absolute;
+  height:218px;
+  width: 218px;
+  top:1px;
+  left:1px;
+  border-radius: 50%;
+  background-color: transparent;
+  border:8px solid transparent;
+}
+.innerCircle {
+  position:absolute;
+  height:200px;
+  width: 200px;
+  line-height: 200px;
+  top:10px;
+  left:10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14pt;
+  border-radius: 50%;
+  /*padding:30px;*/
+  background-color: #FFFFFF;
+}
