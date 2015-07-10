@@ -19,6 +19,7 @@ function ($http, $q, $log, user) {
 		// SPECIAL QUERIES
 		postsInit: postsInit,
 		careTeamInit: careTeamInit
+
 	};
 
 	/*------------------------------------------------
