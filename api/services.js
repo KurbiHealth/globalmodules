@@ -187,7 +187,6 @@ console.log('error in query function-api service: ',error);
 
 		promise = $q.defer();
 		messageRequest1 = query(promise,'messages',{
-			//field: 'messages.user_id|eq|' + user.id,
 			field: 'messages.parent_message_id|eq|0',
 			orderBy: 'messages.created|desc' 
 		});
@@ -197,15 +196,15 @@ console.log('error in query function-api service: ',error);
 				temp = {};
 				if(data[i].type != 'invitation'){
 					// Split timestamp into [ Y, M, D, h, m, s ]
-					var t = data[i].created.split(/[- :T]/);
+					var t = data[i].messages.created.split(/[- :T]/);
 					t[5] = t[5].replace('.000Z', '');
 					// Apply each element to the Date function
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 					temp.created = d;
 					temp.author = user.firstName + ' ' + user.lastName;
-					temp.message = data[i].text;
-					temp.userId = data[i].user_id;
-					temp.messageId = data[i].id;
+					temp.message = data[i].messages.text;
+					temp.userId = data[i].messages.user_id;
+					temp.messageId = data[i].messages.id;
 					list.push(temp);
 				}
 			}
@@ -222,9 +221,9 @@ console.log('error in query function-api service: ',error);
 			list = [];
 			for (i in data){
 				temp = {};
-				if(data[i].type != 'invitation'){
+				if(data[i].messages.type != 'invitation'){
 					// Split timestamp into [ Y, M, D, h, m, s ]
-					var t = data[i].created.split(/[- :T]/);
+					var t = data[i].messages.created.split(/[- :T]/);
 					t[5] = t[5].replace('.000Z', '');
 					// Apply each element to the Date function
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
@@ -232,9 +231,9 @@ console.log('error in query function-api service: ',error);
 					temp.author = 'Someone Else';
 			// get author info by doing query pulling from users where
 			// message_recipients.user_id = ???
-					temp.message = data[i].text;
-					temp.userId = data[i].user_id;
-					temp.messageId = data[i].id;
+					temp.message = data[i].messages.text;
+					temp.userId = data[i].messages.user_id;
+					temp.messageId = data[i].messages.id;
 					list.push(temp);
 				}
 			}
@@ -267,17 +266,17 @@ console.log('error in query function-api service: ',error);
 							function(data){
 								if(data.length > 0){
 									commentList = [];
-									parentId = data[0].parent_message_id;
+									parentId = data[0].messages.parent_message_id;
 									for(i in data){
 										comment = {};
 										comment.author = '';
-										var t = data[i].created.split(/[- :T]/);
+										var t = data[i].messages.created.split(/[- :T]/);
 										t[5] = t[5].replace('.000Z', '');
 										// Apply each element to the Date function
 										var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 										comment.published = d;
-										comment.body = data[i].text;
-										comment.userId = data[i].user_id;
+										comment.body = data[i].messages.text;
+										comment.userId = data[i].messages.user_id;
 										commentList.push(comment);
 									}
 									tempComments[parentId] = commentList;
