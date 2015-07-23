@@ -19,9 +19,10 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 		email: email,
 		token: token,
 		loggedIn: loggedIn,
-		setToken: setToken,
+		// functions
 		saveUser: saveUser,
-		getUser: getUser
+		getUser: getUser,
+		setToken: setToken
 
 	}
 

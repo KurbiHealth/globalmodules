@@ -1,12 +1,11 @@
 // https://docs.angularjs.org/api/ng/service/$http
 // NOTE: take a look at the security concerns in documentation
 
-kurbiApp.factory('api', ['$http', '$q', '$log', 'user',
-function ($http, $q, $log, user) {
+kurbiApp.factory('api', ['$http', '$q', '$log', 'user','config','$state',
+function ($http, $q, $log, user, config,$state) {
 	
 	// set up core configurations (root url, etc)
-	urlRoot = 'http://api.gokurbi.com/v1/';
-	var lastResult = '';
+	urlRoot = config.apiUrl;
 
 	return {
 		// CORE QUERIES
@@ -18,8 +17,8 @@ function ($http, $q, $log, user) {
 		query: query,
 		// SPECIAL QUERIES
 		postsInit: postsInit,
-		careTeamInit: careTeamInit
-
+		careTeamInit: careTeamInit,
+		getJournalCards: getJournalCards
 	};
 
 	/*------------------------------------------------
@@ -42,7 +41,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-
+console.log('error in logIn function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -65,7 +68,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-
+console.log('error in signUp function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -86,7 +93,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-
+console.log('error in getList function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -107,7 +118,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-
+console.log('error in getOne function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -128,7 +143,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-
+console.log('error in addRecord function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -149,7 +168,11 @@ function ($http, $q, $log, user) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-			console.log('error', error);
+console.log('error in query function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
 		});
 		return( promise.promise );
 	}
@@ -330,30 +353,23 @@ function ($http, $q, $log, user) {
 //    "long_description","symptom_category_id","disease_id",
 //    "disease_condition_symptom_id","created"
 // NOTE: need to add a table for images (?)
+
+		user.getUser();
 		returnPromise = $q.defer();
 		queryPromise = $q.defer();
-cardsRequest = query(queryPromise,'journal_entries/journal_entry_components/',{
-	field: 'care_teams.user_id|eq|' + user.id,
-});
+		cardsRequest = query(queryPromise,'journal_entries/journal_entry_components',{
+			//field: 'care_teams.user_id|eq|' + user.id,
+		});
 		cardsRequest.then(function(data){
 // process the data before returning to controller
-			list = [];
+			var list = [];
+			var journal_entry = {};
+console.log(data);
 			for(i in data){
-				tempUser = {};
-				// Split timestamp into [ Y, M, D, h, m, s ]
-				var t = data[i].care_team_members.created.split(/[- :T]/);
-				t[5] = t[5].replace('.000Z', '');
-				// Apply each element to the Date function
-				var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-				tempUser.joined = d;
-				tempUser.firstName = data[i].users.first_name;
-				tempUser.lastName = data[i].users.last_name;
-				tempUser.avatar = data[i].users.image_file_name;
-				tempUser.bio = data[i].users.bio;
-				tempUser.role = data[i].care_team_members.role;
-				tempUser.userId = data[i].users.id; 
+				// each i has 2 objects: journal_entries & journal_entry_components
+				
 
-				list.push(tempUser);
+				list.push(journal_entry);
 			} 
 			returnPromise.resolve(list);
 		});

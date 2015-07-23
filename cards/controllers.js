@@ -1,11 +1,12 @@
 kurbiApp.controller('CardController', ['$scope','api','$timeout','Upload',
-function($scope,$api,$timeout,Upload){
+function($scope,api,$timeout,Upload){
 
-	/* api.getJournalCards().then(function(data){
-	    $scope.cardsList = data;
-	}); */
+	api.getJournalCards().then(function(data){
+	    $scope.journalEntries = data;
+console.log(data);
+	});
 
-	$scope.journalEntries = [
+/*	$scope.journalEntries = [
 	{date: 'Mar 22, 2015', components: 
 		[
 		{id: 1, type: 'image-card', title: 'My vacation'},
@@ -34,7 +35,7 @@ function($scope,$api,$timeout,Upload){
 		], 
 	}
 	];
-
+*/
 	$scope.addCard = function(type,date){
 		// get values from edit form
 

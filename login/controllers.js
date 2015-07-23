@@ -17,7 +17,7 @@ function ($location, $scope, $q, api, user, $state) {
 				}else{
 					// user service not available, means this needs to fail
 					// TODO add a flash message to appear to user
-					$state.go('public.login');
+					$state.go('public.logInPage');
 				}
 			}
 		);

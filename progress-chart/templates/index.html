@@ -1,0 +1,230 @@
+<style>
+.col-wrapper{
+	background:#fff;
+}
+
+#progress-chart-container{
+	font-size: 12px;
+}
+
+#conditions-sidebar{
+	padding:0;
+	overflow:hidden;
+	background:#fff;
+}
+#conditions-block{
+	width:100%;
+}
+
+#health-details{
+	padding-right:0;
+}
+#health-details ul, #notes-container ul{
+	list-style-type: none;
+	padding:0;
+}
+#health-details h4{
+	margin:5px 0;
+}
+
+#information-block, #remedies-block, #notes-block{
+	min-height:100px;
+}
+
+#information-block{
+	padding:5px;
+}
+
+#information-block table{
+	margin: 10px auto;
+}
+
+/* REMEDIES BLOCK */
+#remedies-block{}
+
+#remedies-block h4{
+	margin-bottom:10px;
+}
+
+.remedies-body-wrapper{
+	padding:5px;
+}
+
+#immunizations-block, #medications-block, #planofcare-block{}
+
+#immunizations-block ul, #medications-block ul, #planofcare-block ul{
+	list-style-type: none;
+	padding:0;
+}
+#procedures-block{
+	display:block;
+}
+#procedures-block ul{
+	padding:0;
+}
+#procedures-block li{
+	display:inline-block;
+	float:left;
+	width:31%;
+	height:100px;
+	margin:0 0 3px 5px;
+}
+#procedures-block h4{
+	margin-left:5px;
+}
+
+#notifications-block, #socialhistory-block, #patientinfo-block{
+
+}
+
+.shade{
+	background-color:#D3D3D3;
+}
+</style>
+
+<div ng-controller="ProgressChartController">
+
+<div id="progress-chart-container" class="row">
+<!--  ------------------CONDITIONS---------------------  -->
+	<div id="conditions-sidebar" class="col-md-3 hidden-sm hidden-xs">
+	
+		<div id="conditions-block">
+			<div class="side-headline table">
+				<div class="table-center">
+					<h2 class="pull-left">Conditions</h2>
+				</div>
+				<div class="clear"></div>
+			</div><!--END .side-headline-->
+			
+			<div collapse="isCollapsed">				
+				<div class="sidebar-section table" ng-repeat="condition in healthData.conditions">
+					<div class="table-center condition">
+						<p class="pull-left">{{condition.name}}<br/>{{condition.onsetDate}}</p>
+						<!--<input type="checkbox" name="" value="" class="pull-right" />-->
+					</div>
+					<div class="clear"></div>
+				</div>		
+			</div>
+
+		</div><!--END #conditions-block-->
+	
+	</div><!--END #conditions-sidebar-->
+
+<!--  ------------------DATA---------------------  -->
+	<div id="health-details" class="col-md-5">
+	<div class="col-wrapper">
+		<div class="side-headline table">
+			<div class="table-center">
+				<h2 class="pull-left">Data</h2>
+			</div>
+			<div class="clear"></div>
+		</div><!--END .side-headline-->
+		<div id="information-block">
+			<table>
+				<thead>
+					<tr><th ng-repeat="head in labGridHeader">{{head}}</th><tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="line in labGrid track by $index" ng-class-odd="'shade'">
+						<td ng-repeat="value in line track by $index">{{value}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div><!-- end .col-wrapper -->
+	</div><!-- end #health-details (col-5) -->
+
+<!--  ------------------REMEDIES---------------------  -->		
+	<div id="remedies-block" class="col-md-4">
+	<div class="col-wrapper">
+		<div class="side-headline table">
+			<div class="table-center">
+				<h2 class="pull-left">Remedies</h2>
+			</div>
+			<div class="clear"></div>
+		</div><!--END .side-headline-->
+		<div class="row">
+			<div class="remedies-body-wrapper">
+				<div id="medications-block" class="col-md-12">
+					<h4>Medications</h4>
+					<ul>
+						<li ng-repeat="med in healthData.meds | orderBy:'med.startDate':reverse" ng-class-odd="'shade'">{{med.name}} - {{med.startDate}}</li>
+					</ul>
+				</div>
+			</div>
+		</div><!-- end .row -->
+		<div class="row">
+			<div id="immunizations-block" class="col-md-12">
+				<div class="remedies-body-wrapper">
+					<h4>Immunizations</h4>
+					<ul>
+						<li ng-repeat="immunization in healthData.immunizations | orderBy:'immunization.administrationDate':reverse" ng-class-odd="'shade'">{{immunization.vaccine}} - {{immunization.administrationDate}}</li>
+					</ul>
+				</div>
+			</div>
+		</div><!-- end .row -->
+		<div class="row">
+			<div id="planofcare-block" class="col-md-12">
+				<div class="remedies-body-wrapper">
+					<h4>Plan Of Care</h4>
+					<ul>
+						<li ng-repeat="plan in healthData.planOfCare | orderBy:'plan.date':reverse" ng-class-odd="'shade'">{{plan.type}} - {{plan.date}}</li>
+					</ul>
+				</div><!-- end .remedies-body-wrapper -->
+			</div>
+		</div><!-- end .row -->
+		<div class="row">
+			<div id="procedures-block" class="col-md-12">
+				<div class="remedies-body-wrapper">
+					<h4>Procedures</h4>
+					<ul>
+						<li ng-repeat="procedure in healthData.procedures | orderBy:'procedure.date':reverse" ng-class-odd="'shade'">{{procedure.name}} - {{procedure.date}}</li>
+					</ul>
+				</div>
+			</div>
+		</div><!-- end .row -->
+	</div><!-- end .col-wrapper -->
+	</div><!-- end #remedies-block (col-5) -->
+
+</div><!-- end .row -->
+
+<div id="notes-container" class="row" style="margin-top:15px">
+	<div id="notes-block"><div class="col-wrapper" style="overflow:auto">
+		<div class="side-headline table">
+			<div class="table-center">
+				<h2 class="pull-left">Notes</h2>
+			</div>
+			<div class="clear"></div>
+		</div><!--END .side-headline-->
+		<div id="notes-block">
+			<div id="notifications-block" class="col-md-4 hidden-sm hidden-xs">
+				<h4>Notifications</h4>
+				<ul>
+					<li ng-repeat="notification in healthData.notifications | orderBy:'notification.date':reverse" ng-class-odd="'shade'">{{notification.label}} - {{notification.date}}</li>
+				</ul>
+			</div>
+			<div id="socialhistory-block" class="col-md-4 hidden-sm hidden-xs">
+				<h4>Social History</h4>
+				<ul>
+					<li ng-repeat="social in healthData.social | orderBy:'social.startDate':reverse" ng-class-odd="'shade'">{{social.observationName}} - {{social.observationValue}}</li>
+				</ul>
+			</div>
+			<div id="patientinfo-block" class="col-md-4 hidden-sm hidden-xs">
+				<h4>Patient Information</h4>
+				<ul>
+					<li>ID: {{healthData.patientInfo.patient_id}}</li>
+					<li>{{healthData.patientInfo.address}}</li>
+					<li>{{healthData.patientInfo.birth_date}}</li>
+					<li>{{healthData.patientInfo.ethnicity}}</li>
+					<li>{{healthData.patientInfo.language}}</li>
+					<li>{{healthData.patientInfo.marital_status}}</li>
+					<li>{{healthData.patientInfo.patient_contact_info}}</li>
+					<li>{{healthData.patientInfo.race}}</li>
+					<li>{{healthData.patientInfo.sex}}</li>
+				</ul>
+			</div>
+		</div>
+	</div></div>
+</div><!-- end .row   #notes-container -->
+
+</div><!-- end ng-controller -->
