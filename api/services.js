@@ -5,6 +5,7 @@ kurbiApp.factory('api', ['$http', '$q', '$log', 'user','config','$state',
 function ($http, $q, $log, user, config,$state) {
 	
 	// set up core configurations (root url, etc)
+console.log('config.apiUrl',config.apiUrl);
 	urlRoot = config.apiUrl;
 
 	return {
