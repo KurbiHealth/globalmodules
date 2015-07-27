@@ -26,9 +26,7 @@ angular.module('CardsModule', [])
 	        $http.get(rootDirectory + template).then(function(response){
 	        	element.html(response.data).show();
 	        	$compile(element.contents())(scope);
-	        	// add a binding to make card-reverse work
 	        	editButton = element.find('card-title i');
-	        	//editButton.bind()
 	        });
 	    }
 	};

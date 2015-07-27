@@ -1,4 +1,4 @@
-<div class="row" ng-controller="CardController">
+<div class="row" ng-controller="CardControllerInit">
 
 	<div id="journal-entry" class="col-md-2">
 		<span class="pull-left">ADD: &nbsp;</span>
@@ -10,7 +10,7 @@
 	<div class="cardContainer col-md-12">
 		<div ng-repeat="day in journalEntries" class="journal-day">
 			<div class="journal-day-header">{{day.date}}</div>
-			<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered', condition: $last}"></div>
+			<div class="card {{card.type}}" ng-repeat="card in day.components track by $index" card="card" emit-when="{event: 'allRendered', condition: $last}"></div>
 		</div>
 
 	</div>

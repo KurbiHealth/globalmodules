@@ -1,41 +1,62 @@
-kurbiApp.controller('CardController', ['$scope','api','$timeout','Upload',
-function($scope,api,$timeout,Upload){
+kurbiApp.controller('CardControllerInit', ['api','$scope',
+	'$timeout','$q',
+function(api,$scope,$timeout,$q){
 
-	api.getJournalCards().then(function(data){
-	    $scope.journalEntries = data;
-console.log(data);
+/*	api.getJournalCards($q.defer())
+	.then(
+		function(data){
+		    $scope.journalEntries = data;
+		},
+		function(error){
+console.log(error);
+		}
+	); */
+
+$scope.journalEntries = [
+	{
+		date: 'May 29, 2014',
+		components: [
+			{id: 1, type: 'image-card', title: 'My vacation'},
+			{id: 1, type: 'text-card', title: 'My vacation'},
+			{id: 1, type: 'symptom-card', title: 'My vacation'},
+			{id: 1, type: 'image-card', title: 'My vacation'},
+		]
+	},
+	{
+		date: 'June 12, 2014',
+		components: [
+			{id: 1, type: 'image-card', title: 'My vacation'},
+			{id: 1, type: 'text-card', title: 'My vacation'},
+			{id: 1, type: 'symptom-card', title: 'My vacation'},
+			{id: 1, type: 'image-card', title: 'My vacation'},
+		]
+	},
+	{
+		date: 'Feb 2, 2015',
+		components: [
+			{id: 1, type: 'image-card', title: 'My vacation'},
+			{id: 1, type: 'text-card', title: 'My vacation'},
+			{id: 1, type: 'symptom-card', title: 'My vacation'},
+			{id: 1, type: 'image-card', title: 'My vacation'},
+		]
+	},
+];
+
+	$scope.$on('allRendered', function(){
+		// the "allRendered" event is supposed to broadcast when the 
+		// cards are done being rendered, but there still is a brief
+		// time between when the directive is done rendering and when
+		// the Masonry will work, hence the $timeout
+		$timeout(function(){
+			$('.journal-day').masonry({
+				itemSelector: '.card',
+				//columnWidth: 280,
+				isFitWidth: true,
+				stamp: '.journal-day-header'
+			});
+		},200);
 	});
 
-/*	$scope.journalEntries = [
-	{date: 'Mar 22, 2015', components: 
-		[
-		{id: 1, type: 'image-card', title: 'My vacation'},
-		{id: 2, type: 'text-card', title: 'First note'},
-		{id: 3, type: 'symptom-card', title: 'Leg Heaviness'},
-		{id: 4, type: 'text-card', title: 'Another note'},
-		{id: 5, type: 'symptom-card', title: 'Migraine'}
-		], 
-	},
-	{date: 'Jan 2, 2015', components: 
-		[
-		{id: 1, type: 'image-card', title: 'My vacation'},
-		{id: 2, type: 'text-card', title: 'First note'},
-		{id: 3, type: 'symptom-card', title: 'Leg Heaviness'},
-		{id: 4, type: 'text-card', title: 'Another note'},
-		{id: 5, type: 'symptom-card', title: 'Migraine'}
-		], 
-	},
-	{date: 'Dec 12, 2014', components: 
-		[
-		{id: 1, type: 'image-card', title: 'My vacation'},
-		{id: 2, type: 'text-card', title: 'First note'},
-		{id: 3, type: 'symptom-card', title: 'Leg Heaviness'},
-		{id: 4, type: 'text-card', title: 'Another note'},
-		{id: 5, type: 'symptom-card', title: 'Migraine'}
-		], 
-	}
-	];
-*/
 	$scope.addCard = function(type,date){
 		// get values from edit form
 
@@ -55,22 +76,7 @@ console.log(data);
 		},100);
 	}
 
-	$scope.$on('allRendered', function(){
-		// the "allRendered" event is supposed to broadcast when the 
-		// cards are done being rendered, but there still is a brief
-		// time between when the directive is done rendering and when
-		// the Masonry will work, hence the $timeout
-		$timeout(function(){
-			$('.journal-day').masonry({
-				itemSelector: '.card',
-				//columnWidth: 280,
-				isFitWidth: true,
-				stamp: '.journal-day-header'
-			});
-		},200);
-
-
-/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
+	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
 http://desandro.github.io/masonry/demos/infinite-scroll.html
 $(function(){
     
@@ -107,8 +113,6 @@ $(function(){
     
 }); */
 
-	});
-
 	$scope.$watch('files', function () {
         $scope.upload($scope.files);
     });
@@ -130,6 +134,14 @@ $(function(){
             }
         }
     };
+
+}]);
+
+
+kurbiApp.controller('CardController', [
+function(){
+
+	// this is called in the directives.js file
 
 }]);
 
