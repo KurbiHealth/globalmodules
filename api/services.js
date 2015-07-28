@@ -6,8 +6,10 @@ function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
+	var _tempData = '';
 
 	return {
+		temp: _tempData,
 		// CORE QUERIES
 		logIn: logIn,
 		signUp: signUp,
@@ -366,16 +368,23 @@ console.log('error in query function-api service: ',error);
 
 		// LOAD FOR 'date' OR FIRST RECORD OLDER THEN 'date'
 		var dateString = '-';
+console.log('this',this);
+var that = this;
 		if(date == null || date == ''){
-			query($q.defer(),'journal_entries',{
+			var temp = query($q.defer(),'journal_entries',{
 				orderBy: 'journal_entries.created|asc',
 				limit: 1
-			}).then(
-				function(data){
-					dateString = data[0].journal_entries.created.substr(0,10);console.log(dateString);
-				},
-				function(error){
-					console.log('error in api (service) line 378', error);
+			});
+			dateString = temp.then(function(data){
+//console.log('this',this);
+					var dateString = data[0].journal_entries.created.substr(0,10);
+console.log(dateString);
+					return function(dateString){
+						return dateString;
+					};
+//console.log('that',that);
+				},function(error){
+					console.log(error);
 				}
 			);
 		}else{
@@ -403,9 +412,10 @@ console.log('error in query function-api service: ',error);
 				}
 			);
 		}	
-console.log(dateString);
+console.log('dateString',dateString.$$state.value);
+console.log('dateString',dateString);
 		// GET THE ENTRIES FOR A DAY
-		user.getUser();
+/*		user.getUser();
 		if(dateString != ''){
 			query($q.defer(),'journal_entries',{
 				field: 'journal_entries.created|has|'+dateString,
@@ -414,7 +424,7 @@ console.log(dateString);
 		}else{
 			console.log('error with dateString: ',dateString);
 		}
-
+*/
 		// get all for a day
 /*		journalEntries.then(function(data){
 			var list = [];

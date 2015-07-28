@@ -2,7 +2,7 @@ kurbiApp.controller('CardControllerInit', ['api','$scope',
 	'$timeout','$q',
 function(api,$scope,$timeout,$q){
 
-/*	api.getJournalCards($q.defer())
+	api.getJournalCards($q.defer())
 	.then(
 		function(data){
 		    $scope.journalEntries = data;
@@ -10,9 +10,9 @@ function(api,$scope,$timeout,$q){
 		function(error){
 console.log(error);
 		}
-	); */
+	); 
 
-$scope.journalEntries = [
+/*$scope.journalEntries = [
 	{
 		date: 'May 29, 2014',
 		components: [
@@ -41,7 +41,7 @@ $scope.journalEntries = [
 		]
 	},
 ];
-
+*/
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
 		// cards are done being rendered, but there still is a brief
