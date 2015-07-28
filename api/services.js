@@ -367,31 +367,27 @@ console.log('error in query function-api service: ',error);
 // NOTE: need to add a table for images (?)
 
 		// LOAD FOR 'date' OR FIRST RECORD OLDER THEN 'date'
-		var dateString = '-';
-console.log('this',this);
-var that = this;
+		var that = this;
+
 		if(date == null || date == ''){
-			var temp = query($q.defer(),'journal_entries',{
+			var getDate = query($q.defer(),'journal_entries',{
 				orderBy: 'journal_entries.created|asc',
 				limit: 1
 			});
-			dateString = temp.then(function(data){
-//console.log('this',this);
-					var dateString = data[0].journal_entries.created.substr(0,10);
-console.log(dateString);
-					return function(dateString){
-						return dateString;
-					};
-//console.log('that',that);
-				},function(error){
+			getDate.then(
+				function(data){
+					that.date = data[0].journal_entries.created.substr(0,10);
+				},
+				function(error){
 					console.log(error);
 				}
 			);
 		}else{
 			// Check whether there are entries for 'date', otherwise bring back the earliest day before 'date'
-			query($q.defer,'journal_entries',{
+			var getDate = query($q.defer,'journal_entries',{
 				field: 'journal_entries.created|has|' + date
-			}).then(
+			});
+			getDate.then(
 				function(data){
 					if(data == null){
 						query($q.defer,'journal_entries',{
@@ -399,7 +395,7 @@ console.log(dateString);
 							limit: 1
 						}).then(
 							function(data){console.log('line 392');
-								dateString = data[0].journal_entries.created.substr(0,10);
+								that.date = data[0].journal_entries.created.substr(0,10);
 							},
 							function(error){
 								console.log('error in api (service) line 396', error);
@@ -412,52 +408,58 @@ console.log(dateString);
 				}
 			);
 		}	
-console.log('dateString',dateString.$$state.value);
-console.log('dateString',dateString);
+
 		// GET THE ENTRIES FOR A DAY
-/*		user.getUser();
-		if(dateString != ''){
-			query($q.defer(),'journal_entries',{
-				field: 'journal_entries.created|has|'+dateString,
-				orderBy: 'journal_entries.created|asc'
-			});
-		}else{
-			console.log('error with dateString: ',dateString);
-		}
-*/
-		// get all for a day
-/*		journalEntries.then(function(data){
-			var list = [];
-			for(i in data){
-				var journalEntry = {};
-				var t = data[i].journal_entries.created.split(/[- :T]/);
-				t[5] = t[5].replace('.000Z', '');
-				// Apply each element to the Date function
-				var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-				journalEntry.date = d;
-
-journalEntry.components = [
-	{id: 1, type: 'image-card', title: 'My vacation'},
-];
-
-				// get journal_entry_components for entry
-				queryPromise2 = $q.defer();
-				components = query(queryPromise2,'journal_entry_components/journal_entries',{
-					field: 'journal_entry_components.journal_entry_id|eq|' + data[i].id
+		$q.all([
+			getDate
+		]).then(function(){
+console.log(that.date);
+			var dateString = that.date;
+			user.getUser();
+			if(dateString != ''){
+				var journalEntries = query($q.defer(),'journal_entries',{
+					field: 'journal_entries.created|has|'+dateString,
+					orderBy: 'journal_entries.created|asc'
 				});
-				components.then(function(data2){
-//console.log(data2);
-					
-				});
-				list.push(journalEntry);
+			}else{
+				console.log('error with dateString: ',dateString);
 			}
-console.log(list);
-			returnPromise.resolve(list);
-		});
-		journalEntries.catch(function(error){
-			console.log('error in api (service) - getJournalCards()',error);
-		});
-*/
+
+			// get all for a day
+			journalEntries.then(function(data){
+console.log(data);
+				var list = [];
+				for(i in data){
+					var journalEntry = {};
+					var t = data[i].journal_entries.created.split(/[- :T]/);
+					t[5] = t[5].replace('.000Z', '');
+					// Apply each element to the Date function
+					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+					journalEntry.date = d;
+
+	journalEntry.components = [
+		{id: 1, type: 'image-card', title: 'My vacation'},
+	];
+
+					// get journal_entry_components for entry
+					queryPromise2 = $q.defer();
+					components = query(queryPromise2,'journal_entry_components/journal_entries',{
+						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].id
+					});
+					components.then(function(data2){
+	//console.log(data2);
+						
+					});
+					list.push(journalEntry);
+				}
+	console.log(list);
+				returnPromise.resolve(list);
+			});
+			journalEntries.catch(function(error){
+				console.log('error in api (service) - getJournalCards()',error);
+			});
+		}); // end $q.all.then()
+
 		return returnPromise.promise;
 	}
 
