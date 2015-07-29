@@ -6,7 +6,11 @@ var postDirectives = angular.module('postDirectives', []);
 postDirectives.directive('postList', function(){
 	return {
 		restrict: 'A',
-		templateUrl: '/modules/feed/templates/post-list.html'
+		templateUrl: '/modules/feed/templates/post-list.html',
+		controller: 'PostController',
+		link: function(scope, element, attr, ctrl){
+			ctrl.postsInit();
+		}
 	};
 });
 

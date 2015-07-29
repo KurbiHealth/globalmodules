@@ -1,15 +1,14 @@
 // https://docs.angularjs.org/api/ng/service/$http
 // NOTE: take a look at the security concerns in documentation
 
-kurbiApp.factory('api', ['$http', '$q', '$log', 'user','config','$state', 
+kurbiApp.factory('api', ['$http', '$q', '$log', 'user',
+	'config','$state', 
 function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
-	var _tempData = '';
 
 	return {
-		temp: _tempData,
 		// CORE QUERIES
 		logIn: logIn,
 		signUp: signUp,
@@ -372,10 +371,11 @@ console.log('error in query function-api service: ',error);
 		if(date == null || date == ''){
 			var getDate = query($q.defer(),'journal_entries',{
 				orderBy: 'journal_entries.created|asc',
-				limit: 1
+				limit: 5
 			});
 			getDate.then(
 				function(data){
+console.log(data);
 					that.date = data[0].journal_entries.created.substr(0,10);
 				},
 				function(error){
@@ -413,9 +413,9 @@ console.log('error in query function-api service: ',error);
 		$q.all([
 			getDate
 		]).then(function(){
-console.log(that.date);
 			var dateString = that.date;
 			user.getUser();
+console.log(dateString);
 			if(dateString != ''){
 				var journalEntries = query($q.defer(),'journal_entries',{
 					field: 'journal_entries.created|has|'+dateString,
@@ -423,6 +423,7 @@ console.log(that.date);
 				});
 			}else{
 				console.log('error with dateString: ',dateString);
+				return false;
 			}
 
 			// get all for a day
@@ -444,10 +445,29 @@ console.log(data);
 					// get journal_entry_components for entry
 					queryPromise2 = $q.defer();
 					components = query(queryPromise2,'journal_entry_components/journal_entries',{
-						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].id
+						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].journal_entries.id
 					});
 					components.then(function(data2){
-	//console.log(data2);
+	console.log(data2);
+						// go through each component and get it's associated record
+						for(k in data2){
+							queryPromise3 = $q.defer();
+							if(data2[k].note_id != null){
+								// note_id
+								componentDetail = query(queryPromise3,'notes',{
+									field: 'notes.note_id|eq|'+data2[k].note_id
+								});
+								componentDetail.then(function(detail){
+									// add detail to the component
+								});
+							}
+							if(data2[k].symptom_id != null){
+								// severity, symptom_id
+								componentDetail = query(queryPromise3,'symptoms',{
+									field: 'symptoms.symptom_id|eq|'+data2[k].symptom_id
+								});
+							}
+						}
 						
 					});
 					list.push(journalEntry);
@@ -458,6 +478,7 @@ console.log(data);
 			journalEntries.catch(function(error){
 				console.log('error in api (service) - getJournalCards()',error);
 			});
+
 		}); // end $q.all.then()
 
 		return returnPromise.promise;

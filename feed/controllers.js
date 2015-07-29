@@ -1,11 +1,13 @@
 kurbiApp.controller('PostController', ['$scope', '$q', 'posts', 'api', 'user', 
 function ($scope, $q, posts, api, user) {
 
-	api.postsInit($scope);
+	this.postsInit = function(){
+		api.postsInit($scope);
 
-	api.careTeamInit().then(function(data){
-		$scope.careTeamList = data;
-	});
+		api.careTeamInit().then(function(data){
+			$scope.careTeamList = data;
+		});
+	}
 
 	$scope.addPost = function(){
 		newPost = {

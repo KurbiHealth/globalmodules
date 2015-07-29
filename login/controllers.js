@@ -2,7 +2,6 @@ kurbiApp.controller('LoginController', ['$location', '$scope', '$q', 'api', 'use
 function ($location, $scope, $q, api, user, $state) {
 
 	$scope.login = function(){
-
 		promise = $q.defer();
 		api.logIn(promise,$scope.email,
 			$scope.password).then(
@@ -19,8 +18,9 @@ function ($location, $scope, $q, api, user, $state) {
 					// TODO add a flash message to appear to user
 					$state.go('public.logInPage');
 				}
-			}
+			} 
 		);
+
 	};
 
 }]);

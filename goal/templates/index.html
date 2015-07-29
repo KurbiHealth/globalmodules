@@ -1,11 +1,11 @@
-<div style="padding: 60px 0;">
+<div style="padding: 60px 0;" ng-controller="GoalController as goalCtrl">
 	
 	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
 		<b>Exercise Category: {{goal.category}}</b>
 		{{goal.body}}
 	</div>
 
-	<form name="goalForm" class="add-goal" ng-submit="addGoal()" ng-controller="GoalController as goalCtrl">
+	<form name="goalForm" class="add-goal" ng-submit="addGoal()" >
 	  <div class="form-group">
 	  	<label for="goal-category">Goal Category:</label>
 	  	<select class="form-control" ng-model="goalCtrl.goal.category">
