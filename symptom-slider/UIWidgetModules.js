@@ -8,8 +8,8 @@ angular.module('ui.WellnessSlider', [])
 			templateUrl: 'modules/symptom-slider/templates/RingSliderWidget.html',
 			scope: {
 				//ringSlider: "&",
-				severityNum: '=',
-				sliderPosition: "="
+				//severityNum: '=',
+				//sliderPosition: "="
 			},
 			link: function (scope, element, attrs) {
 				var mDownSlider = false;
@@ -30,13 +30,18 @@ angular.module('ui.WellnessSlider', [])
 	            //Grab severity number by setting <severity-num="someValue"> in view
 	            if (angular.isDefined(attrs.severityNum))
 	            {
-	            	console.log("Severity passed in: ", scope.severityNum);
-	            	degree = scope.severityNum;
+//console.log("Severity passed in: ", scope.severityNum);
+console.log('scope',scope.$parent.card.severity);
+	            	//degree = scope.severityNum;
+	            	degree = scope.$parent.card.severity;
+	            	scope.sliderPosition = scope.$parent.card.severity;
 	            	$slider[0].style.cursor = 'default';
 	            }
 	            else
 	            {
-	            	scope.sliderPosition = degree;
+	            	//scope.sliderPosition = degree;
+	            	degree = scope.$parent.card.severity;
+	            	scope.sliderPosition = scope.$parent.card.severity;
 	            }
 	            //Set default styles of our slider widget
 	            setWidgetStyles(degree);

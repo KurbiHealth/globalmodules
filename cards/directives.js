@@ -10,7 +10,7 @@ angular.module('CardsModule', [])
 		link: function(scope, element, attrs) {
 			var rootDirectory = 'modules/cards/templates/';
 	        var template = '';
-
+//console.log('scope',scope);
 	        switch(scope.card.type) {
 	            case 'image-card':
 	                template = 'image-card.html';

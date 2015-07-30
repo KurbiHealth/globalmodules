@@ -8,7 +8,7 @@ function(api,$scope,$timeout,$q){
 		    $scope.journalEntries = data;
 		},
 		function(error){
-console.log(error);
+			console.log(error);
 		}
 	); 
 
@@ -148,10 +148,8 @@ function(){
 kurbiApp.controller('SymptomCardController', ['$scope',
 function($scope){
 
-	$scope.severity = 0;
-
     $scope.saveSeverity = function() {
-      //$scope.severity = 0;
+console.log('saving severity');
     };
 
 }]);

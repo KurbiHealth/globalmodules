@@ -1,34 +1,56 @@
-<div style="padding: 60px 0;" ng-controller="GoalController as goalCtrl">
+<div style="" ng-controller="GoalController as goalCtrl">
 	
 	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
-		<b>Exercise Category: {{goal.category}}</b>
+		<b>Add Goal: {{goal.category}}</b>
 		{{goal.body}}
 	</div>
 
 	<form name="goalForm" class="add-goal" ng-submit="addGoal()" >
-	  <div class="form-group">
-	  	<label for="goal-category">Goal Category:</label>
-	  	<select class="form-control" ng-model="goalCtrl.goal.category">
-	  	  <option></option>
-	  	  <option>Exercise</option>
-	  	  <option>Travel</option>
-	  	  <option>Sleep</option>
-	  	  <option>Diet</option>
-	  	  <option>Make</option>
-	  	  <option>Work</option>
-	  	  <option>Learn</option>
-	  	  <option>Find</option>
-	  	</select>
-	  </div><!--END /.form-group-->
+
+		<div class="form-group" style="margin:5px 10px;">
+			<label for="goal-category">Goal Category:</label>
+			<select class="form-control" ng-model="goalCtrl.goal.activity">
+			  <option value="0"></option>
+			  <option value="1">Exercise</option>
+			  <option value="2">Travel</option>
+			  <option value="3">Sleep</option>
+			  <option value="4">Diet</option>
+			  <option value="5">Make</option>
+			  <option value="6">Work</option>
+			  <option value="7">Learn</option>
+			  <option value="8">Find</option>
+			</select>
+		</div><!--END /.form-group-->
 	  
-	  <div class="form-group">
-	  	<label for="goal" class="sr-only">What's your goal?</label>
-	  	<input type="text" class="form-control" id="goal" placeholder="What's your goal?" ng-model="goalCtrl.goal.body">
-	  </div><!--END /.form-group-->
-	  
-	  <div id="form-group">
-	  	<button type="submit" class="btn btn-default">Add Goal</button>
-	  </div><!--END /.form-group-->
+		<div class="form-group" style="margin:5px 10px;">
+			<label for="goal" class="sr-only">What's your goal?</label>
+			<input type="text" class="form-control" id="goal" placeholder="What's your goal?" ng-model="goalCtrl.goal.body">
+		</div><!--END /.form-group-->
+
+		<div class="form-group" style="margin:5px 10px;">
+			<label for="goal-action" class="sr-only">What's your action for that goal?</label>
+			<input type="text" class="form-control" id="goal-action" placeholder="What's your action?" ng-model="goalCtrl.goal.action">
+		</div><!--END /.form-group-->
+
+		<div class="form-group" style="margin:5px 10px;">
+			<label for="action-frequency">How many times per week?</label>
+			<select class="form-control" ng-model="goalCtrl.goal.frequency">
+			  <option value="0"></option>
+			  <option value="1">1 Time</option>
+			  <option value="2">2 Times</option>
+			  <option value="3">3 Times</option>
+			  <option value="4">4 Times</option>
+			  <option value="5">5 Times</option>
+			  <option value="6">6 Times</option>
+			  <option value="7">7 Times</option>
+			</select>
+		</div><!--END /.form-group-->
+
+		<div class="modal-footer" style="border-bottom:1px solid #e5e5e5;border-top:none;">
+		    <button type="submit" class="btn btn-primary" ng-click="ok($event)">OK</button>
+		    <button class="btn btn-warning" ng-click="cancel($event)">Cancel</button>
+		</div>
+
 	</form>
 
 </div>

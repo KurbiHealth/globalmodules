@@ -19,7 +19,8 @@ function ($http, $q, $log, user, config, $state) {
 		// SPECIAL QUERIES
 		postsInit: postsInit,
 		careTeamInit: careTeamInit,
-		getJournalCards: getJournalCards
+		getJournalCards: getJournalCards,
+		goalsInit: goalsInit
 	};
 
 	/*------------------------------------------------
@@ -190,6 +191,29 @@ console.log('error in query function-api service: ',error);
 	}
 
 	/*------------------------------------------------
+		HELPER FUNCTIONS
+	------------------------------------------------*/
+
+	function _fixTimestamp(date){
+		// what is mysql_datetime.getTime() ?
+		var t = date.split(/[- :T]/);
+		t[5] = t[5].replace('.000Z', '');
+		var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+		var tz_offset = d.getTimezoneOffset() * 60 * 1000;
+		var corrected_datetime = new Date(d - tz_offset);
+		return corrected_datetime;	
+	}
+
+	function _getStringDate(d){
+		if(d.getMonth() < 9)
+			var month = '0' + (d.getMonth() + 1);
+		else
+			var month = d.getMonth();
+		var r = d.getFullYear() + '-' + month + '-' + d.getDate();
+		return r;
+	}
+
+	/*------------------------------------------------
 		SPECIAL QUERIES 
 	------------------------------------------------*/
 
@@ -320,9 +344,7 @@ console.log('error in query function-api service: ',error);
 	function careTeamInit(){
 		returnPromise = $q.defer();
 		queryPromise = $q.defer();
-		careTeamRequest = query(queryPromise,'care_teams/care_team_members/users',{
-			field: 'care_teams.user_id|eq|' + user.id,
-		});
+		careTeamRequest = query(queryPromise,'care_teams/care_team_members/users',{});
 		careTeamRequest.then(function(data){
 			list = [];
 			for(i in data){
@@ -352,31 +374,21 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function getJournalCards(returnPromise,date){
-// journal_entries
-//	  "id","date","note","wellness_score","user_id","created"
-// journal_entry_components
-//    "id","severity","symptom_id","note_id","journal_entry_id",
-//    "date","created"
-// notes
-//    "id","text","created"
-// symptoms
-//    "id","technical_name","colloquial_name","description",
-//    "long_description","symptom_category_id","disease_id",
-//    "disease_condition_symptom_id","created"
-// NOTE: need to add a table for images (?)
 
 		// LOAD FOR 'date' OR FIRST RECORD OLDER THEN 'date'
+		// OR
+		// if blank, check if there is anything for today, and if there isn't, return the most recent date (this function would need to be called again)
 		var that = this;
 
 		if(date == null || date == ''){
 			var getDate = query($q.defer(),'journal_entries',{
 				orderBy: 'journal_entries.created|asc',
-				limit: 5
+				limit: 1
 			});
 			getDate.then(
 				function(data){
-console.log(data);
-					that.date = data[0].journal_entries.created.substr(0,10);
+					var d = _fixTimestamp(data[0].journal_entries.created);
+					that.date = _getStringDate(d);
 				},
 				function(error){
 					console.log(error);
@@ -395,7 +407,7 @@ console.log(data);
 							limit: 1
 						}).then(
 							function(data){console.log('line 392');
-								that.date = data[0].journal_entries.created.substr(0,10);
+								that.date = _getStringDate(_fixTimestamp(data[0].journal_entries.created));
 							},
 							function(error){
 								console.log('error in api (service) line 396', error);
@@ -415,7 +427,7 @@ console.log(data);
 		]).then(function(){
 			var dateString = that.date;
 			user.getUser();
-console.log(dateString);
+
 			if(dateString != ''){
 				var journalEntries = query($q.defer(),'journal_entries',{
 					field: 'journal_entries.created|has|'+dateString,
@@ -425,61 +437,128 @@ console.log(dateString);
 				console.log('error with dateString: ',dateString);
 				return false;
 			}
-
-			// get all for a day
 			journalEntries.then(function(data){
-console.log(data);
-				var list = [];
+				that.tempData = data;
+
+		// CREATE THE MASTER JOURNAL ENTRY OBJECT
+				that.journalEntry = {
+					date: _fixTimestamp(data[0].journal_entries.created).toDateString()
+				};
+			});
+
+		// GO THROUGH ALL JOURNAL ENTRIES, CREATE RAW COMPONENTS LIST
+			$q.all([
+				journalEntries
+			]).then(function(){
+				// set up the master components list
+				that.componentsList = [];
+
+				// go through all the entries
+				var data = that.tempData;
+				var components = [];
 				for(i in data){
-					var journalEntry = {};
-					var t = data[i].journal_entries.created.split(/[- :T]/);
-					t[5] = t[5].replace('.000Z', '');
-					// Apply each element to the Date function
-					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-					journalEntry.date = d;
-
-	journalEntry.components = [
-		{id: 1, type: 'image-card', title: 'My vacation'},
-	];
-
-					// get journal_entry_components for entry
-					queryPromise2 = $q.defer();
-					components = query(queryPromise2,'journal_entry_components/journal_entries',{
+					promise = $q.defer();
+					components.push(query(promise,'journal_entry_components/journal_entries',{
 						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].journal_entries.id
-					});
-					components.then(function(data2){
-	console.log(data2);
-						// go through each component and get it's associated record
-						for(k in data2){
-							queryPromise3 = $q.defer();
-							if(data2[k].note_id != null){
-								// note_id
-								componentDetail = query(queryPromise3,'notes',{
-									field: 'notes.note_id|eq|'+data2[k].note_id
-								});
-								componentDetail.then(function(detail){
-									// add detail to the component
-								});
-							}
-							if(data2[k].symptom_id != null){
-								// severity, symptom_id
-								componentDetail = query(queryPromise3,'symptoms',{
-									field: 'symptoms.symptom_id|eq|'+data2[k].symptom_id
-								});
-							}
+					}).then(function(componentsData){
+						for(j in componentsData){
+							that.componentsList.push(componentsData[j].journal_entry_components);
 						}
-						
-					});
-					list.push(journalEntry);
+					}));
 				}
-	console.log(list);
-				returnPromise.resolve(list);
-			});
-			journalEntries.catch(function(error){
-				console.log('error in api (service) - getJournalCards()',error);
-			});
 
-		}); // end $q.all.then()
+		// GO THROUGH COMPONENTS RAW LIST, MAKE OBJECTS
+				$q.all(
+					components
+				).then(function(){
+					that.journalEntry.components = [];
+
+					var data = that.componentsList;
+					var details = [];
+
+					for(i in data){
+						// initialize the components section of the master journal entry object
+						// structure of a component is:
+						// { id: 1, type: 'image-card', title: 'My vacation', details: {} }
+
+						// retrieve details for the different component types
+						var promise = $q.defer();
+
+						// check for note type
+						if(data[i].note_id != null){
+							details.push(getOne(promise,'notes',data[i].note_id)
+							.then(function(detail){
+								// add detail to the component
+								that.tempComp = {
+									id: '',
+									type: '',
+									title: '',
+									details: {}
+								};
+								that.tempComp.title = 'Note';
+								that.tempComp.type = 'text-card';
+								that.tempComp.details = detail.notes;
+								that.journalEntry.components.push(that.tempComp);
+							}));
+						}
+
+						// check for symptom type
+						if(data[i].symptom_id != null){
+							// severity, symptom_id
+							details.push(getOne(promise,'symptoms',data[i].symptom_id)
+							.then(function(detail){
+								// add detail to the component
+								that.tempComp = {
+									id: '',
+									type: '',
+									title: '',
+									details: {}
+								};
+								that.tempComp.type = 'symptom-card';
+								that.tempComp.id = data[i].id;
+								that.tempComp.details = detail.symptoms;
+								that.tempComp.details.severity = data[i].severity;
+								that.tempComp.severity = data[i].severity;
+								that.tempComp.title = detail.symptoms.technical_name;
+								that.journalEntry.components.push(that.tempComp);
+							}));
+						}
+
+						// check for image type
+						// COMING...
+
+					}// end for(i in data)
+
+					var list = [];
+					list.push(that.journalEntry);
+					returnPromise.resolve(list);
+
+				}); // end $q.all(componentPromises)
+			}); // end $q.all([journalEntries])
+		});
+
+		return returnPromise.promise;
+	}
+
+	function goalsInit(){
+		returnPromise = $q.defer();
+		queryPromise = $q.defer();
+		goalsRequest = query(queryPromise,'goals/goals_actions',{});
+		goalsRequest.then(function(data){
+			goalList = [];
+console.log(data);
+			for(i in data){
+				var temp = {};
+				temp.created = _fixTimestamp(data[i].goals.created);
+				temp.name = data[i].goals.name;
+				temp.action = data[i].goals_actions.name;
+				goalList.push(temp);
+			} 
+			returnPromise.resolve(goalList);
+		});
+		goalsRequest.catch(function(error){
+			console.log('error in mainController',error);
+		});
 
 		return returnPromise.promise;
 	}
