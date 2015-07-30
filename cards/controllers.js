@@ -5,43 +5,20 @@ function(api,$scope,$timeout,$q){
 	api.getJournalCards($q.defer())
 	.then(
 		function(data){
-		    $scope.journalEntries = data;
+			$scope.journalEntries = data;
+			if(data[0].today == false){
+				var today = new Date;
+				$scope.journalEntries.unshift({
+					date: today.toDateString(),
+					components: []
+				});
+			}
 		},
 		function(error){
 			console.log(error);
 		}
 	); 
 
-/*$scope.journalEntries = [
-	{
-		date: 'May 29, 2014',
-		components: [
-			{id: 1, type: 'image-card', title: 'My vacation'},
-			{id: 1, type: 'text-card', title: 'My vacation'},
-			{id: 1, type: 'symptom-card', title: 'My vacation'},
-			{id: 1, type: 'image-card', title: 'My vacation'},
-		]
-	},
-	{
-		date: 'June 12, 2014',
-		components: [
-			{id: 1, type: 'image-card', title: 'My vacation'},
-			{id: 1, type: 'text-card', title: 'My vacation'},
-			{id: 1, type: 'symptom-card', title: 'My vacation'},
-			{id: 1, type: 'image-card', title: 'My vacation'},
-		]
-	},
-	{
-		date: 'Feb 2, 2015',
-		components: [
-			{id: 1, type: 'image-card', title: 'My vacation'},
-			{id: 1, type: 'text-card', title: 'My vacation'},
-			{id: 1, type: 'symptom-card', title: 'My vacation'},
-			{id: 1, type: 'image-card', title: 'My vacation'},
-		]
-	},
-];
-*/
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
 		// cards are done being rendered, but there still is a brief
@@ -59,14 +36,14 @@ function(api,$scope,$timeout,$q){
 
 	$scope.addCard = function(type,date){
 		// get values from edit form
-
+		
 		// save a new entry to db
 
 		// save a new entry-type to db
 
 		// add new card to UI		
 		$scope.journalEntries[0].components.unshift(
-			{id: 9, 'type': type, title: 'New Card'}
+			{id: 100, 'type': type, title: 'New Card'}
 		);
 
 		// update the masonry grid layout

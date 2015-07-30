@@ -1,8 +1,7 @@
 <div style="" ng-controller="GoalController as goalCtrl">
 	
 	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
-		<b>Add Goal: {{goal.category}}</b>
-		{{goal.body}}
+		<b>Add Goal:</b>
 	</div>
 
 	<form name="goalForm" class="add-goal" ng-submit="addGoal()" >
@@ -48,9 +47,11 @@
 
 		<div class="modal-footer" style="border-bottom:1px solid #e5e5e5;border-top:none;">
 		    <button type="submit" class="btn btn-primary" ng-click="ok($event)">OK</button>
-		    <button class="btn btn-warning" ng-click="cancel($event)">Cancel</button>
 		</div>
 
 	</form>
+
+	<button class="btn btn-warning" style="margin-top: -88px;
+    margin-left: 140px;" ng-click="cancel($event)">Cancel</button>
 
 </div>

@@ -1,0 +1,27 @@
+<div ng-controller="LiveChartControllerList">
+
+	<div class="row">
+
+		<div id="live-cart-filter" class="column-md-12">
+			<span class="pull-left">ADD: &nbsp;</span>
+			<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
+			<i class="md md-camera-alt pull-left" ng-click="addCard('image-card')"></i>
+			<i class="md md-healing pull-left" ng-click="addCard('symptom-card')"></i>
+		</div>
+
+	</div>
+
+	<div class="row">
+
+		<div class="cardContainer col-md-8 col-md-offset-2">
+
+			<div class="card card-wide {{card.type}}" ng-repeat="card in liveChartList" card="card" emit-when="{event: 'allRendered', condition: $last}">
+			</div>
+
+		</div>
+
+		<div class="col-md-4"></div>
+
+	</div>
+
+</div>

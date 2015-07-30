@@ -20,7 +20,8 @@ function ($http, $q, $log, user, config, $state) {
 		postsInit: postsInit,
 		careTeamInit: careTeamInit,
 		getJournalCards: getJournalCards,
-		goalsInit: goalsInit
+		goalsInit: goalsInit,
+		liveChartList: liveChartList
 	};
 
 	/*------------------------------------------------
@@ -389,6 +390,12 @@ console.log('error in query function-api service: ',error);
 				function(data){
 					var d = _fixTimestamp(data[0].journal_entries.created);
 					that.date = _getStringDate(d);
+					var today = new Date;
+					if(that.date != today){
+						that.today = false;
+					}else{
+						that.today = true;
+					}
 				},
 				function(error){
 					console.log(error);
@@ -402,6 +409,7 @@ console.log('error in query function-api service: ',error);
 			getDate.then(
 				function(data){
 					if(data == null){
+						that.today = false;
 						query($q.defer,'journal_entries',{
 							field: 'journal_entries.created|gt|'+date,
 							limit: 1
@@ -413,6 +421,10 @@ console.log('error in query function-api service: ',error);
 								console.log('error in api (service) line 396', error);
 							}
 						);
+					}else{
+			// TODO check whether the date format coming through parameters can be '2015-02-14', and whether scope has 'date'
+						that.date = date;
+						that.today = true;
 					}
 				},
 				function(error){
@@ -442,7 +454,9 @@ console.log('error in query function-api service: ',error);
 
 		// CREATE THE MASTER JOURNAL ENTRY OBJECT
 				that.journalEntry = {
-					date: _fixTimestamp(data[0].journal_entries.created).toDateString()
+					date: _fixTimestamp(data[0].journal_entries.created).toDateString(),
+		// MARK WHETHER ENTRY IS FOR TODAY OR NOT
+					today: that.today
 				};
 			});
 
@@ -558,6 +572,72 @@ console.log('error in query function-api service: ',error);
 		});
 
 		return returnGoalsPromise.promise;
+	}
+
+	function liveChartList(){
+		returnLiveChartDataPromise = $q.defer();
+		var that = this;
+
+		$http.get('/healthData.json')
+		.success(function(lcData){
+			var list = [];
+			var today = new Date();
+			for(i in lcData){
+//console.log(i,lcData[i]);
+				if(i != 'patientInfo'){
+					var obj = lcData[i];
+					var date = '';
+
+					for(j in obj){
+						var details = JSON.stringify(obj[j]);
+												
+						if(i == 'aaa'){
+							date = obj[j].startDate;
+						}
+						if(i == 'immunizations'){
+							date = obj[j].administrationDate;
+						}
+						if(i == 'labs'){
+							date = obj[j].items[0].date;
+						}
+						if(i == 'notifications'){
+							date = obj[j].date;
+						}
+						if(i == 'meds'){
+							date = obj[j].startDate;
+						}
+						if(i == 'planOfCare'){
+							date = obj[j].date;
+						}
+						if(i == 'conditions'){
+							date = obj[j].entryDate;
+						}
+						if(i == 'procedures'){
+							date = obj[j].date;
+						}
+						if(i == 'social'){
+							date = obj[j].startDate;
+						}
+						if(i == 'vitalSigns'){
+							date = obj[j].date;
+						}
+
+						list.push({
+							title: i.toUpperCase() + ' data: ' + date,
+							date: date,
+							created: today.toDateString(),
+							type: i + '-card',
+							details: details
+						});
+					} // end for(j in obj)
+				} // end if(i)
+			} // end for(i in data)
+			returnLiveChartDataPromise.resolve(list);
+		})
+		.catch(function(error){
+			console.log(error);
+		});
+		return returnLiveChartDataPromise.promise;
 	}
 
 }]);

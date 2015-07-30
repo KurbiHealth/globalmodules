@@ -1,9 +1,21 @@
-kurbiApp.controller('ProgressChartController', ['$scope','$http',
+kurbiApp.controller('LiveChartControllerList', ['$scope','$http','api',
+function($scope,$http,api){
+
+	api.liveChartList()
+	.then(function(data){
+		$scope.liveChartList = data;
+	})
+	.catch(function(error){
+
+	});
+
+}]);
+
+kurbiApp.controller('LiveChartController', ['$scope','$http',
 function($scope,$http){
 
 	$http.get('/healthData.json').success(function(data) {
 		$scope.healthData = data;
-console.log(data);
 
 		// fix dates
 

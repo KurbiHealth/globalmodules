@@ -1,12 +1,7 @@
 kurbiApp.controller('GoalController', ['$scope','$rootScope','api','$q',
 function ($scope,$rootScope,api,$q) {
 
-console.log('in GoalController');
-
 	this.goal = {};
-	if(typeof $scope.goalsList == 'undefined'){
-		$scope.goalsList = [];
-	}
 	var that = this;
 
 	$scope.addGoal = function() {
@@ -15,7 +10,7 @@ console.log('in GoalController');
 		temp.name = that.goal.body;
 
 		// save to global array for goals (used in sidebar)
-		$scope.goalsList.push(temp);
+		$rootScope.goalsList.push(temp);
 
 		// save to database
 		// 1. add a 'goals' record

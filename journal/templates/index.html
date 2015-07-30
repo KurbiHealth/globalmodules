@@ -1,19 +1,21 @@
 <div class="row" ng-controller="CardControllerInit">
 
-	<!--<div id="journal-entry" class="col-md-2">
+	<div id="journal-entry" style="margin-top: -43px; margin-left: 360px;position:absolute;">
 		<span class="pull-left">ADD: &nbsp;</span>
 		<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
 		<i class="md md-camera-alt pull-left" ng-click="addCard('image-card')"></i>
 		<i class="md md-healing pull-left" ng-click="addCard('symptom-card')"></i>
-	</div>-->
+	</div>
 
-	<div class="cardContainer col-md-11 col-md-offset-2">
+	<div class="cardContainer col-md-8 col-md-offset-2">
 
-		<div ng-repeat="day in journalEntries" class="journal-day">
+		<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;">
 			<div class="journal-day-header">{{day.date}}</div>
-			<div class="card {{card.type}}" ng-repeat="card in day.components track by $index" card="card" emit-when="{event: 'allRendered', condition: $last}"></div>
+			<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered', condition: $last}"></div>
 		</div>
 
 	</div>
+
+	<div class="col-md-4"></div>
 
 </div>
