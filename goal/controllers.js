@@ -9,18 +9,13 @@ console.log('in GoalController');
 	}
 	var that = this;
 
-	$scope.goalsInit = function(){
-		api.goalsInit().then(function(data){
-			$scope.goals = data;
-		});
-	}
-
 	$scope.addGoal = function() {
 		// get form values
-		var temp = that.goal;
+		var temp = {};
+		temp.name = that.goal.body;
 
 		// save to global array for goals (used in sidebar)
-		$scope.goalsList.push(that.goal);
+		$scope.goalsList.push(temp);
 
 		// save to database
 		// 1. add a 'goals' record

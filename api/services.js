@@ -541,26 +541,23 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function goalsInit(){
-		returnPromise = $q.defer();
-		queryPromise = $q.defer();
-		goalsRequest = query(queryPromise,'goals/goals_actions',{});
-		goalsRequest.then(function(data){
+		returnGoalsPromise = $q.defer();
+		getList($q.defer(),'goals',{})
+		.then(function(data){
 			goalList = [];
-console.log(data);
 			for(i in data){
 				var temp = {};
-				temp.created = _fixTimestamp(data[i].goals.created);
-				temp.name = data[i].goals.name;
-				temp.action = data[i].goals_actions.name;
+				temp.created = _fixTimestamp(data[i].created);
+				temp.name = data[i].name;
 				goalList.push(temp);
 			} 
-			returnPromise.resolve(goalList);
-		});
-		goalsRequest.catch(function(error){
+			returnGoalsPromise.resolve(goalList);
+		})
+		.catch(function(error){
 			console.log('error in mainController',error);
 		});
 
-		return returnPromise.promise;
+		return returnGoalsPromise.promise;
 	}
 
 }]);
