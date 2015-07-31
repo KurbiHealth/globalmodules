@@ -2,10 +2,53 @@
 		<div class="card-title grey-text text-darken-4">
 			<span class="card-title-text">{{card.title}}</span>
 			<i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
-
+			<span class="pull-right">{{card.date | date:'longDate'}}</span>
 		</div>
 		<div class="card-content">
-			<p>{{card.details}}</p>
+			<div ng-repeat="(name, detail) in card.details track by $index" >
+				<div class="live-chart-detail">
+					<div ng-if="name=='items'">
+						<div class="lab-line row">
+							<div class="lab-line-element col-md-3">
+								<strong>Name</strong>
+							</div>
+							<div class="lab-line-element col-md-3">
+								<strong>Range</strong>
+							</div>
+							<div class="lab-line-element col-md-3">
+								<strong>Value</strong>
+							</div>
+							<div class="lab-line-element col-md-3">
+								<strong>Unit</strong>
+							</div>
+						</div>
+						<div ng-repeat="line in detail" class="lab-line row">
+							<div class="lab-line-element col-md-3 lab-back">
+								{{line.name}}
+							</div>
+							<div class="lab-line-element col-md-3 lab-back">
+								{{line.range}}
+							</div>
+							<div class="lab-line-element col-md-3 lab-back">
+								{{line.value}}
+							</div>
+							<div class="lab-line-element col-md-3 lab-back">
+								{{line.unit}}
+							</div>
+						</div>
+					</div>
+					<div ng-if="name != 'items'">
+						<div class="live-chart-detail-label">
+							{{name}}:
+						</div> 
+						{{detail}}
+					</div>
+				</div>
+				<!--<div ng-show="angular.isObject(detail)">
+					<p><strong>{{name}}:</strong></p>
+					<p ng-repeat="(key,item) in detail track by $index"><strong>{{key}}:</strong> {{item}}</p>
+				</div>-->
+			</div>
 		</div>
 		<div class="card-footer">
 			<p></p>

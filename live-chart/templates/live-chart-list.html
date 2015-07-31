@@ -1,21 +1,81 @@
+<style>
+.chart-header{
+
+}
+</style>
+
 <div ng-controller="LiveChartControllerList">
 
 	<div class="row">
 
-		<div id="live-cart-filter" class="column-md-12">
-			<span class="pull-left">ADD: &nbsp;</span>
-			<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
-			<i class="md md-camera-alt pull-left" ng-click="addCard('image-card')"></i>
-			<i class="md md-healing pull-left" ng-click="addCard('symptom-card')"></i>
+		<div id="live-cart-filter" class="col-md-8 col-md-offset-2">
+
+			<span class="pull-left" style="height:37px;display:inline-block;">FILTER: &nbsp;</span>
+
+			<!-- http://zavoloklom.github.io/material-design-iconic-font/v1/icons.html -->
+			
+			<a href="" ng-click="filterLiveChart('all')">
+				<i class="md md-add-circle" style="color: black;"></i> 
+				All
+			</a>
+			<a href="" ng-click="filterLiveChart('aaa')">
+				<i class="md md-add-circle" style="color: red;"></i> 
+				AAA
+			</a>
+			<a href="" ng-click="filterLiveChart('conditions')">
+				<i class="md md-add-circle" style="color: blue;"></i> 
+				Conditions
+			</a>
+			<a href="" ng-click="filterLiveChart('immunizations')">
+				<i class="md md-add-circle" style="color: green;"></i> 
+				Immunizations
+			</a>
+			<a href="" ng-click="filterLiveChart('labs')">
+				<i class="md md-add-circle" style="color: yellow;"></i> 
+				Labs
+			</a>
+			<a href="" ng-click="filterLiveChart('meds')">
+				<i class="md md-add-circle" style="color: brown;"></i> 
+				Medications
+			</a>
+			<a href="" ng-click="filterLiveChart('notifications')">
+				<i class="md md-add-circle" style="color: black;"></i> 
+				Notifications
+			</a>
+			<a href="" ng-click="filterLiveChart('planOfCare')">
+				<i class="md md-add-circle" style="color: orange;"></i> 
+				Plan Of Care
+			</a>
+			<a href="" ng-click="filterLiveChart('procedures')">
+				<i class="md md-add-circle" style="color: red;"></i> 
+				Procedures
+			</a>
+			<a href="" ng-click="filterLiveChart('vitalSigns')">
+				<i class="md md-add-circle" style="color: red;"></i> 
+				Vital Signs
+			</a>
+		</div>
+
+		<div class="column-md-2"></div>
+
+	</div>
+
+	<div class="row" style="margin-top:10px;margin-bottom:10px;">
+
+		<div class="chart-header col-md-8 col-md-offset-2">
+			<div class="chart-name">
+				<button class="btn btn-primary chart-header-button" ng-click="showChart(0)" ng-class="{'btn-default': hiddenChart == 0, 'btn-primary': hiddenChart != 0}">Matt Eckman's Chart</button>
+				<button class="btn btn-default chart-header-button" ng-click="showChart(1)" ng-class="{'btn-default': hiddenChart == 1, 'btn-primary': hiddenChart != 1}">Michelle Garnett's Chart</button>
+			</div>
 		</div>
 
 	</div>
 
 	<div class="row">
 
-		<div class="cardContainer col-md-8 col-md-offset-2">
+		<div ng-repeat="(chartkey,chart) in liveChartList" class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == chartkey}">
 
-			<div class="card card-wide {{card.type}}" ng-repeat="card in liveChartList" card="card" emit-when="{event: 'allRendered', condition: $last}">
+			<div class="card card-wide {{card.type}}" ng-repeat="card in chart | orderBy: '-date'" card="card" emit-when="{event: 'allRendered', condition: $last}" ng-class="{'hidden': isHidden(card)}">
 			</div>
 
 		</div>

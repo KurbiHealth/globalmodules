@@ -205,6 +205,18 @@ console.log('error in query function-api service: ',error);
 		return corrected_datetime;	
 	}
 
+	function _fixChartDate(date){
+		if(date != '' && date != null || date != ' '){
+			var t = date.split(/[-\/ :T]/);
+			var d = new Date(t[0], t[1]-1, t[2]);
+			//var tz_offset = d.getTimezoneOffset() * 60 * 1000;
+			//var corrected_datetime = new Date(d - tz_offset);
+			return d;
+		}else{
+			return null;
+		}
+	}
+
 	function _getStringDate(d){
 		if(d.getMonth() < 9)
 			var month = '0' + (d.getMonth() + 1);
@@ -576,67 +588,84 @@ console.log('error in query function-api service: ',error);
 
 	function liveChartList(){
 		returnLiveChartDataPromise = $q.defer();
+		
 		var that = this;
+		that.chartFileList = [];
 
-		$http.get('/healthDataWesMom.json')
-		.success(function(lcData){
-			var list = [];
-			var today = new Date();
-			for(i in lcData){
-//console.log(i,lcData[i]);
-				if(i != 'patientInfo'){
-					var obj = lcData[i];
-					var date = '';
+		var fileUrls = [
+			'/healthData.json',
+			'/healthDataWesMom.json'
+		];
+		
+		var promises = [];
 
-					for(j in obj){
-						var details = JSON.stringify(obj[j]);
+		for(l in fileUrls){
+			promises.push(
+				$http.get(fileUrls[l])
+				.success(function(lcData){
+					var list = [];
+					var today = new Date();
+					for(i in lcData){
+						if(i != 'patientInfo' && i != 'social'){
+							var obj = lcData[i];
+							var date = '';
 
-						if(i == 'aaa'){
-							date = obj[j].startDate;
-						}
-						if(i == 'immunizations'){
-							date = obj[j].administrationDate;
-						}
-						if(i == 'labs'){
-							date = obj[j].items[0].date;
-						}
-						if(i == 'notifications'){
-							date = obj[j].date;
-						}
-						if(i == 'meds'){
-							date = obj[j].startDate;
-						}
-						if(i == 'planOfCare'){
-							date = obj[j].date;
-						}
-						if(i == 'conditions'){
-							date = obj[j].entryDate;
-						}
-						if(i == 'procedures'){
-							date = obj[j].date;
-						}
-						if(i == 'social'){
-							date = obj[j].startDate;
-						}
-						if(i == 'vitalSigns'){
-							date = obj[j].date;
-						}
+							for(j in obj){
+								//var details = JSON.stringify(obj[j]);
+								var details = obj[j];
 
-						list.push({
-							title: i.toUpperCase() + ' data: ' + date,
-							date: date,
-							created: today.toDateString(),
-							type: i + '-card',
-							details: details
-						});
-					} // end for(j in obj)
-				} // end if(i)
-			} // end for(i in data)
-			returnLiveChartDataPromise.resolve(list);
-		})
-		.catch(function(error){
-			console.log(error);
+								if(i == 'aaa'){
+									date = obj[j].startDate;
+								}
+								if(i == 'immunizations'){
+									date = obj[j].administrationDate;
+								}
+								if(i == 'labs'){
+									date = obj[j].items[0].date;
+								}
+								if(i == 'notifications'){
+									date = obj[j].date;
+								}
+								if(i == 'meds'){
+									date = obj[j].startDate;
+								}
+								if(i == 'planOfCare'){
+									date = obj[j].date;
+								}
+								if(i == 'conditions'){
+									date = obj[j].entryDate;
+								}
+								if(i == 'procedures'){
+									date = obj[j].date;
+								}
+								if(i == 'vitalSigns'){
+									date = obj[j].date;
+								}
+								
+								date = _fixChartDate(date);
+
+								list.push({
+									title: i.toUpperCase(),
+									date: date,
+									created: today.toDateString(),
+									type: i + '-card',
+									details: details
+								});
+							} // end for(j in obj)
+						} // end if(i)
+					} // end for(i in data)
+					that.chartFileList.push(list);
+				})
+				.catch(function(error){
+					console.log(error);
+				})
+			); // end promises.push()
+		} // end for(l in fileUrls)
+
+		$q.all(promises).then(function(){
+			returnLiveChartDataPromise.resolve(that.chartFileList);
 		});
+
 		return returnLiveChartDataPromise.promise;
 	}
 

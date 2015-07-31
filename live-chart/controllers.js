@@ -9,6 +9,33 @@ function($scope,$http,api){
 
 	});
 
+	$scope.filterLiveChartBy = '';
+
+	$scope.filterLiveChart = function(type){
+		type = type.toLowerCase();
+		if(type == 'all'){
+			$scope.filterLiveChartBy = '';
+		}else{
+			$scope.filterLiveChartBy = type;
+		}
+	}
+
+	$scope.isHidden = function(card,type) {
+	    if(card.type.toLowerCase().indexOf($scope.filterLiveChartBy) < 0) {
+	        return true;
+	    }
+	    return false;
+	}
+
+	$scope.hiddenChart = 1;
+
+	$scope.showChart = function(chart){
+		if(chart == 0)
+			$scope.hiddenChart = 1;
+		if(chart == 1)
+			$scope.hiddenChart = 0;
+	}
+
 }]);
 
 kurbiApp.controller('LiveChartController', ['$scope','$http',
