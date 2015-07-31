@@ -578,7 +578,7 @@ console.log('error in query function-api service: ',error);
 		returnLiveChartDataPromise = $q.defer();
 		var that = this;
 
-		$http.get('/healthData.json')
+		$http.get('/healthDataWesMom.json')
 		.success(function(lcData){
 			var list = [];
 			var today = new Date();
@@ -590,7 +590,7 @@ console.log('error in query function-api service: ',error);
 
 					for(j in obj){
 						var details = JSON.stringify(obj[j]);
-												
+
 						if(i == 'aaa'){
 							date = obj[j].startDate;
 						}
