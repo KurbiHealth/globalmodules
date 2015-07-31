@@ -37,7 +37,33 @@
 							</div>
 						</div>
 					</div>
-					<div ng-if="name != 'items'">
+					<div ng-if="name == 'goals'">
+						<h4>Goals Affected:</h4>
+						<div class="row">
+							<div class="col-md-3">Category</div>
+							<div class="col-md-3">Goal</div>
+							<div class="col-md-3">Action</div>
+							<div class="col-md-3">Frequency</div>
+						</div>
+						<div ng-repeat="goal in detail" class="row">
+							<div class="col-md-3">{{goal.category}}</div>
+							<div class="col-md-3">{{goal.name}}</div>
+							<div class="col-md-3">{{goal.action}}</div>
+							<div class="col-md-3">{{goal.frequency}}</div>
+						</div>
+					</div>
+					<div ng-if="name == 'symptoms'">
+						<h4>Symptoms:</h4>
+						<div class="row">
+							<div class="col-md-3">Name</div>
+							<div class="col-md-3">Location</div>
+						</div>
+						<div ng-repeat="symptom in detail" class="row">
+							<div class="col-md-3">{{symptom.name}}</div>
+							<div class="col-md-3">{{symptom.location}}</div>
+						</div>
+					</div>
+					<div ng-if="name != 'items' && name != 'goals' && name != 'symptoms'">
 						<div class="live-chart-detail-label">
 							{{name}}:
 						</div> 

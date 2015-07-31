@@ -609,7 +609,6 @@ console.log('error in query function-api service: ',error);
 						if(i != 'patientInfo' && i != 'social'){
 							var obj = lcData[i];
 							var date = '';
-
 							for(j in obj){
 								//var details = JSON.stringify(obj[j]);
 								var details = obj[j];
