@@ -1,0 +1,65 @@
+<!--
+annotate: " "
+code: "237495005 (SNOMED CT)"
+comment: " "
+description: " "
+entryDate: "2014/04/04"
+goals: Array[2]
+name: "THYROID NODULE"
+onsetDate: "2014/04/04"
+provider: "Samantha DeCouto DO"
+status: "Inactive"
+symptoms: Array[4]
+-->
+
+	<div class="card-front" ng-class="{ 'hidden': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">{{card.title}}</span>
+			<i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
+		</div>
+		<div class="card-content">
+			<div class="row">
+				<div class="col-md-12">
+					<span class="pull-right">Added {{card.date | date:'longDate'}}</span>
+				</div>
+			</div>
+			<div class="live-chart-detail">
+				<h4>Goals</h4>
+				<div ng-repeat="goal in card.details.goals" class="row" style="margin-bottom:5px;">
+					<div class="col-md-1">
+						<img src="/design/img/{{goal.category}}.png" width="30" height="30" />
+					</div>
+					<div class="col-md-10">
+						<div class="row">
+							<div class="col-md-12" style="font-weight:bold;">{{goal.category}}</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">{{goal.name}}</div>
+							<div class="col-md-6">in progress</div>
+						</div>
+					</div>
+				</div>
+				<h4>Symptoms</h4>
+				<div class="row">
+					<div class="col-md-12">
+						<div ng-repeat="symptom in card.details.symptoms" style="float:left;">{{symptom.name}}, </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="card-footer">
+			<p></p>
+		</div>
+	</div>
+	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">Edit: {{card.title}}</span><i class="md md-close pull-right activator" ng-click="reversed = ! reversed"></i>
+		</div>
+		<div class="card-content">
+			<textarea>{{card.details}}</textarea>
+			<input type="submit" name="submit" value="Save" />
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>

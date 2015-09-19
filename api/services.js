@@ -230,10 +230,11 @@ console.log('error in query function-api service: ',error);
 		SPECIAL QUERIES 
 	------------------------------------------------*/
 
-	function postsInit($scope){
+	function postsInit($scope,careTeam){
 		tempPosts1 = [];
 		tempPosts2 = [];
-
+console.log(careTeam);
+console.log(user);
 		promise = $q.defer();
 		messageRequest1 = query(promise,'messages',{
 			field: 'messages.parent_message_id|eq|0',
@@ -243,17 +244,31 @@ console.log('error in query function-api service: ',error);
 			list = [];
 			for(i in data){
 				temp = {};
-				if(data[i].type != 'invitation'){
+				if(data[i].messages.type != 'invitation'){
 					// Split timestamp into [ Y, M, D, h, m, s ]
 					var t = data[i].messages.created.split(/[- :T]/);
 					t[5] = t[5].replace('.000Z', '');
 					// Apply each element to the Date function
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 					temp.created = d;
-					temp.author = user.firstName + ' ' + user.lastName;
 					temp.message = data[i].messages.text;
 					temp.userId = data[i].messages.user_id;
 					temp.messageId = data[i].messages.id;
+					// MATCH UP USER DATA FOR THE MESSAGE
+					var uid = data[i].messages.user_id;
+					if(user.id == uid){
+						temp.author = user.firstName + ' ' + user.lastName;
+						temp.avatar = '';
+					}else{
+						for(i in careTeam){
+							if(careTeam[i].userId == uid){
+								temp.avatar = careTeam[i].avatar;
+							}else{
+								temp.avatar = '';
+							}
+						}
+					}
+					// ADD TO LIST
 					list.push(temp);
 				}
 			}
@@ -278,10 +293,17 @@ console.log('error in query function-api service: ',error);
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 					temp.created = d;
 					temp.author = 'Someone Else';
-			// get author info by doing query pulling from users where
-			// message_recipients.user_id = ???
 					temp.message = data[i].messages.text;
 					temp.userId = data[i].messages.user_id;
+					// MATCH UP USER DATA FOR THE MESSAGE
+					var uid = data[i].messages.user_id;
+					for(i in careTeam){
+						if(careTeam[i].userId == uid){
+							temp.avatar = careTeam[i].avatar;
+						}else{
+							temp.avatar = '';
+						}
+					}
 					temp.messageId = data[i].messages.id;
 					list.push(temp);
 				}
@@ -612,6 +634,7 @@ console.log('error in query function-api service: ',error);
 							for(j in obj){
 								//var details = JSON.stringify(obj[j]);
 								var details = obj[j];
+								var title = i.toUpperCase();
 
 								if(i == 'aaa'){
 									date = obj[j].startDate;
@@ -633,6 +656,7 @@ console.log('error in query function-api service: ',error);
 								}
 								if(i == 'conditions'){
 									date = obj[j].entryDate;
+									title = obj[j].name;
 								}
 								if(i == 'procedures'){
 									date = obj[j].date;
@@ -644,7 +668,7 @@ console.log('error in query function-api service: ',error);
 								date = _fixChartDate(date);
 
 								list.push({
-									title: i.toUpperCase(),
+									title: title,
 									date: date,
 									created: today.toDateString(),
 									type: i + '-card',

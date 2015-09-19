@@ -1,7 +1,13 @@
 <span class="post-timestamp">{{post.created | date:'short'}}</span>
 <a href="#" class="post-person">
-	<img src="http://placehold.it/70x70" alt="{{post.author}}" class="profile-mid" />
+	<div ng-if="post.image_file_name == ''">
+		<img src="http://placehold.it/70x70" alt="{{post.author}}" class="profile-mid" />
+	</div>
+	<div ng-if="post.image_file_name != ''">
+		<img src="/design/user_images/post.image_file_name" alt="{{post.author}}" class="profile-mid" />
+	</div>
 	<h3>{{post.author}}</h3>
+	<div class="clear"></div>
 </a>
 <div class="post-content">
 	<p>{{post.message}}</p>

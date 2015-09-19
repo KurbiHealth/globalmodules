@@ -1,4 +1,4 @@
-<div style="" ng-controller="GoalController as goalCtrl">
+<!--<div style="" ng-controller="GoalController as goalCtrl">
 	
 	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
 		<b>Add Goal:</b>
@@ -19,17 +19,17 @@
 			  <option value="7">Learn</option>
 			  <option value="8">Find</option>
 			</select>
-		</div><!--END /.form-group-->
+		</div><!--END /.form-group--*>
 	  
 		<div class="form-group" style="margin:5px 10px;">
 			<label for="goal" class="sr-only">What's your goal?</label>
 			<input type="text" class="form-control" id="goal" placeholder="What's your goal?" ng-model="goalCtrl.goal.body">
-		</div><!--END /.form-group-->
+		</div><!--END /.form-group--*>
 
 		<div class="form-group" style="margin:5px 10px;">
 			<label for="goal-action" class="sr-only">What's your first step?</label>
 			<input type="text" class="form-control" id="goal-action" placeholder="What's your first step?" ng-model="goalCtrl.goal.action">
-		</div><!--END /.form-group-->
+		</div><!--END /.form-group--*>
 
 		<div class="form-group" style="margin:5px 10px;">
 			<label for="action-frequency">How many times per week?</label>
@@ -43,7 +43,7 @@
 			  <option value="6">6 Times</option>
 			  <option value="7">7 Times</option>
 			</select>
-		</div><!--END /.form-group-->
+		</div><!--END /.form-group--*>
 
 		<div class="modal-footer" style="border-bottom:1px solid #e5e5e5;border-top:none;">
 		    <button type="submit" class="btn btn-primary" ng-click="ok($event)">OK</button>
@@ -54,4 +54,369 @@
 	<button class="btn btn-warning" style="margin-top: -88px;
     margin-left: 140px;" ng-click="cancel($event)">Cancel</button>
 
-</div>
+</div>-->
+
+<style>
+#goal-header {
+	margin: 30px auto 0 auto;
+	padding: 30px 0;
+	max-width: 800px;
+	background: #ffffff;
+	border: 1px solid #cccccc;
+}
+#goal-header h1 {
+	margin: 0 auto;
+	max-width: 600px;
+	font-size: 30px;
+	color: #333333;
+	text-align: center;
+}
+#goal-header ul {
+	margin: 20px auto 0 auto;
+	max-width: 800px;
+}
+#goal-header ul li {
+	margin-right: 5px;
+	display: inline;
+}
+#goal-header ul li a {
+	padding: 10px 0 0 10px;
+	display: inline-block;
+	width: 220px;
+	height: 60px;
+	font-size: 16px;
+	color: #333333;
+	background: #EEEDEB;
+	opacity: 0.5;
+	border: 1px solid #cccccc;
+}
+#goal-header ul li a.active {
+	opacity: 1;
+	background: #ffffff;
+}
+#goal-header ul li a:hover {
+	opacity: 1;
+	background: #ffffff;
+	text-decoration: none;
+}
+#goal-header ul li a img {
+	margin-right: 10px;
+}
+#goal-cards {
+	margin: 30px auto 0 auto;
+	max-width: 800px;
+}
+.goal-card {
+	float: left;
+	margin:0 15px 15px 0;
+	max-width: 255px;
+	min-width: 255px;
+	background: #ffffff;
+	border: 1px solid #cccccc;
+}
+.goal-card:nth-child(3n) {
+	margin-right: 0;
+}
+.goal-card-header, .goal-card-footer {
+	padding: 5px 10px;
+}
+.goal-card-header i.fa {
+	margin-left: 5px;
+	font-size: 16px;
+	line-height: 30px;
+}
+.goal-card-body {
+	position: relative;
+}
+.goal-card-body img {
+	max-width: 253px;
+	min-width: 253px;
+	max-height: 167px;
+	min-height: 167px;
+}
+.goal-card-body h2 {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	padding-right: 10px;
+	font-size: 20px;
+	color: #ffffff;
+	text-shadow: 1px 1px 1px #333333;
+}
+.goal-card-footer img {
+  max-width: 30px;
+  max-height: 30px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+.goal-card-footer a {
+	font-size: 12px;
+	color: #333333;
+	text-decoration: none;
+}
+</style>
+
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+		<div id="goal-header">
+			<h1>We know what you’d like to do. Now, let’s choose a path to get there.</h1>
+			<ul>
+				<li><a href="#" class="active"><img src="design/img/exercise.png" width="40" height="40" alt="Exercise" /> <span>Exercise</span></a></li>
+				<li><a href="#"><img src="design/img/travel.png" width="40" height="40" alt="Travel" /> <span>Travel</span></a></li>
+				<li><a href="#"><img src="design/img/diet.png" width="40" height="40" alt="Diet" /> <span>Diet</span></a></li>
+			</ul>
+		</div><!--END /#goal-header-->
+	</div><!--END /.col-->
+</div><!--END /.row-->
+
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+		<div id="goal-cards">
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/yoga.png" alt="Title" />
+					<h2>Outdoor Yoga on the Square</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/bike.png" alt="Title" />
+					<h2>Bike Lake Lamona</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/crossfit-mom.png" alt="Title" />
+					<h2>Crossfit on a Mom's Schedule</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/couch.png" alt="Title" />
+					<h2>Go C25K with Back Pain</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/polo.png" alt="Title" />
+					<h2>MSers Water Polo Group</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/run.png" alt="Title" />
+					<h2>Let's Play Raquetball!</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/punch.png" alt="Title" />
+					<h2>Punch Back Pain in the Face</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/stretch.png" alt="Title" />
+					<h2>12 Week Stretching Routine</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/balance.png" alt="Title" />
+					<h2>Easy Balance Exercises for MS</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/yoga.png" alt="Title" />
+					<h2>5 Simple Yoga Poses for MS</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/run.png" alt="Title" />
+					<h2>Zumba for Beginners</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+			<div class="goal-card">
+				<div class="goal-card-header table">
+					<div class="pull-left table-center">
+						<img src="design/img/exercise.png" width="30" height="30" alt="Exercise" /> <span>Exercise</span>
+					</div>
+					<div class="pull-right table-center">
+						<i class="fa fa-heart-o"></i>
+						<i class="fa fa-plus-square-o"></i>
+					</div>
+					<div class="clear"></div>
+				</div><!--END /.goal-card-header-->
+				<div class="goal-card-body">
+					<img src="design/img/yoga.png" alt="Title" />
+					<h2>Teach Yourself Adaptive Tai Chi</h2>
+				</div><!--END /.goal-card-body-->
+				<div class="goal-card-footer table">
+					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+				</div><!--END /.goal-card-footer-->
+			</div><!--END /.goal-card-->
+			
+		</div><!--END /#goal-cards-->
+	</div><!--END /.col-->
+</div><!--END /.row-->
+
+
+
