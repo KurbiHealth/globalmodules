@@ -1,15 +1,15 @@
 'use strict';
 
 angular.module('ui.WellnessSlider', [])
-	.directive('ringSlider', function () {
+	.directive('ringSlider', function ($parse) {
 		return {
 			restrict: 'A',
 			replace: true,
-			templateUrl: 'modules/symptom-slider/templates/RingSliderWidget.html',
+			templateUrl: '../modules/symptom-slider/templates/RingSliderWidget.html',
 			scope: {
-				//ringSlider: "&",
-				//severityNum: '=',
-				//sliderPosition: "="
+				cursorAttr: '@',
+				severityNum: '=',
+				sliderPosition: "="
 			},
 			link: function (scope, element, attrs) {
 				var mDownSlider = false;
@@ -30,18 +30,13 @@ angular.module('ui.WellnessSlider', [])
 	            //Grab severity number by setting <severity-num="someValue"> in view
 	            if (angular.isDefined(attrs.severityNum))
 	            {
-//console.log("Severity passed in: ", scope.severityNum);
-console.log('scope',scope.$parent.card.severity);
-	            	//degree = scope.severityNum;
-	            	degree = scope.$parent.card.severity;
-	            	scope.sliderPosition = scope.$parent.card.severity;
+	            	console.log("Severity passed in: ", scope.severityNum);
+	            	degree = severityToDegree(scope.severityNum);
 	            	$slider[0].style.cursor = 'default';
 	            }
 	            else
 	            {
-	            	//scope.sliderPosition = degree;
-	            	degree = scope.$parent.card.severity;
-	            	scope.sliderPosition = scope.$parent.card.severity;
+	            	scope.sliderPosition = degree;
 	            }
 	            //Set default styles of our slider widget
 	            setWidgetStyles(degree);
@@ -130,13 +125,99 @@ console.log('scope',scope.$parent.card.severity);
 				    //For attraction to multiples of 30 degrees so we hit the mid points between severities
 				    var dist = Math.abs( deg - ( Math.round(deg / 30) * 30 ) );
 
-				    if( dist <= 2 )
-				        deg = Math.round(deg / 30) * 30;
+				    //if( dist <= 2 )
+				    deg = Math.round(deg / 30) * 30;
 				                
 				    if(deg == 360)
 				        deg = 0;
 
 				    return deg	
+				}
+
+				function severityToDegree(sev)
+				{
+					switch (Math.round(sev))
+					{
+						case 1:
+							return 30;
+							break;
+						case 2:
+							return 60;
+							break;
+						case 3:
+							return 90;
+							break;
+						case 4:
+							return 120;
+							break;
+						case 5:
+							return 150;
+							break;
+						case 6:
+							return 180;
+							break;
+						case 7:
+							return 210;
+							break;
+						case 8:
+							return 240;
+							break;
+						case 9:
+							return 270;
+							break;
+						case 10:
+							return 300;
+							break;
+						case 11:
+							return 330;
+							break;
+						default:
+							return 0;
+							break;													
+					}
+				}
+
+				function degreeToSeverity(deg)
+				{
+					switch (deg)
+					{
+						case 30:
+							return 1;
+							break;
+						case 60:
+							return 2;
+							break;
+						case 90:
+							return 3;
+							break;
+						case 120:
+							return 4;
+							break;
+						case 150:
+							return 5;
+							break;
+						case 180:
+							return 6;
+							break;
+						case 210:
+							return 7;
+							break;
+						case 240:
+							return 8;
+							break;
+						case 270:
+							return 9;
+							break;
+						case 300:
+							return 10;
+							break;
+						case 330:
+							return 11;
+							break;
+						default:
+							return 0;
+							break;													
+					}
 				}
 
 				function setWidgetStyles(deg)

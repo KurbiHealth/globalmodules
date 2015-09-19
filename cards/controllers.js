@@ -6,6 +6,7 @@ function(api,$scope,$timeout,$q){
 	.then(
 		function(data){
 			$scope.journalEntries = data;
+			console.log("Data: ", data);
 			if(data[0].today == false){
 				var today = new Date;
 				$scope.journalEntries.unshift({
@@ -122,11 +123,14 @@ function(){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope',
-function($scope){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale',
+function($scope, $locale){
+	console.log("Symptom Controller");
+	$scope.severity = 0;
+	$scope.timeSaved = $scope.day.date;
 
     $scope.saveSeverity = function() {
-console.log('saving severity');
+		console.log('saving severity');
     };
 
 }]);
