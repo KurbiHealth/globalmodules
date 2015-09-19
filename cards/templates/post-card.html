@@ -1,0 +1,41 @@
+<div class="post-item">
+
+	<span class="post-timestamp">{{card.created | date:'short'}}</span>
+	<a href="#" class="post-person">
+		<div ng-if="card.image_file_name == ''">
+			<img src="http://placehold.it/70x70" alt="{{card.author}}" class="profile-mid" />
+		</div>
+		<div ng-if="card.image_file_name != ''">
+			<img src="/design/user_images/card.image_file_name" alt="{{card.author}}" class="profile-mid" />
+		</div>
+		<h3>{{card.author}}</h3>
+	</a>
+	<div class="post-content">
+		<p>{{card.message}}</p>
+	</div><!--END .post-content-->
+
+	<!-- ng-if="post.comments.length > 0" -->
+
+	<div class="social-block">
+		<span ><a class="comments-open pull-left" ng-click ="limit = card.comments.length"><span>{{card.comments.length}}</span> Comments</a>
+		<!--<i class="fa fa-comment-o pull-right"></i>-->
+		<i class="fa fa-heart-o pull-right"></i>
+		<div class="clear"></div>
+	</div><!--END .social-block-->
+
+	<div class="comment-block">
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				
+				<div ng-repeat="comment in card.comments | orderBy : '-published' | limitTo: limit">
+					<blockquote>
+						<div comment-detail></div>
+					</blockquote>
+				</div>
+				
+				<div add-comment></div>
+			</div><!--END .columns-->
+		</div><!--END .row-->
+	</div><!--END .comment-block-->
+
+</div><!--END .post-item-->

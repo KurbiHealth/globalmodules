@@ -26,7 +26,7 @@ angular.module('CardsModule', [])
 	                template = 'live-chart-card.html';
 	                break;
 	            case 'conditions-card':
-	            	template = 'live-chart-card.html';
+	            	template = 'live-chart-conditions-card.html';
 	            	break;
 	            case 'immunizations-card':
 	                template = 'live-chart-card.html';
@@ -51,6 +51,9 @@ angular.module('CardsModule', [])
 	                break;
 	            case 'vitalSigns-card':
 	                template = 'live-chart-card.html';
+	                break;
+	            case 'post-card':
+	                template = 'post-card.html';
 	                break;
 	            default:
 	            	template = 'text-card.html';

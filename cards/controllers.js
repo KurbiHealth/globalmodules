@@ -31,7 +31,7 @@ function(api,$scope,$timeout,$q){
 				isFitWidth: true,
 				stamp: '.journal-day-header'
 			});
-		},200);
+		},450);
 	});
 
 	$scope.addCard = function(type,date){

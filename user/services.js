@@ -10,6 +10,7 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 	lastName 	= '';
 	id 			= 0;
 	token 		= '';
+	completeUser = '';
 
 	return {
 
@@ -26,27 +27,31 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 
 	}
 
-	function saveUser(email,firstName,lastName,id){
+	function saveUser(email,firstName,lastName,id,user){
 		// set local values
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.id = id;
+		this.completeUser = user;
+
 
 		// set values in cookie
 		$cookies.userEmail = email;
 		$cookies.userFirstName = firstName;
 		$cookies.userLastName = lastName;
 		$cookies.userId = id;
+		$cookies.completeUser = user;
 	}
 
 	function getUser(){
 		var tempObj = {
-			'email': '',
-			'firstName': '',
-			'lastName': '',
-			'id': '',
-			'token': ''
+			'email': 		'',
+			'firstName': 	'',
+			'lastName': 	'',
+			'id': 			'',
+			'token': 		'',
+			'user': 		''
 		};
 
 		// Email
@@ -78,6 +83,12 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 			tempObj.token = this.token;
 		}else{
 			tempObj.token = this.token = $cookies.token;
+		}
+		// Complete User Record
+		if(this.completeUser != ''){
+			tempObj.completeUser = this.completeUser;
+		}else{
+			tempObj.completeUser = this.completeUser = $cookies.completeUser;
 		}
 
 		return tempObj;

@@ -1,12 +1,14 @@
-kurbiApp.controller('PostController', ['$scope', '$q', 'posts', 'api', 'user', 
-function ($scope, $q, posts, api, user) {
+kurbiApp.controller('PostController', ['$scope', '$q', 'posts', 'api', 
+	'user', '$rootScope', '$timeout',
+function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 
 	this.postsInit = function(){
-		api.postsInit($scope);
 
 		api.careTeamInit().then(function(data){
 			$scope.careTeamList = data;
+			api.postsInit($rootScope,data);
 		});
+
 	}
 
 	$scope.addPost = function(){
@@ -26,11 +28,32 @@ function ($scope, $q, posts, api, user) {
 			comments: []
 		});
 		$scope.message = '';
+
+		// update the masonry grid layout
+		$timeout(function(){
+			$('.journal-day').masonry('reloadItems');
+			$('.journal-day').masonry('layout');
+		},100);
 	};
 
 	$scope.incrementLikes = function(post) {
 		post.likes += 1;
 	};
+
+	$scope.$on('allRendered', function(){
+		// the "allRendered" event is supposed to broadcast when the 
+		// cards are done being rendered, but there still is a brief
+		// time between when the directive is done rendering and when
+		// the Masonry will work, hence the $timeout
+		$timeout(function(){
+			$('.journal-day').masonry({
+				itemSelector: '.card',
+				//columnWidth: 280,
+				isFitWidth: true,
+				stamp: '.journal-day-header'
+			});
+		},450);
+	});
 
 }]);
 
