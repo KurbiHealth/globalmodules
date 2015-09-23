@@ -6,17 +6,31 @@ angular.module('ui.WellnessSlider', [])
 			restrict: 'A',
 			replace: true,
 			templateUrl: '../modules/symptom-slider/templates/RingSliderWidget.html',
-			scope: {
+			/*scope: {				
 				cursorAttr: '@',
-				severityNum: '=',
-				sliderPosition: "="
-			},
+				severityNum: '='
+				//sliderPosition: "="
+			},*/
 			link: function (scope, element, attrs) {
+				/*This method will be called whet the 'objectToInject' value is changes*/
+	            /*$scope.$watch('saveSev', function (value) {
+	                //Checking if the given value is not undefined
+	                if(value){
+	                	$scope.Obj = value;
+	                    //Injecting the Method
+	                    $scope.Obj.invoke = function(){
+	                        console.log("Inside directive!!!")
+	                    }
+	                }    
+	            });*/
+
 				var mDownSlider = false;
 				var mMoveSlider = false;
 				var mdown = false;
 				var degree = 0;
 				scope.displayOnly = angular.isDefined(attrs.displayOnly); //Set in view if widget is used in display only mode, cant move slider
+				scope.savedSev = 0;
+				scope.currentDeg = 0;
 
 				//Reference to widget container, max size
 			    var $container = element;
@@ -27,12 +41,27 @@ angular.module('ui.WellnessSlider', [])
 			    var $slice2 = element.find('.slice2');
 			    var $slice3 = element.find('.slice3');
 
+	            if (angular.isDefined(attrs.cursorAttr))
+	            {
+	            	scope.cursorAttr = scope.$eval(attrs.cursorAttr);
+	            	if (scope.cursorAttr == "default")
+	            	{
+	            		$slider[0].style.cursor = 'default';
+	            	}
+	            	else
+	            	{
+	            		$slider[0].style.cursor = 'grab';
+	            	}
+	            }
+
 	            //Grab severity number by setting <severity-num="someValue"> in view
 	            if (angular.isDefined(attrs.severityNum))
 	            {
+	            	scope.severityNum = scope.$eval(attrs.severityNum);
 	            	console.log("Severity passed in: ", scope.severityNum);
 	            	degree = severityToDegree(scope.severityNum);
-	            	$slider[0].style.cursor = 'default';
+	            	scope.savedSev = Math.round(scope.severityNum);
+	            	scope.currentDeg = degree;
 	            }
 	            else
 	            {
@@ -281,8 +310,47 @@ angular.module('ui.WellnessSlider', [])
 					var sliderX = X+outterRad-sliderWidth/2;
 					var sliderY = Y+outterRad-sliderHeight/2;
 				    
-				    $slider.css({ left: sliderX, top: sliderY });					
+				    $slider.css({ left: sliderX, top: sliderY });
+				    scope.currentDeg = deg;
+				    //scope.severityNum = degreeToSeverity(deg);
+				    //scope.$apply;
 				}
+
+				scope.setSliderStyle = function(style)
+				{
+					scope.displayOnly = !scope.displayOnly;
+
+	            	if (style == "default")
+	            	{
+	            		$slider[0].style.cursor = 'default';
+	            	}
+	            	else
+	            	{
+	            		$slider[0].style.cursor = 'grab';
+	            	}					
+				};
+
+				scope.getSeverity = function()
+				{
+					return degreeToSeverity(scope.currentDeg);
+				};
+
+				scope.saveSliderPosition = function()
+				{
+					//setWidgetStyles(scope.currentDeg);
+					//setSliderPosition(scope.currentDeg);					
+					scope.savedSev = degreeToSeverity(scope.currentDeg);
+				};
+
+				scope.resetSeverity = function()
+				{
+					if (degreeToSeverity(scope.currentDeg) != scope.savedSev)
+					{
+						var deg = severityToDegree(scope.savedSev);
+						setWidgetStyles(deg);
+						setSliderPosition(deg);						
+					}
+				};
 			}
 		};
 	});
