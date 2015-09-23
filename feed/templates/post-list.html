@@ -1,27 +1,10 @@
 <!-- col-md-8 col-md-offset-2 -->
-<div class="row">
-	<div class="col-md-8 col-md-offset-3">
-		<div ng-repeat="post in posts | orderBy : '-created'">
-			<div class="post-item">
+<div class="row" ng-controller="CardController"><!-- ?? -->
 
-					<div post-detail></div>
-					
-					<div class="comment-block">
-						<div class="row">
-							<div class="col-md-10 col-md-offset-1">
-								
-								<div ng-repeat="comment in post.comments | orderBy : '-published' | limitTo: limit">
-									<blockquote>
-										<div comment-detail></div>
-									</blockquote>
-								</div>
-								
-								<div add-comment></div>
-							</div><!--END .columns-->
-						</div><!--END .row-->
-					</div><!--END .comment-block-->
-			
-			</div><!--END .post-item-->
-		</div>
+	<div class="col-md-8 col-md-offset-3">
+
+		<div class="card {{card.type}} card-wide" ng-repeat="card in feed | orderBy : '-created'" card="card" emit-when="{event: 'allRendered', condition: $last}"></div>
+
 	</div>
+
 <div>

@@ -23,14 +23,6 @@ postDirectives.directive('addPost', function() {
 	};
 });
 
-// Post details
-postDirectives.directive('postDetail', function() {
-	return {
-		restrict: 'A',
-		templateUrl: './modules/feed/templates/post-detail.html'
-	};
-});
-
 // Add comment
 postDirectives.directive('commentDetail', function() {
 	return {

@@ -20,7 +20,7 @@ function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 		};
 		promise = $q.defer();
 		newId = api.addRecord(promise,'messages',newPost);
-		$scope.posts.push({
+		$scope.feed.push({
 			id: newId,
 			author: user.firstName + ' ' + user.lastName,
 			message: $scope.message,
@@ -50,7 +50,7 @@ function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 				itemSelector: '.card',
 				//columnWidth: 280,
 				isFitWidth: true,
-				stamp: '.journal-day-header'
+				//stamp: '.journal-day-header'
 			});
 		},450);
 	});

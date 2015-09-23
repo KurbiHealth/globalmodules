@@ -1,0 +1,205 @@
+<style>
+.path-details-container h1{
+	background-color: #E9E8E4;
+	line-height:45px;
+	font-size:17px;
+	padding-left:5px;
+}
+.path-details-container h3{
+	font-size:18px;
+	color:#51079B;
+	margin-bottom: 5px;
+}
+.path-details-container h1 button{
+	float: right;
+    height: 25px;
+    font-size: 12px;
+    line-height: 20px;
+    margin-top: 10px;
+    background-color: transparent;
+    border: 1px solid #51079B;
+    margin-right: 10px;
+    color:#51079B;
+}
+.path-details-header img{
+	height:80px;
+	float:left;
+}
+.path-details-container label{
+	color:#51079B;
+	display:block;
+	width:100%;
+	clear:both;
+	font-size: 18px;
+}
+.path-details-container input{
+	width:100%;
+	clear:both;
+}
+.path-details-form, .path-details-overview, .path-details-team, .path-details-location, .path-details-frequency, .path-details-toolkit{
+	display:block;
+	width:100%;
+	min-height:20px;
+	overflow: auto;
+	margin:15px 0 0 0;
+	padding: 0 10px;
+}
+.path-details-overview{
+	margin-top:20px;
+}
+.path-details-overview img{
+	float:left;
+	width:70px;
+}
+.path-details-overview .path-overview-body{
+	display: block;
+    width: 150px;
+    float: left;
+}
+.path-details-overview .path-overview-body .path-overview-title{
+	font-weight: bold;
+}
+.path-details-overview .path-overview-body button{
+	background-color: transparent;
+	border: 1px solid #51079B;
+	color:#51079B;
+}
+.path-details-overview button{
+	float:left;
+}
+.path-details-team p{
+	margin:0;
+	padding:0;
+	font-weight: bold;
+}
+.path-details-team ul{
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+.path-details-team ul li img{
+	float:left;
+}
+.path-details-frequency ul{
+	list-style-type: none;
+	margin:0;
+	padding:0;
+}
+.path-details-frequency ul li{
+	width:30px;
+	height:30px;
+	margin:3px;
+	border:1px solid #E9E8E4;
+	background-color:white;
+	float:left;
+	line-height: 30px;
+    padding-left: 9px;
+    color:#00AB91;
+}
+.path-details-frequency ul li.selected{
+	background-color: #00AB91;
+	color:white;
+}
+.path-details-toolkit{}
+.path-details-toolkit .toolkit-body{
+	display:block;
+	float:left;
+	width:45%;
+	height:50px;
+	border:1px solid #E9E8E4;
+	margin: 0 10px 5px 0;
+}
+.path-details-toolkit .toolkit-body input[type='checkbox']{
+	width:20px;
+	height:20px;
+	border:1px solid black;
+}
+.path-details-toolkit .toolkit-body .toolkit-label{
+
+}
+</style>
+
+<div class="row">
+	<div class="col-md-12 path-details-container">
+		<h1>Create a new goal<button>CANCEL</button></h1>
+		<div class="path-details-header">
+			<img src="/design/img/Path_CoverPhoto.png" style="position: relative;top: -5px;right: 5px;"/>
+			<img src="/design/img/exercise.png" style="position:relative;top: -70px;height:50px;right: -10px;" />
+			<div style="display:block;position:relative;top:0;height:80px;width:80%;">
+				<span style="display:block;height:20px;position:relative;top:-65px;right:-20px;color:white;">Exercise</span>
+				<span style="display:block;height:60px;position:relative;top:-50px;right:-20px;color:white;font-size:20px;">Bike Lake Monona</span>
+			</div>
+		</div>
+		<div class="path-details-form">
+			<label for="">What would you like to do?</label>
+			<input name="" type="" value="" />
+			<a href="">Invite other to join you?</a>
+			<span style="display:block;height:10px;width:1px;"></span>
+			<label for="">Select a path</label>
+			<input name="" type="" value="" />
+		</div>
+		<div class="path-details-overview">
+			<img src="/design/img/Expert_ProfilePhoto.png" />
+			<div class="path-overview-body">
+				<div class="path-overview-title">Path Overview</div>
+				<p>This is a 11.11 mi bike ride in Madison, WI, United States. The Bike Ride has a total ascent of 36.0 ft and has a maximum elevation of 927.59 ft.</p>
+				<button>See Path Details</button>
+			</div>
+			<button style="background-color: #00AB91;border-radius: 15px;border:none;">$10</button>
+		</div>
+		<div class="path-details-team">
+			<p>People you know on this path</p>
+			<ul>
+				<li><img src="/design/img/PYK_Photo1.png" /></li>
+				<li><img src="/design/img/PYK_Photo2.png" /></li>
+				<li><img src="/design/img/PYK_Photo3.png" /></li>
+				<li><img src="/design/img/PYK_Photo4.png" /></li>
+				<li><img src="/design/img/PYK_Photo5.png" /></li>
+				<li class="plus">+3</li>
+			</ul>
+		</div>
+		<div class="path-details-location">
+			<h3>Location</h3>
+			<img src="/design/img/Path_MapPhoto.png" style="width:270px;" />
+		</div>
+		<div class="path-details-frequency">
+			<h3>Frequency per week</h3>
+			<ul>
+				<li>1</li>
+				<li>2</li>
+				<li class="selected">3</li>
+				<li>4</li>
+				<li>5</li>
+				<li>6</li>
+				<li>7</li>
+			</ul>
+		</div>
+		<div class="path-details-toolkit">
+			<h3>Your Toolkit</h3>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">Bike</span>
+			</div>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">Helmet</span>
+			</div>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">GPS</span>
+			</div>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">Water Bottle</span>
+			</div>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">Heart-rate Monitor</span>
+			</div>
+			<div class="toolkit-body">
+				<input type="checkbox" name="" value="" />
+				<span class="toolkit-label">Phone</span>
+			</div>
+		</div>
+	</div><!--END /.col-->
+</div><!--END /.row-->

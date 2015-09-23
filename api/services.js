@@ -250,6 +250,7 @@ console.log(user);
 					t[5] = t[5].replace('.000Z', '');
 					// Apply each element to the Date function
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+					temp.type = 'post-card';
 					temp.created = d;
 					temp.message = data[i].messages.text;
 					temp.userId = data[i].messages.user_id;
@@ -281,30 +282,31 @@ console.log(user);
 			//field: 'message_recipients.user_id|eq|' + user.id,
 			orderBy: 'messages.created|desc' 
 		});
-		messageRequest2.then(function(data){
+		messageRequest2.then(function(data2){
 			list = [];
-			for (i in data){
+			for (i in data2){
 				temp = {};
-				if(data[i].messages.type != 'invitation'){
+				if(data2[i].messages.type != 'invitation'){
 					// Split timestamp into [ Y, M, D, h, m, s ]
-					var t = data[i].messages.created.split(/[- :T]/);
+					var t = data2[i].messages.created.split(/[- :T]/);
 					t[5] = t[5].replace('.000Z', '');
 					// Apply each element to the Date function
 					var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+					temp.type = 'post-card';
 					temp.created = d;
 					temp.author = 'Someone Else';
-					temp.message = data[i].messages.text;
-					temp.userId = data[i].messages.user_id;
+					temp.message = data2[i].messages.text;
+					temp.userId = data2[i].messages.user_id;
 					// MATCH UP USER DATA FOR THE MESSAGE
-					var uid = data[i].messages.user_id;
-					for(i in careTeam){
-						if(careTeam[i].userId == uid){
-							temp.avatar = careTeam[i].avatar;
+					var uid = data2[i].messages.user_id;
+					for(j in careTeam){
+						if(careTeam[j].userId == uid){
+							temp.avatar = careTeam[j].avatar;
 						}else{
 							temp.avatar = '';
 						}
 					}
-					temp.messageId = data[i].messages.id;
+					temp.messageId = data2[i].messages.id;
 					list.push(temp);
 				}
 			}
@@ -365,7 +367,8 @@ console.log(user);
 						else
 							temp[i].comments = [];
 					}
-					$scope.posts = temp;
+	_getSymptoms();
+					$scope.feed = temp;
 				});
 			},
 			function (error) {
@@ -374,6 +377,45 @@ console.log(user);
 				return error;
 			}
 		);
+	}
+
+	function _getSymptoms(){
+		var that = this;
+		that.componentsList = [];
+		// get all symptoms from journal_entry_components where
+		// symptom_id != null/''
+
+		// go through each one and 
+		var components = [];
+		var details = [];
+		promise = $q.defer();
+		components.push(query(promise,'journal_entry_components/journal_entries',{
+			//field: 'journal_entry_components.created|eq|' + data[i].journal_entries.id
+		}).then(function(componentsData){
+console.log(componentsData);
+			for(j in componentsData){
+				
+				details.push(getOne(promise,'symptoms',data[i].symptom_id)
+				.then(function(detail){
+					// add detail to the component
+					that.tempComp = {
+						id: '',
+						type: '',
+						title: '',
+						details: {}
+					};
+					that.tempComp.type = 'symptom-card';
+					that.tempComp.id = data[i].id;
+					that.tempComp.details = detail.symptoms;
+					that.tempComp.details.severity = data[i].severity;
+					that.tempComp.severity = data[i].severity;
+					that.tempComp.title = detail.symptoms.technical_name;
+					that.journalEntry.components.push(that.tempComp);
+				}));
+
+				that.componentsList.push(componentsData[j].journal_entry_components);
+			}
+		}));
 	}
 
 	function careTeamInit(){
