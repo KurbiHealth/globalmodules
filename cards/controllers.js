@@ -126,11 +126,33 @@ function(){
 kurbiApp.controller('SymptomCardController', ['$scope', '$locale',
 function($scope, $locale){
 	console.log("Symptom Controller");
+	$scope.reversed = true;
+	$scope.saved = false;
 	$scope.severity = 0;
 	$scope.timeSaved = $scope.day.date;
+	$scope.defaultSlider = "default";
+	$scope.grabSlider = "grab";
+	//$scope.directiveDelegate = {};
 
-    $scope.saveSeverity = function() {
-		console.log('saving severity');
+    $scope.onEditClick = function(sliderStyle)
+    {
+    	$scope.saved = false;
+    	$scope.reversed = !$scope.reversed;
+    	$scope.setSliderStyle(sliderStyle);
+    	$scope.resetSeverity();
+    }
+
+    $scope.saveSeverity = function() 
+    {
+    	$scope.saved = true;
+    	//$scope.card.severity = 7;
+    	var sev = $scope.getSeverity();
+    	$scope.saveSliderPosition();
+    	//console.log("Directive sev: ", sev);
+		//console.log('saving severity: ', $scope.card.severity);
+		$scope.card.severity = sev;
+		$scope.timeSaved = Date.now();
+		//$scope.directiveDelegate.invoke();
     };
 
 }]);
