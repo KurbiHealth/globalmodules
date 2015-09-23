@@ -1,3 +1,4 @@
+<div ng-controller="SymptomCardController">
 	<div class="card-front" ng-class="{ 'hidden': reversed }">
 		<div class="card-title grey-text text-darken-4">
 			<span class="card-title-text">{{card.title}}</span><i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
@@ -6,11 +7,11 @@
 		<div class="card-content">
 			<!-- ng-controller="SymptomCardController" -->
 			<div style="margin:10px 0 0 25px;">
-			    <div ring-slider severity-num="1" display-only></div>
+			    <div ring-slider cursor-attr="{{default}}" severity-num="card.severity" display-only></div>
 			</div>
 		</div>
 		<div class="card-footer">
-			<p>9:45pm</p>
+			<p>{{timeSaved}}</p>
 		</div>
 	</div>
 	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
@@ -20,12 +21,13 @@
 		<div class="card-content">
 			<!-- ng-controller="SymptomCardController" -->
 			<div style="margin:10px 0 0 25px;">
-			    <div ring-slider severity-num="1"></div>
+			    <div ring-slider cursor-attr="{{move}}" severity-num="card.severity"></div>
 			    <button type="submit" class="btn btn-default" ng-click="saveSeverity()">Save Severity</button>
-			    <h5>Severity Saved: {{severity}}</h5>
+			    <h5>Severity Saved: {{card.severity}}</h5>
 			</div>
 		</div>
 		<div class="card-footer">
-			<p>9:45pm</p>
+			<p>{{timeSaved}}</p>
 		</div>
 	</div>
+</div>
