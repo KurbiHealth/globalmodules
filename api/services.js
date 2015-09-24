@@ -258,12 +258,13 @@ console.log(user);
 					// MATCH UP USER DATA FOR THE MESSAGE
 					var uid = data[i].messages.user_id;
 					if(user.id == uid){
+console.log(user);
 						temp.author = user.firstName + ' ' + user.lastName;
-						temp.avatar = '';
+						temp.avatar = '/design/user_images' + user.image_file_name;
 					}else{
 						for(i in careTeam){
 							if(careTeam[i].userId == uid){
-								temp.avatar = careTeam[i].avatar;
+								temp.avatar = '/design/user_images' + careTeam[i].image_file_name;
 							}else{
 								temp.avatar = '';
 							}
@@ -299,11 +300,11 @@ console.log(user);
 					temp.userId = data2[i].messages.user_id;
 					// MATCH UP USER DATA FOR THE MESSAGE
 					var uid = data2[i].messages.user_id;
+					
+					temp.avatar = '';
 					for(j in careTeam){
 						if(careTeam[j].userId == uid){
-							temp.avatar = careTeam[j].avatar;
-						}else{
-							temp.avatar = '';
+							temp.avatar = '/design/user_images' + careTeam[j].image_file_name;
 						}
 					}
 					temp.messageId = data2[i].messages.id;
@@ -367,7 +368,7 @@ console.log(user);
 						else
 							temp[i].comments = [];
 					}
-	_getSymptoms();
+	//_getSymptoms();
 					$scope.feed = temp;
 				});
 			},
@@ -390,11 +391,11 @@ console.log(user);
 		var details = [];
 		promise = $q.defer();
 		components.push(query(promise,'journal_entry_components/journal_entries',{
-			//field: 'journal_entry_components.created|eq|' + data[i].journal_entries.id
+			field: 'journal_entry_components.symptom_id|eq|' + data[i].journal_entries.id
 		}).then(function(componentsData){
 console.log(componentsData);
 			for(j in componentsData){
-				
+
 				details.push(getOne(promise,'symptoms',data[i].symptom_id)
 				.then(function(detail){
 					// add detail to the component
