@@ -144,10 +144,11 @@ function($scope, $locale){
 
     $scope.saveSeverity = function() 
     {
-    	$scope.saved = true;
     	//$scope.card.severity = 7;
     	var sev = $scope.getSeverity();
     	$scope.saveSliderPosition();
+    	$scope.onEditClick("default");
+    	$scope.saved = true;    	
     	//console.log("Directive sev: ", sev);
 		//console.log('saving severity: ', $scope.card.severity);
 		$scope.card.severity = sev;
