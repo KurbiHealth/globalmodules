@@ -32,7 +32,7 @@ function(api,$scope,$timeout,$q){
 				isFitWidth: true,
 				stamp: '.journal-day-header'
 			});
-		},450);
+		},50);
 	});
 
 	$scope.addCard = function(type,date){
@@ -51,7 +51,7 @@ function(api,$scope,$timeout,$q){
 		$timeout(function(){
 			$('.journal-day').masonry('reloadItems');
 			$('.journal-day').masonry('layout');
-		},100);
+		},650);
 	}
 
 	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
