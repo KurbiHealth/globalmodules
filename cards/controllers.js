@@ -373,8 +373,8 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.ok = function () {
-		$scope.$apply();
-	  //$modalInstance.close();
+		//$scope.$apply();
+		$modalInstance.close();
 	};
 
 	$scope.cancel = function () {
