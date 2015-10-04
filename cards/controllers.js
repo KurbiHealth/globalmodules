@@ -209,15 +209,19 @@ function($scope, $locale, api){
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'api', '$modalInstance',
 function($scope, $locale, api, $modalInstance){
 	console.log("ModalInstanceCtrl");
+	$scope.firstClicked = false;
 	$scope.closeOthers = true;
 	$scope.disable = true;
 	$scope.open = false;
+	$scope.showPlus = false;
+	$scope.symptomClicked = false;
 	$scope.currentCat = "";
 	$scope.showCategory = false;
 	$scope.selectedCategory = {value: -1};
 	$scope.leftView = [];
 	$scope.rightView = [];
-	$scope.symArray = [];
+	$scope.catArray = [];
+	$scope.symList = [];
 	$scope.symptoms = {
 		'Head': {
 			'Eyes': {
@@ -286,8 +290,8 @@ function($scope, $locale, api, $modalInstance){
 	//$scope.nextRightView = $scope.symptoms;
 
 	$scope.clickRightView = function(index, category) {
-		console.log("leftView: ", $scope.currentLeftView);
-		console.log("rightView: ", $scope.currentRightView);	
+		//console.log("leftView: ", $scope.currentLeftView);
+		//console.log("rightView: ", $scope.currentRightView);	
 		
 		$scope.selectedCategory.value = index;
 		$scope.showCategory = true;
@@ -295,18 +299,26 @@ function($scope, $locale, api, $modalInstance){
 		
 		//var newView = $scope.getSymCategories($scope.currentRightView[category]);
 		$scope.leftView = $scope.currentRightView[category];
+		if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
+			$scope.showPlus = true;
+			$scope.disable = false;
+		}
+		else {
+			$scope.showPlus = false;
+			$scope.disable = true;
+		}
 		//$scope.leftView = newView;
 		$scope.currentLeftView = $scope.currentRightView[category];
 		//$scope.$apply();
 		//$scope.nextRightView = $scope.currentRightView[category];
 		//console.log("Cat: ", category);
-		console.log("leftView: ", $scope.currentLeftView);
-		console.log("rightView: ", $scope.currentRightView);		
+		//console.log("leftView: ", $scope.currentLeftView);
+		//console.log("rightView: ", $scope.currentRightView);		
 	};
 
 	$scope.clickLeftView = function(index, symptom) {
-		console.log("leftView: ", $scope.currentLeftView);
-		console.log("rightView: ", $scope.currentRightView);		
+		//console.log("leftView: ", $scope.currentLeftView);
+		//console.log("rightView: ", $scope.currentRightView);		
 		//var newView = $scope.getSymCategories($scope.currentLeftView);
 		var newView = $scope.currentLeftView;
 
@@ -320,21 +332,42 @@ function($scope, $locale, api, $modalInstance){
 
 			//newView = $scope.getSymCategories($scope.currentLeftView[symptom]);
 			newView = $scope.currentLeftView[symptom];
+			//console.log("newview: ", newView);
 			if (newView !== undefined) {
 				$scope.leftView = newView;
 			}
-			else {
+			else if ($scope.currentLeftView[symptom] !== undefined) {
+				//console.log("current left: ", $scope.currentLeftView[symptom]);
 				$scope.leftView = $scope.currentLeftView[symptom];
 				$scope.currentLeftView = $scope.currentRightView[symptom];
 			}
+
+			if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
+				//console.log("WE ARE HERE!");
+				$scope.showPlus = true;
+				$scope.disable = false;
+				if ($scope.firstClicked) {
+					$scope.symptomClicked = !$scope.symptomClicked;
+					$scope.open = !$scope.open;
+				}
+				else
+					$scope.firstClicked = true;
+			}
+			else {
+				$scope.showPlus = false;
+				$scope.disable = true;
+			}			
 		}
 		else {
-			console.log("WE ARE HERE!");
+			//console.log("WE ARE HERE!");
+			$scope.showPlus = true;
 			$scope.disable = false;
+			$scope.symptomClicked = !$scope.symptomClicked;
+			$scope.open = !$scope.open;
 		}
 		//$scope.$apply();
-		console.log("leftView: ", $scope.currentLeftView);
-		console.log("rightView: ", $scope.currentRightView);
+		//console.log("leftView: ", $scope.currentLeftView);
+		//console.log("rightView: ", $scope.currentRightView);
 		//$scope.rightSideObj = $scope.rightSideObj[symptom];
 		//$scope.leftSide = [];
 	};
@@ -358,28 +391,31 @@ function($scope, $locale, api, $modalInstance){
 
 				//if (typeof objToIterate[key] === 'number') {
 					//console.log("End of the line");
-					//$scope.symArray.push(objToIterate[key]);
+					//$scope.catArray.push(objToIterate[key]);
 				//}
 				//else {
-					$scope.symArray.push(key);
-					$scope.convertObjToArray(objToIterate[key]);					
+				$scope.catArray.push(key);
+				$scope.convertObjToArray(objToIterate[key]);					
 				//}
+				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
+					$scope.symList.push(key);
+				}
 			}
 			else {
-				$scope.symArray.push(key);
+				$scope.catArray.push(key);
 			}
 		}
 	};
 
 	$scope.buildSearchList = function(symptomObj) {
 		$scope.convertObjToArray(symptomObj);
-		//console.log("Full List: ", $scope.symArray);
+		//console.log("Symptom List: ", $scope.symList);
 		//$scope.rightView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
 		$scope.rightView = symptomObj;
 		//console.log("rightView: ", $scope.rightView);
-		$scope.deleteListFromList($scope.symArray, topLevel);
-		//console.log("Full List: ", $scope.symArray);
+		$scope.deleteListFromList($scope.catArray, topLevel);
+		//console.log("Full List: ", $scope.catArray);
 	};
 
 	$scope.getSymCategories = function(symObj) {
@@ -411,6 +447,24 @@ function($scope, $locale, api, $modalInstance){
 				sourceList.splice(idx, 1);
 			}
 		}
+	};
+
+	$scope.isThingInObj = function (objToCheck, listOfThings) {
+		//console.log("Object To Check: ", objToCheck);
+		for (var index in listOfThings) {
+			//console.log("Thing: ", listOfThings[index]);
+			if (typeof objToCheck !== undefined && typeof listOfThings[index] !== undefined && typeof index !== undefined &&
+				objToCheck !== undefined && listOfThings[index] !== undefined && index !== undefined) {
+				if (objToCheck.hasOwnProperty(listOfThings[index])) {
+					return true;
+					//console.log("Has own property: TRUE, ", listOfThings[index]);
+				}
+				/*if (listOfThings[index] in objToCheck) {
+					console.log("Thing in Object: TRUE, ", listOfThings[index]);
+				}*/
+			}
+		}
+		return false;
 	};
 
 	$scope.buildSearchList($scope.symptoms);
