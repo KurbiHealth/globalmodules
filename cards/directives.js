@@ -69,16 +69,31 @@ angular.module('CardsModule', [])
 	};
 })
 
-.directive("emitWhen", function(){
+.directive("emitWhen", function($timeout){
     return {
         restrict: 'A',
+       /* scope: {
+        	$last: '@'
+        },*/
         link: function(scope, element, attrs) {
             var params = scope.$eval(attrs.emitWhen),
-                event = params.event,
-                condition = params.condition;
-            if(condition){
-                scope.$emit(event);
-            }
+                event = params.event;
+                //,
+                //first = params.conditionFirst,
+                //last = params.conditionLast;
+//console.log('event', event);
+//console.log(scope);
+//console.log(scope.$parent.$last);
+			if(event == 'renderingCard'){
+				if(scope.$last === true){
+console.log('------', scope.$last, scope.$parent.$last);
+console.log(scope);
+//console.log(scope.$parent.$last);
+					$timeout(function () {
+	                    scope.$emit('allRendered');
+	                });
+				}
+			}
         }
     }
 });

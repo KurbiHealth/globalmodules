@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q',
-function(api,$scope,$timeout,$q){
+	'$timeout','$q','$element',
+function(api,$scope,$timeout,$q,$element){
 
 	api.getJournalCards($q.defer())
 	.then(
@@ -26,13 +26,15 @@ function(api,$scope,$timeout,$q){
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
-			$('.journal-day').masonry({
+			$('.journal-day').masonry(
+			{
 				itemSelector: '.card',
-				//columnWidth: 280,
+				columnWidth: '.card',
 				isFitWidth: true,
 				stamp: '.journal-day-header'
-			});
-		},450);
+			}
+			); 
+		},150);
 	});
 
 	$scope.addCard = function(type,date){
@@ -123,8 +125,8 @@ function(){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale',
-function($scope, $locale){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
+function($scope, $locale,api){
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -155,5 +157,27 @@ function($scope, $locale){
 		$scope.timeSaved = Date.now();
 		//$scope.directiveDelegate.invoke();
     };
+
+    $scope.addSymptomCard = function(api){
+    	var newSymptom = {
+    		journal_entry_id: id,
+    		severity: severity,
+    		symptom_id: symptom_id
+
+    	}
+    	promise = $q.defer();
+		newId = api.addRecord(promise,'journal_components',newSymptom);
+    }
+
+    $scope.updateSymptomCard = function(api,symptomId){
+    	var newSymptom = {
+    		journal_entry_id: id,
+    		severity: severity,
+    		symptom_id: symptom_id
+    	}
+    	promise = $q.defer();
+		newId = api.updateOne(promise,'journal_components',newSymptom,symptoId);
+
+    }
 
 }]);
