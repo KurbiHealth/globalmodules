@@ -167,13 +167,9 @@ function($scope, $locale, api){
 
 }]);
 
-<<<<<<< HEAD
 kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
 function($scope, $locale,api){
-=======
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale', 'api',
-function($scope, $locale, api){
->>>>>>> 8bfbba9877df2fd3170be8abae9cd8dc06175dc9
+
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -205,30 +201,6 @@ function($scope, $locale, api){
 		//$scope.directiveDelegate.invoke();
     };
 
-<<<<<<< HEAD
-    $scope.addSymptomCard = function(api){
-    	var newSymptom = {
-    		journal_entry_id: id,
-    		severity: severity,
-    		symptom_id: symptom_id
-
-    	}
-    	promise = $q.defer();
-		newId = api.addRecord(promise,'journal_components',newSymptom);
-    }
-
-    $scope.updateSymptomCard = function(api,symptomId){
-    	var newSymptom = {
-    		journal_entry_id: id,
-    		severity: severity,
-    		symptom_id: symptom_id
-    	}
-    	promise = $q.defer();
-		newId = api.updateOne(promise,'journal_components',newSymptom,symptoId);
-
-    }
-
-=======
 	$scope.ok = function() {
 	  $scope.showModal = false;
 	};
@@ -500,5 +472,5 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.buildSearchList($scope.symptoms);
->>>>>>> 8bfbba9877df2fd3170be8abae9cd8dc06175dc9
+
 }]);
