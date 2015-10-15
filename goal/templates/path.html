@@ -1,30 +1,30 @@
 <style>
-.path-details-container h1{
-	background-color: #E9E8E4;
-	line-height:45px;
-	font-size:17px;
-	padding-left:5px;
+.path-details-header {
+	height: 70px;
+	background: #cccccc;
 }
-.path-details-container h3{
-	font-size:18px;
-	color:#51079B;
-	margin-bottom: 5px;
+.path-details-header h1 {
+	float: left;
+	margin-left: 20px;
+	font-size: 14px;
+	line-height: 34px;
+	color: #333333;
 }
-.path-details-container h1 button{
+.path-details-header button {
+	margin-right: 20px;
 	float: right;
-    height: 25px;
-    font-size: 12px;
-    line-height: 20px;
-    margin-top: 10px;
-    background-color: transparent;
-    border: 1px solid #51079B;
-    margin-right: 10px;
-    color:#51079B;
 }
-.path-details-header img{
-	height:80px;
-	float:left;
+.path-details-hero {
+	position: relative;
 }
+img.path-hero-icon {
+	position: absolute;
+	bottom: 15px;
+	left: 40px;
+	max-width: 85px;
+	max-height: 85px;
+}
+
 .path-details-container label{
 	color:#51079B;
 	display:block;
@@ -121,15 +121,34 @@
 
 <div class="row">
 	<div class="col-md-12 path-details-container">
-		<h1>Create a new goal<button>CANCEL</button></h1>
-		<div class="path-details-header">
-			<img src="/design/img/Path_CoverPhoto.png" style="position: relative;top: -5px;right: 5px;"/>
-			<img src="/design/img/exercise.png" style="position:relative;top: -70px;height:50px;right: -10px;" />
+		
+		<div class="path-details-header table">
+			<div class="table-center">
+				<h1>Create a new goal</h1>
+				<button class="btn btn-default" ng-click="cancel($event)">Cancel</button>
+			</div>
+			<div class="clear"></div>
+		</div><!--END /.path-details-header-->
+		
+		<div id="path-details-hero">
+			<img src="/design/img/path-hero-bkgd.jpg" class="path-hero-bkgd" />
+			<img src="/design/img/exercise.png" class="path-hero-icon" />
+		</div><!--END /.path-details-header-->
+		
+	</div><!--END /.path-details-container-->
+</div><!--END /.row-->
+	
+	
+	
+		
+
+
+			
 			<div style="display:block;position:relative;top:0;height:80px;width:80%;">
 				<span style="display:block;height:20px;position:relative;top:-65px;right:-20px;color:white;">Exercise</span>
 				<span style="display:block;height:60px;position:relative;top:-50px;right:-20px;color:white;font-size:20px;">Bike Lake Monona</span>
 			</div>
-		</div>
+
 		<div class="path-details-form">
 			<label for="">What would you like to do?</label>
 			<input name="" type="" value="" />
