@@ -93,9 +93,9 @@
 
 		<div ng-controller="CardController" class="cardContainer col-md-10">
 
-			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" emit-when="{event: 'renderingDay'}">
+			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" ><!-- emit-when="{event: 'renderingDay'}" -->
 				<div class="journal-day-header">{{day.date}}</div>
-				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'renderingCard'}"></div><!-- , conditionFirst: $first, conditionLast: $last -->
+				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'renderingCard', conditionFirst: $first, conditionLast: $last}"></div><!--  -->
 			</div>
 
 		</div>

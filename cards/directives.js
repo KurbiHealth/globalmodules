@@ -69,7 +69,7 @@ angular.module('CardsModule', [])
 	};
 })
 
-.directive("emitWhen", function($timeout){
+.directive("emitWhen", function($timeout,$rootScope){
     return {
         restrict: 'A',
        /* scope: {
@@ -81,14 +81,13 @@ angular.module('CardsModule', [])
                 //,
                 //first = params.conditionFirst,
                 //last = params.conditionLast;
-//console.log('event', event);
-//console.log(scope);
-//console.log(scope.$parent.$last);
+            $rootScope.templast = scope.$last;
+console.log(this);
+//console.log(kurbiGlobal);
+console.log('$rootscope.templast',$rootScope.templast);
 			if(event == 'renderingCard'){
 				if(scope.$last === true){
-console.log('------', scope.$last, scope.$parent.$last);
-console.log(scope);
-//console.log(scope.$parent.$last);
+console.log(angular.copy(scope.$last));
 					$timeout(function () {
 	                    scope.$emit('allRendered');
 	                });
