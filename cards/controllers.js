@@ -211,10 +211,10 @@ function($scope, $locale, api, $modalInstance){
 	console.log("ModalInstanceCtrl");
 	$scope.firstClicked = false;
 	$scope.closeOthers = true;
-	$scope.disable = true;
-	$scope.open = false;
+	$scope.disable = {value:true};
+	$scope.status = {open:false};
 	$scope.showPlus = false;
-	$scope.symptomClicked = false;
+	$scope.clickedList = {};
 	$scope.currentCat = "";
 	$scope.showCategory = false;
 	$scope.selectedCategory = {value: -1};
@@ -289,23 +289,28 @@ function($scope, $locale, api, $modalInstance){
 	$scope.currentRightView = $scope.symptoms;
 	//$scope.nextRightView = $scope.symptoms;
 
-	$scope.clickRightView = function(index, category) {
+	$scope.clickLeftView = function(index, category) {
 		//console.log("leftView: ", $scope.currentLeftView);
 		//console.log("rightView: ", $scope.currentRightView);	
 		
 		$scope.selectedCategory.value = index;
 		$scope.showCategory = true;
 		$scope.currentCat = category;
-		
+
+		for (var key in $scope.clickedList) {
+			$scope.clickedList[key] = false;		
+		}		
+		//$scope.status = {open:false};
+		//$scope.symptomClicked = "";
 		//var newView = $scope.getSymCategories($scope.currentRightView[category]);
 		$scope.leftView = $scope.currentRightView[category];
 		if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
 			$scope.showPlus = true;
-			$scope.disable = false;
+			$scope.disable.value = false;
 		}
 		else {
 			$scope.showPlus = false;
-			$scope.disable = true;
+			$scope.disable.value = true;
 		}
 		//$scope.leftView = newView;
 		$scope.currentLeftView = $scope.currentRightView[category];
@@ -316,7 +321,7 @@ function($scope, $locale, api, $modalInstance){
 		//console.log("rightView: ", $scope.currentRightView);		
 	};
 
-	$scope.clickLeftView = function(index, symptom) {
+	$scope.clickRightView = function(index, symptom) {
 		//console.log("leftView: ", $scope.currentLeftView);
 		//console.log("rightView: ", $scope.currentRightView);		
 		//var newView = $scope.getSymCategories($scope.currentLeftView);
@@ -332,42 +337,76 @@ function($scope, $locale, api, $modalInstance){
 
 			//newView = $scope.getSymCategories($scope.currentLeftView[symptom]);
 			newView = $scope.currentLeftView[symptom];
-			//console.log("newview: ", newView);
+			console.log("IF1");
 			if (newView !== undefined) {
+				console.log("IF2");
 				$scope.leftView = newView;
 			}
 			else if ($scope.currentLeftView[symptom] !== undefined) {
+				console.log("ELSEIF1");
 				//console.log("current left: ", $scope.currentLeftView[symptom]);
 				$scope.leftView = $scope.currentLeftView[symptom];
 				$scope.currentLeftView = $scope.currentRightView[symptom];
 			}
 
 			if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
-				//console.log("WE ARE HERE!");
+				console.log("IF3");
 				$scope.showPlus = true;
-				$scope.disable = false;
+				$scope.disable.value = false;
 				if ($scope.firstClicked) {
-					$scope.symptomClicked = !$scope.symptomClicked;
-					$scope.open = !$scope.open;
+					console.log("IF4");
+					for (var key in $scope.clickedList) {
+						//console.log("key: ", key);
+						//console.log("value: ", $scope.clickedList[key]);
+						if (key !== symptom) {
+							$scope.clickedList[key] = false;
+						}
+						
+					}
+					$scope.clickedList[symptom] = !$scope.clickedList[symptom];
+					//$scope.symptomClicked = symptom;
+					//$scope.open = !$scope.open;
 				}
-				else
+				else {
+					console.log("ELSE3");
 					$scope.firstClicked = true;
+				}
 			}
 			else {
+				console.log("ELSE2");
 				$scope.showPlus = false;
-				$scope.disable = true;
+				$scope.disable.value = true;
 			}			
 		}
 		else {
-			//console.log("WE ARE HERE!");
+			/*for (var ky in clickList) {
+				console.log("ngrepeat ky: ", ky);
+				console.log("ngrepeat value: ", clickList[ky]);
+				clickList[ky] = false;
+			}*/
+			//clickList[symptom] = !clickList[symptom];
+
+			for (var key in $scope.clickedList) {
+				//console.log("key: ", key);
+				//console.log("value: ", $scope.clickedList[key]);
+				if (key !== symptom) {
+					$scope.clickedList[key] = false;
+				}
+				
+			}
+			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
+			console.log("ELSE1: ", closed.value);
+			//closed.value = !closed.value;
+			//console.log("ELSE1: ", closed.value);
 			$scope.showPlus = true;
-			$scope.disable = false;
-			$scope.symptomClicked = !$scope.symptomClicked;
-			$scope.open = !$scope.open;
+			$scope.disable.value = false;
+			//$scope.symptomClicked = symptom;
+			//$scope.open = !$scope.open;
 		}
+
 		//$scope.$apply();
-		//console.log("leftView: ", $scope.currentLeftView);
-		//console.log("rightView: ", $scope.currentRightView);
+		//console.log("open: ", $scope.status.open);
+		//console.log("disable: ", $scope.disable.value);
 		//$scope.rightSideObj = $scope.rightSideObj[symptom];
 		//$scope.leftSide = [];
 	};
@@ -394,6 +433,7 @@ function($scope, $locale, api, $modalInstance){
 					//$scope.catArray.push(objToIterate[key]);
 				//}
 				//else {
+				$scope.clickedList[key] = false;
 				$scope.catArray.push(key);
 				$scope.convertObjToArray(objToIterate[key]);					
 				//}
