@@ -155,6 +155,31 @@ console.log('error in addRecord function-api service: ',error);
 		return( promise.promise );
 	}
 
+	function updateOne(promise,tableName,obj,id){
+		user.getUser();
+		config = {
+			method: 'PUT',
+			url: urlRoot + 'db/' + tableName + '/',
+			headers: {
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
+			},
+			data: obj
+		}
+		$http(config)
+		.success(function(data){
+			promise.resolve(data);
+		})
+		.error(function(error){
+console.log('error in addRecord function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
+		});
+		return( promise.promise );
+	}
+
 /**
  * USAGE
  * obj = {
@@ -734,5 +759,7 @@ console.log(componentsData);
 
 		return returnLiveChartDataPromise.promise;
 	}
+
+	function addSymptom(){}
 
 }]);

@@ -69,16 +69,30 @@ angular.module('CardsModule', [])
 	};
 })
 
-.directive("emitWhen", function(){
+.directive("emitWhen", function($timeout,$rootScope){
     return {
         restrict: 'A',
+       /* scope: {
+        	$last: '@'
+        },*/
         link: function(scope, element, attrs) {
             var params = scope.$eval(attrs.emitWhen),
-                event = params.event,
-                condition = params.condition;
-            if(condition){
-                scope.$emit(event);
-            }
+                event = params.event;
+                //,
+                //first = params.conditionFirst,
+                //last = params.conditionLast;
+            $rootScope.templast = scope.$last;
+console.log(this);
+//console.log(kurbiGlobal);
+console.log('$rootscope.templast',$rootScope.templast);
+			if(event == 'renderingCard'){
+				if(scope.$last === true){
+console.log(angular.copy(scope.$last));
+					$timeout(function () {
+	                    scope.$emit('allRendered');
+	                });
+				}
+			}
         }
     }
 });

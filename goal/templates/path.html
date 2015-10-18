@@ -1,152 +1,54 @@
-<style>
-.path-details-container h1{
-	background-color: #E9E8E4;
-	line-height:45px;
-	font-size:17px;
-	padding-left:5px;
-}
-.path-details-container h3{
-	font-size:18px;
-	color:#51079B;
-	margin-bottom: 5px;
-}
-.path-details-container h1 button{
-	float: right;
-    height: 25px;
-    font-size: 12px;
-    line-height: 20px;
-    margin-top: 10px;
-    background-color: transparent;
-    border: 1px solid #51079B;
-    margin-right: 10px;
-    color:#51079B;
-}
-.path-details-header img{
-	height:80px;
-	float:left;
-}
-.path-details-container label{
-	color:#51079B;
-	display:block;
-	width:100%;
-	clear:both;
-	font-size: 18px;
-}
-.path-details-container input{
-	width:100%;
-	clear:both;
-}
-.path-details-form, .path-details-overview, .path-details-team, .path-details-location, .path-details-frequency, .path-details-toolkit{
-	display:block;
-	width:100%;
-	min-height:20px;
-	overflow: auto;
-	margin:15px 0 0 0;
-	padding: 0 10px;
-}
-.path-details-overview{
-	margin-top:20px;
-}
-.path-details-overview img{
-	float:left;
-	width:70px;
-}
-.path-details-overview .path-overview-body{
-	display: block;
-    width: 150px;
-    float: left;
-}
-.path-details-overview .path-overview-body .path-overview-title{
-	font-weight: bold;
-}
-.path-details-overview .path-overview-body button{
-	background-color: transparent;
-	border: 1px solid #51079B;
-	color:#51079B;
-}
-.path-details-overview button{
-	float:left;
-}
-.path-details-team p{
-	margin:0;
-	padding:0;
-	font-weight: bold;
-}
-.path-details-team ul{
-	list-style-type:none;
-	margin:0;
-	padding:0;
-}
-.path-details-team ul li img{
-	float:left;
-}
-.path-details-frequency ul{
-	list-style-type: none;
-	margin:0;
-	padding:0;
-}
-.path-details-frequency ul li{
-	width:30px;
-	height:30px;
-	margin:3px;
-	border:1px solid #E9E8E4;
-	background-color:white;
-	float:left;
-	line-height: 30px;
-    padding-left: 9px;
-    color:#00AB91;
-}
-.path-details-frequency ul li.selected{
-	background-color: #00AB91;
-	color:white;
-}
-.path-details-toolkit{}
-.path-details-toolkit .toolkit-body{
-	display:block;
-	float:left;
-	width:45%;
-	height:50px;
-	border:1px solid #E9E8E4;
-	margin: 0 10px 5px 0;
-}
-.path-details-toolkit .toolkit-body .toolkit-element{
-	width:20px;
-	height:20px;
-	border:1px solid black;
-}
-.path-details-toolkit .toolkit-body .toolkit-label{
-
-}
-</style>
-
 <div class="row">
 	<div class="col-md-12 path-details-container">
-		<h1>Create a new goal<button>CANCEL</button></h1>
-		<div class="path-details-header">
-			<img src="/design/img/Path_CoverPhoto.png" style="position: relative;top: -5px;right: 5px;"/>
-			<img src="/design/img/exercise.png" style="position:relative;top: -70px;height:50px;right: -10px;" />
-			<div style="display:block;position:relative;top:0;height:80px;width:80%;">
-				<span style="display:block;height:20px;position:relative;top:-65px;right:-20px;color:white;">Exercise</span>
-				<span style="display:block;height:60px;position:relative;top:-50px;right:-20px;color:white;font-size:20px;">Bike Lake Monona</span>
+		
+		<div class="path-details-header table">
+			<div class="table-center">
+				<h1>Create a new goal</h1>
+				<button class="btn btn-default" ng-click="cancel($event)">Cancel</button>
 			</div>
-		</div>
+			<div class="clear"></div>
+		</div><!--END /.path-details-header-->
+		
+		<div class="path-details-hero" style="background: url('/design/img/path-hero-bkgd.jpg') no-repeat left top; min-height: 123px;">
+			<img src="/design/img/exercise.png" class="path-hero-icon" />
+			<div style="position: absolute; top: 40px; left: 135px;">
+				<p>Exercise</p>
+				<h2>Bike Lake Monona</h2>
+			</div>
+		</div><!--END /.path-details-hero-->
+		
 		<div class="path-details-form">
-			<label for="">What would you like to do?</label>
-			<input name="" type="" value="" />
-			<a href="">Invite other to join you?</a>
-			<span style="display:block;height:10px;width:1px;"></span>
-			<label for="">Select a path</label>
-			<input name="" type="" value="" />
-		</div>
-		<div class="path-details-overview">
-			<img src="/design/img/Expert_ProfilePhoto.png" />
-			<div class="path-overview-body">
-				<div class="path-overview-title">Path Overview</div>
-				<p>This is a 11.11 mi bike ride in Madison, WI, United States. The Bike Ride has a total ascent of 36.0 ft and has a maximum elevation of 927.59 ft.</p>
-				<button>See Path Details</button>
+			<h3>Path Details</h3>
+			<div class="form-row">
+				<label for="">What would you like to do?</label>
+				<input name="" type="" value="" placeholder="Build up my endurance" />
+				<a href="#" style="color: #333333;">Invite other to join you?</a>
 			</div>
-			<button style="background-color: #00AB91;border-radius: 15px;border:none;">$10</button>
-		</div>
+			
+			<div class="form-row">
+				<label for="">Selected path</label>
+				<input name="" type="" value="" placeholder="Joe Trainers Lake Challenge" />
+			</div>
+		</div><!--END /.path-details-form-->
+		
+		<div class="path-details-overview">
+			<div class="row">
+				<div class="col-md-2" style="padding-right: 15px;">
+					<img src="/design/img/Expert_ProfilePhoto.png" />	
+				</div>
+				<div class="col-md-10">
+					<div class="path-overview-body">
+						<div class="path-overview-title" style="float: left;position: relative; top: 10px;">Path Overview</div>
+						<button style="float: right;background-color: #00AB91;border-radius: 15px;border:none;color: #ffffff;">$10</button>
+						<div class="clear" style="height: 5px;"></div>
+						<p>This is a 11.11 mi bike ride in Madison, WI, United States. The Bike Ride has a total ascent of 36.0 ft and has a maximum elevation of 927.59 ft.</p>
+						<button>See Path Details</button>
+					</div><!--END /.path-overview-body-->	
+					
+				</div>
+			</div><!--END /.row-->
+		</div><!--END /.path-details-overview-->
+		
 		<div class="path-details-team">
 			<p>People you know on this path</p>
 			<ul>
@@ -158,10 +60,12 @@
 				<li class="plus">+3</li>
 			</ul>
 		</div>
+		
 		<div class="path-details-location">
 			<h3>Location</h3>
-			<img src="/design/img/Path_MapPhoto.png" style="width:270px;" />
+			<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d93245.75214753454!2d-89.47646000795177!3d43.08497214334484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8806536d3a2019ff%3A0x4e0cfcb5ba484198!2sMadison%2C+WI!5e0!3m2!1sen!2sus!4v1444955537075' width='600' height='450' frameborder='0' style='border:0' allowfullscreen></iframe></div>
 		</div>
+		
 		<div class="path-details-frequency">
 			<h3>Frequency per week</h3>
 			<ul>
@@ -174,6 +78,7 @@
 				<li>7</li>
 			</ul>
 		</div>
+		
 		<div class="path-details-toolkit">
 			<h3>Your Toolkit</h3>
 			<div class="toolkit-body">
@@ -201,5 +106,6 @@
 				<span class="toolkit-label">Phone</span>
 			</div>
 		</div>
-	</div><!--END /.col-->
+		
+	</div><!--END /.path-details-container-->
 </div><!--END /.row-->

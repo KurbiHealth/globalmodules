@@ -1,6 +1,7 @@
-kurbiApp.controller('CardControllerInit', ['api','$scope', 
-	'$timeout','$q','$modal',
-function(api,$scope,$timeout,$q,$modal){
+kurbiApp.controller('CardControllerInit', ['api','$scope',
+	'$timeout','$q','$element','$modal',
+function(api,$scope,$timeout,$q,$element,$modal){
+
 	api.getJournalCards($q.defer())
 	.then(
 		function(data){
@@ -17,7 +18,7 @@ function(api,$scope,$timeout,$q,$modal){
 		function(error){
 			console.log(error);
 		}
-	); 
+	);
 
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
@@ -25,30 +26,49 @@ function(api,$scope,$timeout,$q,$modal){
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
-			$('.journal-day').masonry({
+			$('.journal-day').masonry(
+			{
 				itemSelector: '.card',
-				//columnWidth: 280,
+				columnWidth: '.card',
 				isFitWidth: true,
 				stamp: '.journal-day-header'
-			});
-		},450);
+			}
+			); 
+		},150);
 	});
 
 	$scope.addCard = function(type,date){
-	  var modalInstance = $modal.open({
-	    animation: true,
-	    templateUrl: 'myModalContent.html',
-	    controller: 'ModalInstanceCtrl',
-	    //size: size,
-	    resolve: {
-	      /*items: function () {
-	        return $scope.items;
-	      }*/
-	    }
-	  });		
+		var modalInstance = $modal.open({
+			animation: true,
+			templateUrl: 'myModalContent.html',
+			controller: 'ModalInstanceCtrl',
+			//size: size,
+			resolve: {
+			  /*items: function () {
+			    return $scope.items;
+			  }*/
+			}
+		});
+
 		// get values from edit form
+		var tableName = 'symptom',
+			dataObj = {
+				//'' = ''
+			},
+			tableId = 1;
 		
 		// save a new entry to db
+		/*
+		api.updateOne($q.defer(),tableName,dataObj,tableId)
+		.then(
+			function(data){
+				
+			},
+			function(error){
+				console.log(error);
+			}
+		);
+		*/
 
 		// save a new entry-type to db
 
@@ -68,41 +88,41 @@ function(api,$scope,$timeout,$q,$modal){
 	}
 
 	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
-http://desandro.github.io/masonry/demos/infinite-scroll.html
-$(function(){
-    
-    var $container = $('#container');
-    
-    $container.imagesLoaded(function(){
-      $container.masonry({
-        itemSelector: '.box',
-        columnWidth: 100
-      });
-    });
-    
-    $container.infinitescroll({
-      navSelector  : '#page-nav',    // selector for the paged navigation 
-      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
-      itemSelector : '.box',     // selector for all items you'll retrieve
-      loading: {
-          finishedMsg: 'No more pages to load.',
-          img: 'http://i.imgur.com/6RMhx.gif'
-        }
-      },
-      // trigger Masonry as a callback
-      function( newElements ) {
-        // hide new items while they are loading
-        var $newElems = $( newElements ).css({ opacity: 0 });
-        // ensure that images load before adding to masonry layout
-        $newElems.imagesLoaded(function(){
-          // show elems now they're ready
-          $newElems.animate({ opacity: 1 });
-          $container.masonry( 'appended', $newElems, true ); 
-        });
-      }
-    );
-    
-}); */
+	http://desandro.github.io/masonry/demos/infinite-scroll.html
+	$(function(){
+	    
+	    var $container = $('#container');
+	    
+	    $container.imagesLoaded(function(){
+	      $container.masonry({
+	        itemSelector: '.box',
+	        columnWidth: 100
+	      });
+	    });
+	    
+	    $container.infinitescroll({
+	      navSelector  : '#page-nav',    // selector for the paged navigation 
+	      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
+	      itemSelector : '.box',     // selector for all items you'll retrieve
+	      loading: {
+	          finishedMsg: 'No more pages to load.',
+	          img: 'http://i.imgur.com/6RMhx.gif'
+	        }
+	      },
+	      // trigger Masonry as a callback
+	      function( newElements ) {
+	        // hide new items while they are loading
+	        var $newElems = $( newElements ).css({ opacity: 0 });
+	        // ensure that images load before adding to masonry layout
+	        $newElems.imagesLoaded(function(){
+	          // show elems now they're ready
+	          $newElems.animate({ opacity: 1 });
+	          $container.masonry( 'appended', $newElems, true ); 
+	        });
+	      }
+	    );
+	    
+	}); */
 
 	$scope.$watch('files', function () {
         $scope.upload($scope.files);
@@ -145,11 +165,13 @@ $(function(){
 	  }, function () {
 	    $log.info('Modal dismissed at: ' + new Date());
 	  });*/
-	};
+
+	}; // end $scope.open()
 
 	/*$scope.toggleAnimation = function () {
 	  $scope.animationsEnabled = !$scope.animationsEnabled;
 	};*/
+
 }]);
 
 
@@ -164,8 +186,9 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale', 'api',
-function($scope, $locale, api){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
+function($scope, $locale,api){
+
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -187,7 +210,7 @@ function($scope, $locale, api){
     {
     	//$scope.card.severity = 7;
     	var sev = $scope.getSeverity();
-    	$scope.saveSliderPosition();
+    	$scope.saveSliderPosition(); // ???
     	$scope.onEditClick("default");
     	$scope.saved = true;    	
     	//console.log("Directive sev: ", sev);
@@ -204,6 +227,7 @@ function($scope, $locale, api){
 	$scope.cancel = function() {
 	  $scope.showModal = false;
 	};
+
 }]);
 
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'api', '$modalInstance',
@@ -286,6 +310,7 @@ function($scope, $locale, api, $modalInstance){
 			}
 		}
 	};
+
 	$scope.currentRightView = $scope.symptoms;
 	//$scope.nextRightView = $scope.symptoms;
 
@@ -508,4 +533,5 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.buildSearchList($scope.symptoms);
+
 }]);
