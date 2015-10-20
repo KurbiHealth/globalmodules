@@ -234,6 +234,7 @@ kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'api', '$modalIns
 function($scope, $locale, api, $modalInstance){
 	console.log("ModalInstanceCtrl");
 	$scope.firstClicked = false;
+	$scope.backClicked = false;
 	$scope.closeOthers = true;
 	$scope.disable = {value:true};
 	$scope.status = {open:false};
@@ -242,10 +243,12 @@ function($scope, $locale, api, $modalInstance){
 	$scope.currentCat = "";
 	$scope.showCategory = false;
 	$scope.selectedCategory = {value: -1};
-	$scope.leftView = [];
-	$scope.rightView = [];
+	$scope.rightView = {};
+	$scope.leftView = {};
 	$scope.catArray = [];
 	$scope.symList = [];
+	$scope.historyStack = [];
+	$scope.lastClick = "";
 	$scope.symptoms = {
 		'Head': {
 			'Eyes': {
@@ -311,12 +314,18 @@ function($scope, $locale, api, $modalInstance){
 		}
 	};
 
-	$scope.currentRightView = $scope.symptoms;
-	//$scope.nextRightView = $scope.symptoms;
+	//$scope.currentLeftView = $scope.symptoms;
+	//$scope.nextleftView = $scope.symptoms;
 
 	$scope.clickLeftView = function(index, category) {
-		//console.log("leftView: ", $scope.currentLeftView);
-		//console.log("rightView: ", $scope.currentRightView);	
+		$scope.backClicked = false;
+		var tempHistory = [];
+		var historyCopy = [];
+		var lastView = [];
+		var lastLeft = {};
+		var lastRight = {};
+		//console.log("rightView: ", $scope.currentRightView);
+		//console.log("leftView: ", $scope.currentLeftView);	
 		
 		$scope.selectedCategory.value = index;
 		$scope.showCategory = true;
@@ -327,54 +336,81 @@ function($scope, $locale, api, $modalInstance){
 		}		
 		//$scope.status = {open:false};
 		//$scope.symptomClicked = "";
-		//var newView = $scope.getSymCategories($scope.currentRightView[category]);
-		$scope.leftView = $scope.currentRightView[category];
-		if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
-			$scope.showPlus = true;
-			$scope.disable.value = false;
+		//var newView = $scope.getSymCategories($scope.currentLeftView[category]);
+		//$scope.rightView = $scope.currentLeftView[category];
+		if ($scope.lastClick !== category) {
+			$scope.lastClick = category;
+			historyCopy = $scope.historyStack.slice();
+			lastView = historyCopy.pop();
+			lastLeft = lastView[0];
+			lastRight = lastView[1];
+			$scope.rightView = lastLeft[category];
+			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
+				$scope.showPlus = true;
+				$scope.disable.value = false;
+			}
+			else {
+				$scope.showPlus = false;
+				$scope.disable.value = true;
+			}
+			//$scope.rightView = newView;
+			//$scope.currentRightView = $scope.currentLeftView[category];
+
+			tempHistory.push($scope.leftView);
+			tempHistory.push($scope.rightView);
+			$scope.historyStack.push(tempHistory);
+			//$scope.$apply();
+			//$scope.nextleftView = $scope.currentLeftView[category];
+			console.log("Left History: ", $scope.historyStack);
+			//console.log("rightView: ", $scope.currentRightView);
+			//console.log("leftView: ", $scope.currentLeftView);
 		}
-		else {
-			$scope.showPlus = false;
-			$scope.disable.value = true;
-		}
-		//$scope.leftView = newView;
-		$scope.currentLeftView = $scope.currentRightView[category];
-		//$scope.$apply();
-		//$scope.nextRightView = $scope.currentRightView[category];
-		//console.log("Cat: ", category);
-		//console.log("leftView: ", $scope.currentLeftView);
-		//console.log("rightView: ", $scope.currentRightView);		
 	};
 
 	$scope.clickRightView = function(index, symptom) {
-		//console.log("leftView: ", $scope.currentLeftView);
-		//console.log("rightView: ", $scope.currentRightView);		
-		//var newView = $scope.getSymCategories($scope.currentLeftView);
-		var newView = $scope.currentLeftView;
+		//console.log("rightView: ", $scope.currentRightView);
+		//console.log("leftView: ", $scope.currentLeftView);		
+		//var newView = $scope.getSymCategories($scope.currentRightView);
+		$scope.backClicked = false;
+		var currentView = $scope.rightView;
+		var newView = $scope.rightView[symptom];
+		var tempHistory = [];
+		var historyCopy = [];
+		var lastView = [];
+		var lastLeft = {};
+		var lastRight = {};
+		$scope.lastClick = symptom;
 
-		if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
-			&& typeof $scope.currentLeftView[symptom] !== undefined 
-			&& typeof $scope.currentLeftView[symptom] !== 'number' && typeof $scope.currentLeftView[symptom] !== 'string') {
-			$scope.rightView = newView;
+		/*if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
+			&& typeof $scope.currentRightView[symptom] !== undefined 
+			&& typeof $scope.currentRightView[symptom] !== 'number' && typeof $scope.currentRightView[symptom] !== 'string') {*/
+		if (typeof currentView !== undefined && typeof currentView !== 'number' && typeof currentView !== 'string'
+			&& typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string') {	
+			$scope.leftView = currentView;
 			$scope.selectedCategory.value = index;
 			$scope.currentCat = symptom;
-			$scope.currentRightView = $scope.currentLeftView;
+			//$scope.currentLeftView = $scope.currentRightView;
 
-			//newView = $scope.getSymCategories($scope.currentLeftView[symptom]);
-			newView = $scope.currentLeftView[symptom];
+			//newView = $scope.getSymCategories($scope.currentRightView[symptom]);
+			//newView = $scope.currentRightView[symptom];
 			console.log("IF1");
-			if (newView !== undefined) {
-				console.log("IF2");
-				$scope.leftView = newView;
-			}
-			else if ($scope.currentLeftView[symptom] !== undefined) {
-				console.log("ELSEIF1");
-				//console.log("current left: ", $scope.currentLeftView[symptom]);
-				$scope.leftView = $scope.currentLeftView[symptom];
-				$scope.currentLeftView = $scope.currentRightView[symptom];
-			}
+			//if (newView !== undefined) {
+				//console.log("IF2");
+				$scope.rightView = newView;
 
-			if ($scope.isThingInObj($scope.leftView, $scope.symList)) {
+				tempHistory.push($scope.leftView);
+				tempHistory.push($scope.rightView);
+				$scope.historyStack.push(tempHistory);
+				console.log("Right History: ", $scope.historyStack);				
+			/*}
+			else if ($scope.currentRightView[symptom] !== undefined) {
+				console.log("ELSEIF1");
+				//console.log("current left: ", $scope.currentRightView[symptom]);
+				$scope.rightView = $scope.currentRightView[symptom];
+				$scope.currentRightView = $scope.currentLeftView[symptom];
+			}*/
+
+			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
 				console.log("IF3");
 				$scope.showPlus = true;
 				$scope.disable.value = false;
@@ -401,7 +437,7 @@ function($scope, $locale, api, $modalInstance){
 				console.log("ELSE2");
 				$scope.showPlus = false;
 				$scope.disable.value = true;
-			}			
+			}
 		}
 		else {
 			/*for (var ky in clickList) {
@@ -445,6 +481,21 @@ function($scope, $locale, api, $modalInstance){
 	  $modalInstance.dismiss('cancel');
 	};
 
+	$scope.clickBack = function () {
+		if ($scope.historyStack.length > 1) {
+			var lastView = $scope.historyStack.pop();
+			if (!$scope.backClicked) {
+				$scope.backClicked = true;
+				lastView = $scope.historyStack.pop();
+			}
+			console.log("Last: ", lastView);
+			if (lastView[1] !== undefined) {
+				$scope.leftView = lastView[0];
+				$scope.rightView = lastView[1];			
+			}
+		}
+	}
+
 	$scope.convertObjToArray = function(objToIterate) {
 		for (var key in objToIterate) {
 			//console.log("Key: ", key);
@@ -473,14 +524,19 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.buildSearchList = function(symptomObj) {
+		var tempHistory = [];
 		$scope.convertObjToArray(symptomObj);
 		//console.log("Symptom List: ", $scope.symList);
-		//$scope.rightView = $scope.getSymCategories(symptomObj);
+		//$scope.leftView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
-		$scope.rightView = symptomObj;
-		//console.log("rightView: ", $scope.rightView);
+		$scope.leftView = symptomObj;
+		//console.log("leftView: ", $scope.leftView);
 		$scope.deleteListFromList($scope.catArray, topLevel);
 		//console.log("Full List: ", $scope.catArray);
+		tempHistory.push($scope.leftView);		
+		tempHistory.push($scope.rightView);
+		$scope.historyStack.push(tempHistory);
+		console.log("Build History: ", $scope.historyStack);
 	};
 
 	$scope.getSymCategories = function(symObj) {

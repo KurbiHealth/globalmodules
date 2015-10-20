@@ -23,8 +23,20 @@
             </div>
         </div>
         <div class="modal-body" style="overflow: auto; max-height: 300px; min-height: 300px">
+        	<div>
+        		<div class="col-md-6" style="padding-left:10px; padding-right:10px">
+        			<span><a href="#" class="label" ng-click="clickBack()" style="color: black; font-size: 1em">Back to Categories</a></span>
+        		</div>
+        		<div class="col-md-6" style="padding-left:10px; padding-right:10px">
+	  				<div>
+	      				<span><i class="fa fa-search"></i></span>
+	      				<input type="search" autocomplete="off" ng-model="symptomSearch" placeholder="Search by name"/>
+	  				</div>        		
+        		</div>        		
+        	</div>
+        	<div>
 				<div class="col-md-6" style="overflow: scroll; padding-left:10px; padding-right:10px">
-					<div ng-repeat="(ky, vl) in rightView" style="padding-top:0px; padding-bottom:0px">
+					<div ng-repeat="(ky, vl) in leftView" style="padding-top:0px; padding-bottom:0px">
 						<span><a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: black; font-size: 1em" ng-class="{ 'selected-class-name': $index == selectedIndex }">{{ky}}</a></span><i class="fa fa-caret-right fa-2x" ng-show="selectedCategory.value == $index"></i>
 						<hr style="margin-top:5px; margin-bottom:5px">
 					</div>				
@@ -32,7 +44,7 @@
 				<div class="col-md-6" style="overflow: scroll; padding-left:10px; padding-right:10px">
 					<accordion close-others="closeOthers">
 						<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
-						<div ng-repeat="(key, val) in leftView" style="padding-top:5px">
+						<div ng-repeat="(key, val) in rightView" style="padding-top:5px">
 							<accordion-group ng-click="clickRightView($index, key)" is-disabled=false is-open=false>
 								<accordion-heading>
 									<!--span-->
@@ -49,6 +61,7 @@
 						</div>
 					</accordion>
 				</div>
+			</div>
         </div>
         <div class="modal-footer">
         </div>
