@@ -362,6 +362,8 @@ function($scope, $locale, api, $modalInstance){
 			//$scope.$apply();
 			//$scope.nextleftView = $scope.currentLeftView[category];
 			console.log("Left History: ", $scope.historyStack);
+			console.log("Left: ", $scope.leftView);
+			console.log("Right: ", $scope.rightView);			
 			//console.log("rightView: ", $scope.currentRightView);
 			//console.log("leftView: ", $scope.currentLeftView);
 		}
@@ -401,7 +403,9 @@ function($scope, $locale, api, $modalInstance){
 				tempHistory.push($scope.leftView);
 				tempHistory.push($scope.rightView);
 				$scope.historyStack.push(tempHistory);
-				console.log("Right History: ", $scope.historyStack);				
+				console.log("Right History: ", $scope.historyStack);
+				console.log("Left: ", $scope.leftView);
+				console.log("Right: ", $scope.rightView);
 			/*}
 			else if ($scope.currentRightView[symptom] !== undefined) {
 				console.log("ELSEIF1");
@@ -456,7 +460,7 @@ function($scope, $locale, api, $modalInstance){
 				
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			console.log("ELSE1: ", closed.value);
+			console.log("ELSE1: ");
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
 			$scope.showPlus = true;
@@ -486,10 +490,13 @@ function($scope, $locale, api, $modalInstance){
 			var lastView = $scope.historyStack.pop();
 			if (!$scope.backClicked) {
 				$scope.backClicked = true;
-				lastView = $scope.historyStack.pop();
+				if ($scope.historyStack.length > 1) {
+					lastView = $scope.historyStack.pop();
+				}
 			}
-			console.log("Last: ", lastView);
-			if (lastView[1] !== undefined) {
+			console.log("Last Left: ", lastView[0]);
+			console.log("Last Right: ", lastView[1]);
+			if (lastView[1] !== undefined && lastView[1].length > 0) {
 				$scope.leftView = lastView[0];
 				$scope.rightView = lastView[1];			
 			}
