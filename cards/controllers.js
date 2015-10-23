@@ -249,6 +249,7 @@ function($scope, $locale, api, $modalInstance){
 	$scope.symList = [];
 	$scope.historyStack = [];
 	$scope.lastClick = "";
+	$scope.showSearchView = false;
 	$scope.symptoms = {
 		'Head': {
 			'Eyes': {
@@ -476,6 +477,16 @@ function($scope, $locale, api, $modalInstance){
 		//$scope.leftSide = [];
 	};
 
+	$scope.clickSearchView = function (index, symptom) {
+		for (var key in $scope.clickedList) {
+			if (key !== symptom) {
+				$scope.clickedList[key] = false;
+			}
+						
+		}
+		$scope.clickedList[symptom] = !$scope.clickedList[symptom];
+	};
+
 	$scope.ok = function () {
 		//$scope.$apply();
 		$modalInstance.close();
@@ -501,7 +512,16 @@ function($scope, $locale, api, $modalInstance){
 				$scope.rightView = lastView[1];			
 			}
 		}
-	}
+	};
+
+	$scope.modalSearchChange = function (change) {
+		if ($scope.symptomSearch.length > 0 && change !== "blur") {
+			$scope.showSearchView = true;
+		}
+		else {
+			$scope.showSearchView = false;
+		}
+	};
 
 	$scope.convertObjToArray = function(objToIterate) {
 		for (var key in objToIterate) {

@@ -30,7 +30,7 @@
         		<div class="col-md-6" style="padding-left:10px; padding-right:10px">
 	  				<div>
 	      				<span><i class="fa fa-search"></i></span>
-	      				<input type="search" autocomplete="off" ng-model="symptomSearch" placeholder="Search by name"/>
+	      				<input type="search" autocomplete="off" ng-model="symptomSearch" ng-change="modalSearchChange('search')" ng-blur="modalSearchChange('blur')" placeholder="Search by name"/>
 	  				</div>        		
         		</div>        		
         	</div>
@@ -42,7 +42,7 @@
 					</div>				
 				</div>        
 				<div class="col-md-6" style="overflow: scroll; padding-left:10px; padding-right:10px">
-					<accordion close-others="closeOthers">
+					<accordion close-others="closeOthers" ng-show="!showSearchView">
 						<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
 						<div ng-repeat="(key, val) in rightView" style="padding-top:5px">
 							<accordion-group ng-click="clickRightView($index, key)" is-disabled=false is-open=false>
@@ -60,6 +60,18 @@
 							</div-->
 						</div>
 					</accordion>
+					<accordion close-others="closeOthers" ng-show="showSearchView">
+						<div ng-repeat="(key, val) in symList | filter:symptomSearch" style="padding-top:5px">
+							<accordion-group ng-click="clickSearchView($index, val)" is-disabled=false is-open=false>
+								<accordion-heading>
+									<h4 style="line-height:2; display:inline-block">{{val}}</h4>
+									<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="display:inline-block; margin-right:10px;"></i>
+								</accordion-heading>
+							    <p>Use the slider to record severity of symptom</p>
+							    <div ring-slider cursor-attr="grab" severity-num="0"></div>
+							</accordion-group>
+						</div>
+					</accordion>					
 				</div>
 			</div>
         </div>
