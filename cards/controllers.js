@@ -238,11 +238,11 @@ function($scope, $locale, api, $modalInstance){
 	$scope.closeOthers = true;
 	$scope.disable = {value:true};
 	$scope.status = {open:false};
-	$scope.showPlus = false;
+	$scope.showPlus = {};
 	$scope.clickedList = {};
 	$scope.currentCat = "";
 	$scope.showCategory = false;
-	$scope.selectedCategory = {value: -1};
+	$scope.selectedCategory = {value: ""};
 	$scope.rightView = {};
 	$scope.leftView = {};
 	$scope.catArray = [];
@@ -250,6 +250,7 @@ function($scope, $locale, api, $modalInstance){
 	$scope.historyStack = [];
 	$scope.lastClick = "";
 	$scope.showSearchView = false;
+	$scope.clickStack = [];
 	$scope.symptoms = {
 		'Head': {
 			'Eyes': {
@@ -320,6 +321,7 @@ function($scope, $locale, api, $modalInstance){
 
 	$scope.clickLeftView = function(index, category) {
 		$scope.backClicked = false;
+		$scope.showSearchView = false;
 		var tempHistory = [];
 		var historyCopy = [];
 		var lastView = [];
@@ -328,7 +330,7 @@ function($scope, $locale, api, $modalInstance){
 		//console.log("rightView: ", $scope.currentRightView);
 		//console.log("leftView: ", $scope.currentLeftView);	
 		
-		$scope.selectedCategory.value = index;
+		$scope.selectedCategory.value = category;
 		$scope.showCategory = true;
 		$scope.currentCat = category;
 
@@ -347,11 +349,11 @@ function($scope, $locale, api, $modalInstance){
 			lastRight = lastView[1];
 			$scope.rightView = lastLeft[category];
 			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
-				$scope.showPlus = true;
+				//$scope.showPlus = true;
 				$scope.disable.value = false;
 			}
 			else {
-				$scope.showPlus = false;
+				//$scope.showPlus = false;
 				$scope.disable.value = true;
 			}
 			//$scope.rightView = newView;
@@ -360,11 +362,13 @@ function($scope, $locale, api, $modalInstance){
 			tempHistory.push($scope.leftView);
 			tempHistory.push($scope.rightView);
 			$scope.historyStack.push(tempHistory);
+			$scope.clickStack.push(category);
 			//$scope.$apply();
 			//$scope.nextleftView = $scope.currentLeftView[category];
 			console.log("Left History: ", $scope.historyStack);
 			console.log("Left: ", $scope.leftView);
-			console.log("Right: ", $scope.rightView);			
+			console.log("Right: ", $scope.rightView);
+			console.log("Left Click: ", $scope.clickStack);			
 			//console.log("rightView: ", $scope.currentRightView);
 			//console.log("leftView: ", $scope.currentLeftView);
 		}
@@ -390,7 +394,7 @@ function($scope, $locale, api, $modalInstance){
 		if (typeof currentView !== undefined && typeof currentView !== 'number' && typeof currentView !== 'string'
 			&& typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string') {	
 			$scope.leftView = currentView;
-			$scope.selectedCategory.value = index;
+			$scope.selectedCategory.value = symptom;
 			$scope.currentCat = symptom;
 			//$scope.currentLeftView = $scope.currentRightView;
 
@@ -404,9 +408,11 @@ function($scope, $locale, api, $modalInstance){
 				tempHistory.push($scope.leftView);
 				tempHistory.push($scope.rightView);
 				$scope.historyStack.push(tempHistory);
+				$scope.clickStack.push(symptom);
 				console.log("Right History: ", $scope.historyStack);
 				console.log("Left: ", $scope.leftView);
 				console.log("Right: ", $scope.rightView);
+				console.log("Right Click: ", $scope.clickStack);
 			/*}
 			else if ($scope.currentRightView[symptom] !== undefined) {
 				console.log("ELSEIF1");
@@ -417,7 +423,7 @@ function($scope, $locale, api, $modalInstance){
 
 			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
 				console.log("IF3");
-				$scope.showPlus = true;
+				//$scope.showPlus = true;
 				$scope.disable.value = false;
 				if ($scope.firstClicked) {
 					console.log("IF4");
@@ -440,7 +446,7 @@ function($scope, $locale, api, $modalInstance){
 			}
 			else {
 				console.log("ELSE2");
-				$scope.showPlus = false;
+				//$scope.showPlus = false;
 				$scope.disable.value = true;
 			}
 		}
@@ -464,7 +470,7 @@ function($scope, $locale, api, $modalInstance){
 			console.log("ELSE1: ");
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
-			$scope.showPlus = true;
+			//$scope.showPlus = true;
 			$scope.disable.value = false;
 			//$scope.symptomClicked = symptom;
 			//$scope.open = !$scope.open;
@@ -497,20 +503,40 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.clickBack = function () {
+		var historyCopy = [];
+		var clickCopy = [];
+
 		if ($scope.historyStack.length > 1) {
-			var lastView = $scope.historyStack.pop();
-			if (!$scope.backClicked) {
-				$scope.backClicked = true;
-				if ($scope.historyStack.length > 1) {
+			//if (!$scope.backClicked) {
+				var lastView = $scope.historyStack.pop();
+				var lastClick = $scope.clickStack.pop();
+				//$scope.backClicked = true;
+				historyCopy = $scope.historyStack.slice();
+				clickCopy = $scope.clickStack.slice();
+				var currentView = historyCopy.pop();
+				var currentClick = clickCopy.pop();
+
+				/*if ($scope.historyStack.length > 1) {
 					lastView = $scope.historyStack.pop();
 				}
-			}
-			console.log("Last Left: ", lastView[0]);
-			console.log("Last Right: ", lastView[1]);
-			if (lastView[1] !== undefined && lastView[1].length > 0) {
-				$scope.leftView = lastView[0];
-				$scope.rightView = lastView[1];			
-			}
+				else {
+					historyCopy = $scope.historyStack.slice();
+					lastView = historyCopy.pop();
+				}*/
+			/*}
+			else {
+
+			}*/
+
+			console.log("Current Click: ", currentClick);
+			console.log("Last Left: ", currentView[0]);
+			console.log("Last Right: ", currentView[1]);
+
+			if (currentView[1] !== undefined) {
+				$scope.leftView = currentView[0];
+				$scope.rightView = currentView[1];
+				$scope.selectedCategory.value = currentClick;
+			}			
 		}
 	};
 
@@ -518,9 +544,9 @@ function($scope, $locale, api, $modalInstance){
 		if ($scope.symptomSearch.length > 0 && change !== "blur") {
 			$scope.showSearchView = true;
 		}
-		else {
+		/*else {
 			$scope.showSearchView = false;
-		}
+		}*/
 	};
 
 	$scope.convertObjToArray = function(objToIterate) {
@@ -537,11 +563,13 @@ function($scope, $locale, api, $modalInstance){
 				//}
 				//else {
 				$scope.clickedList[key] = false;
+				$scope.showPlus[key] = false;
 				$scope.catArray.push(key);
 				$scope.convertObjToArray(objToIterate[key]);					
 				//}
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
+					$scope.showPlus[key] = true;
 				}
 			}
 			else {
@@ -557,12 +585,15 @@ function($scope, $locale, api, $modalInstance){
 		//$scope.leftView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
 		$scope.leftView = symptomObj;
+		$scope.rightView = symptomObj[topLevel[0]];
+		$scope.selectedCategory.value = topLevel[0];
 		//console.log("leftView: ", $scope.leftView);
 		$scope.deleteListFromList($scope.catArray, topLevel);
 		//console.log("Full List: ", $scope.catArray);
 		tempHistory.push($scope.leftView);		
 		tempHistory.push($scope.rightView);
 		$scope.historyStack.push(tempHistory);
+		$scope.clickStack.push(topLevel[0]);
 		console.log("Build History: ", $scope.historyStack);
 	};
 
@@ -580,6 +611,16 @@ function($scope, $locale, api, $modalInstance){
 				for (var key in symObj) {
 					tempList.push(key);
 				}
+
+				tempList.sort(function(a, b){
+				 var catA=a.toLowerCase(), catB=b.toLowerCase();
+				 if (catA < catB) //sort string ascending
+				  return -1;
+				 if (catA > catB)
+				  return 1;
+				 return 0; //default return value (no sorting)
+				});
+
 			}
 			return tempList;
 		}

@@ -37,7 +37,7 @@
         	<div>
 				<div class="col-md-6" style="overflow: scroll; padding-left:10px; padding-right:10px">
 					<div ng-repeat="(ky, vl) in leftView" style="padding-top:0px; padding-bottom:0px">
-						<span><a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: black; font-size: 1em" ng-class="{ 'selected-class-name': $index == selectedIndex }">{{ky}}</a></span><i class="fa fa-caret-right fa-2x" ng-show="selectedCategory.value == $index"></i>
+						<span><a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: black; font-size: 1em" ng-class="{ 'selected-class-name': $index == selectedIndex }">{{ky}}</a></span><i class="fa fa-caret-right fa-2x" ng-show="selectedCategory.value == ky"></i>
 						<hr style="margin-top:5px; margin-bottom:5px">
 					</div>				
 				</div>        
@@ -49,7 +49,7 @@
 								<accordion-heading>
 									<!--span-->
 									<h4 style="line-height:2; display:inline-block">{{key}}</h4>
-									<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus" style="display:inline-block; margin-right:10px;"></i>
+									<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="display:inline-block; margin-right:10px;"></i>
 									<!--/span-->
 								</accordion-heading>
 							    <p>Use the slider to record severity of symptom</p>
