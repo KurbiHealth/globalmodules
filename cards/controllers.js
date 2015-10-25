@@ -38,54 +38,69 @@ function(api,$scope,$timeout,$q,$element,$modal){
 	});
 
 	$scope.addCard = function(type,date){
-		var modalInstance = $modal.open({
-			animation: true,
-			templateUrl: 'myModalContent.html',
-			controller: 'ModalInstanceCtrl',
-			//size: size,
-			resolve: {
-			  /*items: function () {
-			    return $scope.items;
-			  }*/
-			}
-		});
+		var newTitle = "";
 
-		// get values from edit form
-		var tableName = 'symptom',
-			dataObj = {
-				//'' = ''
-			},
-			tableId = 1;
-		
-		// save a new entry to db
-		/*
-		api.updateOne($q.defer(),tableName,dataObj,tableId)
-		.then(
-			function(data){
-				
-			},
-			function(error){
-				console.log(error);
-			}
-		);
-		*/
+		switch (type) {
+			case 'text-card':
+				newTitle = "New Journal Entry";
+				$scope.updateCardUI(100, type, newTitle);				
+				break;
+			case 'symptom-card':
+				var tableName = 'journal_entry_components';
+				// save a new entry to db
+				/*
+							api.updateOne($q.defer(),tableName,dataObj,tableId)
+							.then(
+								function(data){
+									
+								},
+								function(error){
+									console.log(error);
+								}
+							);
+				*/
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'myModalContent.html',
+					controller: 'ModalInstanceCtrl',
+					//size: size,
+					resolve: {
+						/*addSymptom: function (tableName) {
+							
+						}*/
+					}
+				});
 
-		// save a new entry-type to db
-
-		// add new card to UI		
-		$scope.journalEntries[0].components.unshift(
-			{id: 100, 'type': type, title: 'New Card'}
-		);
-
-		// update the masonry grid layout
-		$timeout(function(){
-			$('.journal-day').masonry('reloadItems');
-			$('.journal-day').masonry('layout');
-		},650);
-
+			    modalInstance.result.then(
+			    	function (dataObj, symName) {
+				    	// save a new entry-type to db
+						api.addRecord($q.defer(),tableName,dataObj)
+							.then(
+								function(data) {
+									$scope.updateCardUI(100, type, symName);									
+									console.log("Add Record Data: ", data);
+								},
+								function(error){
+									console.log(error);
+								}
+							);			    	
+						//$scope.selected = selectedItem;
+			    	}, 
+			    	function () {
+			      		console.log('Modal dismissed at: ' + new Date());
+			      	}
+			    );
+				break;
+			case 'image-card':
+				newTitle = "New Image";
+				$scope.updateCardUI(100, type, newTitle);
+				break;
+			default:
+				break;
+		}
 		//$scope.showModal = true;
 		//$scope.addSymptomCard();
-	}
+	};
 
 	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
 	http://desandro.github.io/masonry/demos/infinite-scroll.html
@@ -124,6 +139,19 @@ function(api,$scope,$timeout,$q,$element,$modal){
 	    
 	}); */
 
+	$scope.updateCardUI = function (newId, type, newTitle) {
+		// add new card to UI
+		$scope.journalEntries[0].components.unshift(
+			{id: newId, 'type': type, title: newTitle}
+		);
+
+		// update the masonry grid layout
+		$timeout(function(){
+			$('.journal-day').masonry('reloadItems');
+			$('.journal-day').masonry('layout');
+		},650);		
+	};
+
 	$scope.$watch('files', function () {
         $scope.upload($scope.files);
     });
@@ -146,7 +174,7 @@ function(api,$scope,$timeout,$q,$element,$modal){
         }
     };
 
-	$scope.open = function (size) {
+	/*$scope.open = function (size) {
 
 	  var modalInstance = $modal.open({
 	    animation: true,
@@ -154,9 +182,9 @@ function(api,$scope,$timeout,$q,$element,$modal){
 	    controller: 'ModalInstanceCtrl',
 	    size: size,
 	    resolve: {
-	      /*items: function () {
-	        return $scope.items;
-	      }*/
+	      //items: function () {
+	        //return $scope.items;
+	      //}
 	    }
 	  });
 
@@ -164,9 +192,9 @@ function(api,$scope,$timeout,$q,$element,$modal){
 	    $scope.selected = selectedItem;
 	  }, function () {
 	    $log.info('Modal dismissed at: ' + new Date());
-	  });*/
+	  });
 
-	}; // end $scope.open()
+	};*/ // end $scope.open()
 
 	/*$scope.toggleAnimation = function () {
 	  $scope.animationsEnabled = !$scope.animationsEnabled;
@@ -234,7 +262,7 @@ kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'api', '$modalIns
 function($scope, $locale, api, $modalInstance){
 	console.log("ModalInstanceCtrl");
 	$scope.firstClicked = false;
-	$scope.backClicked = false;
+	//$scope.backClicked = false;
 	$scope.closeOthers = true;
 	$scope.disable = {value:true};
 	$scope.status = {open:false};
@@ -251,6 +279,7 @@ function($scope, $locale, api, $modalInstance){
 	$scope.lastClick = "";
 	$scope.showSearchView = false;
 	$scope.clickStack = [];
+	//$scope.addSymptom = addSymptom;
 	$scope.symptoms = {
 		'Head': {
 			'Eyes': {
@@ -320,7 +349,7 @@ function($scope, $locale, api, $modalInstance){
 	//$scope.nextleftView = $scope.symptoms;
 
 	$scope.clickLeftView = function(index, category) {
-		$scope.backClicked = false;
+		//$scope.backClicked = false;
 		$scope.showSearchView = false;
 		var tempHistory = [];
 		var historyCopy = [];
@@ -378,7 +407,7 @@ function($scope, $locale, api, $modalInstance){
 		//console.log("rightView: ", $scope.currentRightView);
 		//console.log("leftView: ", $scope.currentLeftView);		
 		//var newView = $scope.getSymCategories($scope.currentRightView);
-		$scope.backClicked = false;
+		//$scope.backClicked = false;
 		var currentView = $scope.rightView;
 		var newView = $scope.rightView[symptom];
 		var tempHistory = [];
@@ -495,7 +524,16 @@ function($scope, $locale, api, $modalInstance){
 
 	$scope.ok = function () {
 		//$scope.$apply();
-		$modalInstance.close();
+		// get values from edit form
+		var symName = "Blurry Vision";
+		var dataObj = {
+			'severity': 11,
+			'symptom_id': 6,
+			'journal_entry_id': 1,
+			'date': '10/26/2015'
+		};
+		//$scope.addSymptom(tableName, dataObj, symName);
+		$modalInstance.close(dataObj, symName);
 	};
 
 	$scope.cancel = function () {
