@@ -421,7 +421,7 @@ function($scope, $locale, symptoms, $modalInstance){
 		}
 	};
 
-	$scope.clickRightView = function(index, symptom) {
+	$scope.clickRightView = function(index, symptom, passedIn) {
 		//console.log("rightView: ", $scope.currentRightView);
 		//console.log("leftView: ", $scope.currentLeftView);		
 		//var newView = $scope.getSymCategories($scope.currentRightView);
@@ -434,7 +434,7 @@ function($scope, $locale, symptoms, $modalInstance){
 		var lastLeft = {};
 		var lastRight = {};
 		$scope.lastClick = symptom;
-
+console.log("Passed In: ", passedIn[symptom]);
 		/*if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
 			&& typeof $scope.currentRightView[symptom] !== undefined 
 			&& typeof $scope.currentRightView[symptom] !== 'number' && typeof $scope.currentRightView[symptom] !== 'string') {*/
@@ -514,7 +514,9 @@ function($scope, $locale, symptoms, $modalInstance){
 				
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			console.log("ELSE1: ");
+			console.log("ELSE1: ", symptom);
+			console.log("Passed In After: ", passedIn[symptom]);
+			console.log("Controller: ", $scope.clickedList[symptom]);
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
 			//$scope.showPlus = true;

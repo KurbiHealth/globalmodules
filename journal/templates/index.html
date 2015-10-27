@@ -78,11 +78,11 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 							<accordion close-others="closeOthers" ng-show="!showSearchView">
 								<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
 								<div ng-repeat="(key, val) in rightView" style="margin-top:5px;">
-									<accordion-group ng-click="clickRightView($index, key)" is-disabled=false is-open=clickedList[key]>
+									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<!--span-->
-											<h4 style="line-height:2; display:inline-block">{{key}}</h4>
-											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="position:relative; top: 10px; float:right; display:inline-block; margin-right:10px;"></i>
+											<h4 ng-click="clickRightView($index, key, clickedList)" style="line-height:2; display:inline-block; padding:0 155px 0 0">{{key}}</h4>
+											<i ng-click="clickRightView($index, key, clickedList)" ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="display:inline-block; padding:3px 0 0 155px;"></i>
 											<div class="clear"></div>
 											<!--/span-->
 										</accordion-heading>
