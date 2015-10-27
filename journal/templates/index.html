@@ -15,6 +15,7 @@ ul.symptom-cats li a {
 	border-radius: 0;
 }
 .panel {
+	position:relative;
 	border: 1px solid #CCCCCC;
 }
 .panel-default > .panel-heading {
@@ -55,7 +56,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 				<div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="col-md-6">
-							<a href="#" class="label" ng-click="clickBack()" style="color: #333333; font-size: 14px;"><i class="fa fa-angle-double-left"></i> Back to Categories</a>
+							<a href="#" class="label" ng-click="clickBack()" style="color: #333333; font-size: 14px;"><i class="fa fa-angle-double-left"></i> Back</a>
 						</div><!-- END /.col -->
 						<div class="col-md-6">
 							<div class="input-group">
@@ -81,9 +82,10 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<!--span-->
-											<h4 ng-click="clickRightView($index, key, clickedList)" style="line-height:2; display:inline-block; padding:0 155px 0 0">{{key}}</h4>
-											<i ng-click="clickRightView($index, key, clickedList)" ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="display:inline-block; padding:3px 0 0 155px;"></i>
+											<h4 style="float:left; padding:8px 0;">{{key}}</h4>
+											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
+											<div ng-click="clickRightView($index, key, clickedList)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 											<!--/span-->
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
@@ -96,11 +98,12 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
 								<div ng-repeat="(key, val) in symList | filter:symptomSearch" style="margin-top:5px">
-									<accordion-group ng-click="clickSearchView($index, val)" is-disabled=false is-open=clickedList[key]>
+									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
-											<h4 style="line-height:2; display:inline-block">{{val}}</h4>
-											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="position:relative; top: 10px; float:right; display:inline-block; margin-right:10px;"></i>
+											<h4 style="float:left; padding:8px 0;">{{val}}</h4>
+											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
+											<div ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="0"></div>
@@ -121,7 +124,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 	<div class="row">
 
-		<div ng-controller="CardController" class="cardContainer col-md-11">
+		<div ng-controller="CardController" class="cardContainer col-md-12">
 
 			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" ><!-- emit-when="{event: 'renderingDay'}" -->
 				<div class="journal-day-header">{{day.date}}</div>
