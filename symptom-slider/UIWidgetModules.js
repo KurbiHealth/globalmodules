@@ -4,6 +4,7 @@ angular.module('ui.WellnessSlider', [])
 	.directive('ringSlider', function ($parse) {
 		return {
 			restrict: 'A',
+			//require: 'ngModel',
 			replace: true,
 			templateUrl: '../modules/symptom-slider/templates/RingSliderWidget.html',
 			/*scope: {				
@@ -31,6 +32,7 @@ angular.module('ui.WellnessSlider', [])
 				scope.displayOnly = angular.isDefined(attrs.displayOnly); //Set in view if widget is used in display only mode, cant move slider
 				scope.savedSev = 0;
 				scope.currentDeg = 0;
+				//ngModelCtrl.$setViewValue("5");
 
 				//Reference to widget container, max size
 			    var $container = element;
@@ -131,6 +133,19 @@ angular.module('ui.WellnessSlider', [])
 				        setSliderPosition(degree);
 			        }
 			    });
+
+      // view -> model
+      /*element.on('blur', function() {
+        ngModelCtrl.$setViewValue(element.html());
+      });
+
+      // model -> view
+      ngModelCtrl.$render = function() {
+        element.html(ngModelCtrl.$viewValue);
+      };
+
+      // load init value from DOM
+      ngModelCtrl.$setViewValue(element.html());*/
 
 				function calculateMousePos(evnt, mouseMov)
 				{

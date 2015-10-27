@@ -1,6 +1,22 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
 	'$timeout','$q','$element','$modal',
 function(api,$scope,$timeout,$q,$element,$modal){
+	$scope.symptoms = {
+		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
+				'Ears': {'Ear Ache':6},
+				'Nose': {'Runny Nose':7},
+				'Jaw': {'Clicking':8},
+				'Face': {'Sunburn':9},
+				'Scalp': {'Itchy':10},
+				'Brain': {'Migraine':11}},
+		'Neck': {'Throat': {'Sore Throat':12}},
+		'Torso': {'Stomach': {'Gas':13}},
+		'Arms': {'Elbow': {'Burning':14}},
+		'Back': {'Spine': {'Inflamation':15}},
+		'Hips': {'Joint': {'Pain':16}},
+		'Knees': {'Cap': {'Swelling':17}},
+		'Feet': {'Heel': {'Stinging':18}}
+	};
 
 	api.getJournalCards($q.defer())
 	.then(
@@ -65,9 +81,9 @@ function(api,$scope,$timeout,$q,$element,$modal){
 					controller: 'ModalInstanceCtrl',
 					//size: size,
 					resolve: {
-						/*addSymptom: function (tableName) {
-							
-						}*/
+						symptoms: function () {
+							return $scope.symptoms;
+						}
 					}
 				});
 
@@ -258,29 +274,31 @@ function($scope, $locale,api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'api', '$modalInstance',
-function($scope, $locale, api, $modalInstance){
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance',
+function($scope, $locale, symptoms, $modalInstance){
 	console.log("ModalInstanceCtrl");
+	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
 	$scope.closeOthers = true;
-	$scope.disable = {value:true};
-	$scope.status = {open:false};
+	//$scope.disable = {value:true};
+	//$scope.status = {open:false};
 	$scope.showPlus = {};
 	$scope.clickedList = {};
-	$scope.currentCat = "";
-	$scope.showCategory = false;
+	//$scope.currentCat = "";
+	//$scope.showCategory = false;
 	$scope.selectedCategory = {value: ""};
 	$scope.rightView = {};
 	$scope.leftView = {};
-	$scope.catArray = [];
+	$scope.catArray = []; //Should get rid of this and return/use local variable
 	$scope.symList = [];
 	$scope.historyStack = [];
-	$scope.lastClick = "";
+	$scope.lastClick = ""; //Should get rid of this and use clickStack
 	$scope.showSearchView = false;
 	$scope.clickStack = [];
+	//$scope.pray = {value: -1};
 	//$scope.addSymptom = addSymptom;
-	$scope.symptoms = {
+	/*$scope.symptoms = {
 		'Head': {
 			'Eyes': {
 				'Blurry Vision':1, 
@@ -343,7 +361,7 @@ function($scope, $locale, api, $modalInstance){
 				'Stinging':18
 			}
 		}
-	};
+	};*/
 
 	//$scope.currentLeftView = $scope.symptoms;
 	//$scope.nextleftView = $scope.symptoms;
@@ -360,8 +378,8 @@ function($scope, $locale, api, $modalInstance){
 		//console.log("leftView: ", $scope.currentLeftView);	
 		
 		$scope.selectedCategory.value = category;
-		$scope.showCategory = true;
-		$scope.currentCat = category;
+		//$scope.showCategory = true;
+		//$scope.currentCat = category;
 
 		for (var key in $scope.clickedList) {
 			$scope.clickedList[key] = false;		
@@ -377,14 +395,14 @@ function($scope, $locale, api, $modalInstance){
 			lastLeft = lastView[0];
 			lastRight = lastView[1];
 			$scope.rightView = lastLeft[category];
-			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
+			/*if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
 				//$scope.showPlus = true;
 				$scope.disable.value = false;
 			}
 			else {
 				//$scope.showPlus = false;
 				$scope.disable.value = true;
-			}
+			}*/
 			//$scope.rightView = newView;
 			//$scope.currentRightView = $scope.currentLeftView[category];
 
@@ -403,7 +421,7 @@ function($scope, $locale, api, $modalInstance){
 		}
 	};
 
-	$scope.clickRightView = function(index, symptom) {
+	$scope.clickRightView = function(index, symptom, passedIn) {
 		//console.log("rightView: ", $scope.currentRightView);
 		//console.log("leftView: ", $scope.currentLeftView);		
 		//var newView = $scope.getSymCategories($scope.currentRightView);
@@ -416,7 +434,7 @@ function($scope, $locale, api, $modalInstance){
 		var lastLeft = {};
 		var lastRight = {};
 		$scope.lastClick = symptom;
-
+console.log("Passed In: ", passedIn[symptom]);
 		/*if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
 			&& typeof $scope.currentRightView[symptom] !== undefined 
 			&& typeof $scope.currentRightView[symptom] !== 'number' && typeof $scope.currentRightView[symptom] !== 'string') {*/
@@ -424,7 +442,7 @@ function($scope, $locale, api, $modalInstance){
 			&& typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string') {	
 			$scope.leftView = currentView;
 			$scope.selectedCategory.value = symptom;
-			$scope.currentCat = symptom;
+			//$scope.currentCat = symptom;
 			//$scope.currentLeftView = $scope.currentRightView;
 
 			//newView = $scope.getSymCategories($scope.currentRightView[symptom]);
@@ -453,7 +471,7 @@ function($scope, $locale, api, $modalInstance){
 			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
 				console.log("IF3");
 				//$scope.showPlus = true;
-				$scope.disable.value = false;
+				//$scope.disable.value = false;
 				if ($scope.firstClicked) {
 					console.log("IF4");
 					for (var key in $scope.clickedList) {
@@ -476,7 +494,7 @@ function($scope, $locale, api, $modalInstance){
 			else {
 				console.log("ELSE2");
 				//$scope.showPlus = false;
-				$scope.disable.value = true;
+				//$scope.disable.value = true;
 			}
 		}
 		else {
@@ -496,11 +514,13 @@ function($scope, $locale, api, $modalInstance){
 				
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			console.log("ELSE1: ");
+			console.log("ELSE1: ", symptom);
+			console.log("Passed In After: ", passedIn[symptom]);
+			console.log("Controller: ", $scope.clickedList[symptom]);
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
 			//$scope.showPlus = true;
-			$scope.disable.value = false;
+			//$scope.disable.value = false;
 			//$scope.symptomClicked = symptom;
 			//$scope.open = !$scope.open;
 		}
@@ -523,17 +543,43 @@ function($scope, $locale, api, $modalInstance){
 	};
 
 	$scope.ok = function () {
-		//$scope.$apply();
-		// get values from edit form
-		var symName = "Blurry Vision";
-		var dataObj = {
-			'severity': 11,
-			'symptom_id': 6,
-			'journal_entry_id': 1,
-			'date': '10/26/2015'
-		};
-		//$scope.addSymptom(tableName, dataObj, symName);
-		$modalInstance.close(dataObj, symName);
+		var focusSymptom = undefined;
+		for (var key in $scope.clickedList) {
+			//console.log("Save: ", $scope.clickedList[key]);
+			if ($scope.clickedList[key] === true) {
+				focusSymptom = key;
+				break;
+			}			
+		}
+
+		if (focusSymptom !== undefined) {
+	    	var sev = $scope.getSeverity();
+	    	//var sev = $scope.pray;
+	    	console.log("Modal severity: ", sev);
+	    	//$scope.saveSliderPosition(); // ???
+	    	//$scope.onEditClick("default");
+	    	//$scope.saved = true;    	
+	    	//console.log("Directive sev: ", sev);
+			//console.log('saving severity: ', $scope.card.severity);
+			//$scope.card.severity = sev;
+			var timeSaved = Date.now();
+
+			//$scope.$apply();
+			// get values from edit form
+			var symName = focusSymptom;
+			console.log("Saved symptom: ", focusSymptom);
+			var dataObj = {
+				'severity': sev,
+				'symptom_id': 6,
+				'journal_entry_id': 1,
+				'date': '10/26/2015'
+			};
+			//$scope.addSymptom(tableName, dataObj, symName);
+			$modalInstance.close(dataObj, symName);			
+		}
+		else {
+			$modalInstance.dismiss('cancel');
+		}
 	};
 
 	$scope.cancel = function () {
