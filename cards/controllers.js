@@ -240,6 +240,7 @@ function($scope, $locale,api){
 	$scope.timeSaved = $scope.day.date;
 	$scope.defaultSlider = "default";
 	$scope.grabSlider = "grab";
+	$scope.severityToAdd = {value: -1};
 	//$scope.directiveDelegate = {};
 
     $scope.onEditClick = function(sliderStyle)
@@ -296,7 +297,7 @@ function($scope, $locale, symptoms, $modalInstance){
 	$scope.lastClick = ""; //Should get rid of this and use clickStack
 	$scope.showSearchView = false;
 	$scope.clickStack = [];
-	//$scope.pray = {value: -1};
+	$scope.severityToAdd = {value: -1};
 	//$scope.addSymptom = addSymptom;
 	/*$scope.symptoms = {
 		'Head': {
@@ -434,7 +435,7 @@ function($scope, $locale, symptoms, $modalInstance){
 		var lastLeft = {};
 		var lastRight = {};
 		$scope.lastClick = symptom;
-console.log("Passed In: ", passedIn[symptom]);
+
 		/*if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
 			&& typeof $scope.currentRightView[symptom] !== undefined 
 			&& typeof $scope.currentRightView[symptom] !== 'number' && typeof $scope.currentRightView[symptom] !== 'string') {*/
@@ -515,8 +516,7 @@ console.log("Passed In: ", passedIn[symptom]);
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
 			console.log("ELSE1: ", symptom);
-			console.log("Passed In After: ", passedIn[symptom]);
-			console.log("Controller: ", $scope.clickedList[symptom]);
+
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
 			//$scope.showPlus = true;
@@ -553,7 +553,7 @@ console.log("Passed In: ", passedIn[symptom]);
 		}
 
 		if (focusSymptom !== undefined) {
-	    	var sev = $scope.getSeverity();
+	    	var sev = $scope.severityToAdd.value;
 	    	//var sev = $scope.pray;
 	    	console.log("Modal severity: ", sev);
 	    	//$scope.saveSliderPosition(); // ???

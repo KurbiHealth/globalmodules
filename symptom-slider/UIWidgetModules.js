@@ -12,7 +12,14 @@ angular.module('ui.WellnessSlider', [])
 				severityNum: '='
 				//sliderPosition: "="
 			},*/
-			link: function (scope, element, attrs) {
+			controller: function ($scope) {
+				//$scope.severityToAdd.value = 5;
+				$scope.setSymSeverity = function (severityToSet) {
+					$scope.severityToAdd.value = severityToSet;
+				}
+				this.shared = 'ok';
+			},
+			link: function (scope, element, attrs, ctrl) {
 				/*This method will be called whet the 'objectToInject' value is changes*/
 	            /*$scope.$watch('saveSev', function (value) {
 	                //Checking if the given value is not undefined
@@ -327,7 +334,9 @@ angular.module('ui.WellnessSlider', [])
 				    
 				    $slider.css({ left: sliderX, top: sliderY });
 				    scope.currentDeg = deg;
-				    //scope.severityNum = degreeToSeverity(deg);
+				    console.log("Control: ", ctrl);
+				    scope.setSymSeverity(degreeToSeverity(deg));
+				    //ctrl.severityToAdd.value = degreeToSeverity(deg);
 				    //scope.$apply;
 				}
 
