@@ -1,10 +1,10 @@
 <span class="post-timestamp">{{post.created | date:'short'}}</span>
 <a href="#" class="post-person">
 	<div ng-if="post.image_file_name == ''">
-		<img src="http://placehold.it/70x70" alt="{{post.author}}" class="profile-mid" />
+		<img src="http://placehold.it/40x40" alt="{{post.author}}" class="profile-small" />
 	</div>
 	<div ng-if="post.image_file_name != ''">
-		<img src="/design/user_images/post.image_file_name" alt="{{post.author}}" class="profile-mid" />
+		<img src="/design/user_images/post.image_file_name" alt="{{post.author}}" class="profile-small" />
 	</div>
 	<h3>{{post.author}}</h3>
 	<div class="clear"></div>
