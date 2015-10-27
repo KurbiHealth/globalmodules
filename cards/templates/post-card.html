@@ -1,12 +1,17 @@
+<style>
+.post-item i.fa.fa-heart-o:hover {
+	cursor: pointer;
+}
+</style>
 <div class="post-item">
 
 	<span class="post-timestamp">{{card.created | date:'short'}}</span>
 	<a href="#" class="post-person">
 		<div ng-if="card.avatar == ''">
-			<img src="http://placehold.it/70x70" alt="{{card.author}}" height="70" width="70" class="profile-mid" />
+			<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
 		</div>
 		<div ng-if="card.avatar != ''">
-			<img ng-src="card.avatar" alt="{{card.author}}" height="70" width="70" class="profile-mid" />
+			<img ng-src="card.avatar" alt="{{card.author}}" height="40" width="40" class="profile-small" />
 		</div>
 		<h3>{{card.author}}</h3>
 	</a>
@@ -19,7 +24,7 @@
 	<div class="social-block">
 		<span ><a class="comments-open pull-left" ng-click ="limit = card.comments.length"><span>{{card.comments.length}}</span> Comments</a>
 		<!--<i class="fa fa-comment-o pull-right"></i>-->
-		<i class="fa fa-heart-o pull-right"></i>
+		<i class="fa fa-heart-o pull-right" data-toggle="modal" data-target="#joinModal"></i>
 		<div class="clear"></div>
 	</div><!--END .social-block-->
 
@@ -39,3 +44,38 @@
 	</div><!--END .comment-block-->
 
 </div><!--END .post-item-->
+
+<!-- Modal -->
+<div class="modal fade" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="joinModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" style="text-align: center;" id="joinModalLabel">Join {{firstName}} {{lastName}}</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        	<div class="checkbox">
+      	    <label>
+      	      <input type="checkbox"> Show Support
+      	    </label>
+        	</div>
+        	<div class="checkbox">
+        	  <label>
+        	    <input type="checkbox"> Show up in Person
+        	  </label>
+        	</div>
+        	<div class="checkbox">
+        	  <label>
+        	    <input type="checkbox"> Send Help
+        	  </label>
+        	</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success">Join</button>
+      </div>
+    </div>
+  </div>
+</div>
