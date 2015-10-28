@@ -14,10 +14,13 @@ angular.module('ui.WellnessSlider', [])
 			},*/
 			controller: function ($scope) {
 				//$scope.severityToAdd.value = 5;
-				$scope.setSymSeverity = function (severityToSet) {
-					$scope.severityToAdd.value = severityToSet;
-				}
-				this.shared = 'ok';
+				$scope.updateSymSeverity = function (severityToSet) {
+					$scope.updateSeverity(severityToSet);
+					//console.log("Widget Ctrl Current Deg: ", $scope.currentDeg);
+				};
+				/*$scope.getSymSeverity = function () {
+					console.log("Widget Ctrl GET");
+				}*/
 			},
 			link: function (scope, element, attrs, ctrl) {
 				/*This method will be called whet the 'objectToInject' value is changes*/
@@ -334,8 +337,8 @@ angular.module('ui.WellnessSlider', [])
 				    
 				    $slider.css({ left: sliderX, top: sliderY });
 				    scope.currentDeg = deg;
-				    console.log("Control: ", ctrl);
-				    scope.setSymSeverity(degreeToSeverity(deg));
+				    //console.log("Control: ", ctrl);
+				    scope.updateSymSeverity(degreeToSeverity(deg));
 				    //ctrl.severityToAdd.value = degreeToSeverity(deg);
 				    //scope.$apply;
 				}

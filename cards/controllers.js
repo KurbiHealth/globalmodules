@@ -221,10 +221,10 @@ function(api,$scope,$timeout,$q,$element,$modal){
 
 kurbiApp.controller('CardController', ['$scope', '$locale', 'api',
 function($scope, $locale, api){
-	$scope.addSymptomCard = function(api)
+	/*$scope.addSymptomCard = function(api)
 	{
 		//$scope.showModal = true;
-	};
+	};*/
 
 	// this is called in the directives.js file
 
@@ -232,7 +232,6 @@ function($scope, $locale, api){
 
 kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
 function($scope, $locale,api){
-
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -240,8 +239,12 @@ function($scope, $locale,api){
 	$scope.timeSaved = $scope.day.date;
 	$scope.defaultSlider = "default";
 	$scope.grabSlider = "grab";
-	$scope.severityToAdd = {value: -1};
+	//$scope.severityToAdd = {value: -1};
 	//$scope.directiveDelegate = {};
+
+	$scope.updateSeverity = function (severity) {
+		//
+	}
 
     $scope.onEditClick = function(sliderStyle)
     {
@@ -297,75 +300,47 @@ function($scope, $locale, symptoms, $modalInstance){
 	$scope.lastClick = ""; //Should get rid of this and use clickStack
 	$scope.showSearchView = false;
 	$scope.clickStack = [];
-	$scope.severityToAdd = {value: -1};
+	//$scope.severityToAdd = {value: -1};
+	$scope.symsToAddList = {};
+	$scope.modalSeverities = {};
+	$scope.addedSymptoms = 0;
 	//$scope.addSymptom = addSymptom;
-	/*$scope.symptoms = {
-		'Head': {
-			'Eyes': {
-				'Blurry Vision':1, 
-				'Double Vision':2, 
-				'Uncontrolled Watering':3, 
-				'Dry Eyes':4, 
-				'Itchy Eyes':5
-			},
-			'Ears': {
-				'Ear Ache':6
-			},
-			'Nose': {
-				'Runny Nose':7
-			},
-			'Jaw': {
-				'Clicking':8
-			},
-			'Face': {
-				'Sunburn':9
-			},
-			'Scalp': {
-				'Itchy':10
-			},
-			'Brain': {
-				'Migraine':11
-			}
-		},
-		'Neck': {
-			'Throat': {
-				'Sore Throat':12
-			}
-		},
-		'Torso': {
-			'Stomach': {
-				'Gas':13
-			}
-		},
-		'Arms': {
-			'Elbow': {
-				'Burning':14
-			}
-		},
-		'Back': {
-			'Spine': {
-				'Inflamation':15
-			}
-		},
-		'Hips': {
-			'Joint': {
-				'Pain':16
-			}
-		},
-		'Knees': {
-			'Cap': {
-				'Swelling':17
-			}
-		},
-		'Feet': {
-			'Heel': {
-				'Stinging':18
+
+	$scope.addSymptom = function (symptom) {
+		var severityToAdd = 0;
+
+		for (var key in $scope.modalSeverities) {
+			if (key === symptom) {
+				severityToAdd = $scope.modalSeverities[key];
 			}
 		}
-	};*/
 
-	//$scope.currentLeftView = $scope.symptoms;
-	//$scope.nextleftView = $scope.symptoms;
+		if (severityToAdd > 0) {
+			$scope.symsToAddList[symptom] = severityToAdd;
+			++$scope.addedSymptoms;
+		}
+		else {
+			alert("Slider can't be at default position when saving");
+		}
+		console.log("Add List: ", $scope.symsToAddList);
+	}
+
+	$scope.updateSeverity = function (severity) {
+		var focusSymptom = undefined;
+		for (var key in $scope.clickedList) {
+			//console.log("Save: ", $scope.clickedList[key]);
+			if ($scope.clickedList[key] === true) {
+				focusSymptom = key;
+				break;
+			}			
+		}
+
+		if (focusSymptom !== undefined) {		
+			$scope.modalSeverities[focusSymptom] = severity;
+		}
+		console.log("Focused: ", focusSymptom);
+		console.log("Modal List: ", $scope.modalSeverities);		
+	}
 
 	$scope.clickLeftView = function(index, category) {
 		//$scope.backClicked = false;
@@ -543,17 +518,25 @@ function($scope, $locale, symptoms, $modalInstance){
 	};
 
 	$scope.ok = function () {
-		var focusSymptom = undefined;
+		/*var focusSymptom = undefined;
 		for (var key in $scope.clickedList) {
 			//console.log("Save: ", $scope.clickedList[key]);
 			if ($scope.clickedList[key] === true) {
 				focusSymptom = key;
 				break;
 			}			
-		}
+		}*/
 
-		if (focusSymptom !== undefined) {
-	    	var sev = $scope.severityToAdd.value;
+		//if (focusSymptom !== undefined) {
+		console.log("Add List: ", Object.keys($scope.symsToAddList).length);
+		if (Object.keys($scope.symsToAddList).length > 0) {
+			//console.log("Add List: ", $scope.symsToAddList);
+			for (var key in $scope.symsToAddList) {
+				var sev = $scope.symsToAddList[key];
+				var symName = key;
+				break;
+			}
+	    	//var sev = $scope.symsToAddList.pop();
 	    	//var sev = $scope.pray;
 	    	console.log("Modal severity: ", sev);
 	    	//$scope.saveSliderPosition(); // ???
@@ -566,8 +549,8 @@ function($scope, $locale, symptoms, $modalInstance){
 
 			//$scope.$apply();
 			// get values from edit form
-			var symName = focusSymptom;
-			console.log("Saved symptom: ", focusSymptom);
+			//var symName = focusSymptom;
+			console.log("Saved symptom: ", symName);
 			var dataObj = {
 				'severity': sev,
 				'symptom_id': 6,
