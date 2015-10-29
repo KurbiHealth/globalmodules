@@ -80,7 +80,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 							<accordion close-others="closeOthers" ng-show="!showSearchView">
 								<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
 								<div ng-repeat="(key, val) in rightView" style="margin-top:5px;">
-									<accordion-group is-disabled=false is-open=false>
+									<accordion-group is-disabled="false" is-open="false">
 										<accordion-heading>
 											<!--span-->
 											<h4 style="float:left; padding:8px 0;">{{key}}</h4>
@@ -129,9 +129,9 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 		<div ng-controller="CardController" class="cardContainer col-md-12">
 
-			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" ><!-- emit-when="{event: 'renderingDay'}" -->
+			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" >
 				<div class="journal-day-header">{{day.date}}</div>
-				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'renderingCard', conditionFirst: $first, conditionLast: $last}"></div><!--  -->
+				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered'}"></div><!--  -->
 			</div>
 
 		</div>

@@ -18,36 +18,18 @@ function(api,$scope,$timeout,$q,$element,$modal){
 		'Feet': {'Heel': {'Stinging':18}}
 	};
 
-	api.getJournalCards($q.defer())
-	.then(
-		function(data){
-			$scope.journalEntries = data;
-			console.log("Data: ", data);
-			if(data[0].today == false){
-				var today = new Date;
-				$scope.journalEntries.unshift({
-					date: today.toDateString(),
-					components: []
-				});
-			}
-		},
-		function(error){
-			console.log(error);
-		}
-	);
-
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
 		// cards are done being rendered, but there still is a brief
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
-			$('.journal-day').masonry(
+			$('.cardContainer').masonry(
 			{
 				itemSelector: '.card',
-				columnWidth: '.card',
-				isFitWidth: true,
-				stamp: '.journal-day-header'
+				columnWidth: '.card'
+				/*isFitWidth: true,*/
+				/*stamp: '.journal-day-header'*/
 			}
 			); 
 		},150);
@@ -90,7 +72,8 @@ function(api,$scope,$timeout,$q,$element,$modal){
 			    modalInstance.result.then(
 			    	function (dataObj, symName) {
 				    	// save a new entry-type to db
-						api.addRecord($q.defer(),tableName,dataObj)
+				    	api.addSymptom($q.defer(),dataObj)
+						//api.addRecord($q.defer(),tableName,dataObj)
 							.then(
 								function(data) {
 									$scope.updateCardUI(100, type, symName);									
@@ -554,8 +537,6 @@ function($scope, $locale, symptoms, $modalInstance){
 			var dataObj = {
 				'severity': sev,
 				'symptom_id': 6,
-				'journal_entry_id': 1,
-				'date': '10/26/2015'
 			};
 			//$scope.addSymptom(tableName, dataObj, symName);
 			$modalInstance.close(dataObj, symName);			

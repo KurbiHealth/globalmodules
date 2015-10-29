@@ -221,13 +221,16 @@ console.log('error in query function-api service: ',error);
 	------------------------------------------------*/
 
 	function _fixTimestamp(date){
-		// what is mysql_datetime.getTime() ?
+		// The datetime value in the database is off because the 
+		// db is set to a different timezone then EST, so rather
+		// then try and change the db, I set up this function to
+		// fix the time, as a temporary fix
 		var t = date.split(/[- :T]/);
 		t[5] = t[5].replace('.000Z', '');
 		var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 		var tz_offset = d.getTimezoneOffset() * 60 * 1000;
 		var corrected_datetime = new Date(d - tz_offset);
-		return corrected_datetime;	
+		return corrected_datetime;
 	}
 
 	function _fixChartDate(date){
@@ -243,10 +246,11 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function _getStringDate(d){
-		if(d.getMonth() < 9)
-			var month = '0' + (d.getMonth() + 1);
-		else
-			var month = d.getMonth();
+		// this converts a Time object into a y/m/d string
+		// that can be used in a mysql sql query
+		var month = d.getMonth() + 1;
+		if(month < 10)
+			var month = '0' + month;
 		var r = d.getFullYear() + '-' + month + '-' + d.getDate();
 		return r;
 	}
@@ -485,7 +489,7 @@ console.log(componentsData);
 
 		if(date == null || date == ''){
 			var getDate = query($q.defer(),'journal_entries',{
-				orderBy: 'journal_entries.created|asc',
+				orderBy: 'journal_entries.created|desc',
 				limit: 1
 			});
 			getDate.then(
@@ -513,7 +517,7 @@ console.log(componentsData);
 					if(data == null){
 						that.today = false;
 						query($q.defer,'journal_entries',{
-							field: 'journal_entries.created|gt|'+date,
+							orderBy: 'journal_entries.created|desc',
 							limit: 1
 						}).then(
 							function(data){console.log('line 392');
@@ -588,7 +592,7 @@ console.log(componentsData);
 					components
 				).then(function(){
 					that.journalEntry.components = [];
-
+console.log(that.componentsList);
 					var data = that.componentsList;
 					var details = [];
 
@@ -621,21 +625,28 @@ console.log(componentsData);
 						// check for symptom type
 						if(data[i].symptom_id != null){
 							// severity, symptom_id
-							details.push(getOne(promise,'symptoms',data[i].symptom_id)
+							details.push(query(promise,'journal_entries/journal_entry_components/symptoms',{
+								field: 'journal_entry_components.id|eq|' + data[i].id
+							})
+							//details.push(getOne(promise,'symptoms',data[i].symptom_id)
 							.then(function(detail){
 								// add detail to the component
 								that.tempComp = {
 									id: '',
 									type: '',
 									title: '',
+									date: '',
+									journal_entry_id: '',
 									details: {}
 								};
 								that.tempComp.type = 'symptom-card';
-								that.tempComp.id = data[i].id;
-								that.tempComp.details = detail.symptoms;
-								that.tempComp.details.severity = data[i].severity;
-								that.tempComp.severity = data[i].severity;
-								that.tempComp.title = detail.symptoms.technical_name;
+								that.tempComp.id = detail[0].journal_entry_components.id;
+								that.tempComp.details = detail[0].symptoms;
+								that.tempComp.details.severity = detail[0].journal_entry_components.severity;
+								that.tempComp.severity = detail[0].journal_entry_components.severity;
+								that.tempComp.date = detail[0].journal_entry_components.created;
+								that.tempComp.title = detail[0].symptoms.technical_name;
+								that.tempComp.journal_entry_id = detail[0].journal_entry_components.journal_entry_id;
 								that.journalEntry.components.push(that.tempComp);
 							}));
 						}
@@ -645,9 +656,13 @@ console.log(componentsData);
 
 					}// end for(i in data)
 
-					var list = [];
-					list.push(that.journalEntry);
-					returnPromise.resolve(list);
+					$q.all(
+						details
+					).then(function(){
+						var list = [];
+						list.push(that.journalEntry);
+						returnPromise.resolve(list);
+					});
 
 				}); // end $q.all(componentPromises)
 			}); // end $q.all([journalEntries])
@@ -760,6 +775,62 @@ console.log(componentsData);
 		return returnLiveChartDataPromise.promise;
 	}
 
-	function addSymptom(){}
+	function addSymptom(returnPromise,symptomDataObj){
+		// check to see whether there is a journal_entries record for today; if not, create one
+		var today = _getStringDate(new Date);
+		var that = this;
+
+		var checkEntry = query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|has|' + today
+		})
+		.then(function(data){
+			// if there is a value in journalEntry, then there is a record, use it to save new component record
+			// if this fails, create a journalEntry record for today
+			that.currJournalEntryId = data.id;
+		})
+		.catch(function(error){
+			// the query failed, so adding new journal_entries record for today's date
+			var dataObj = {
+				'wellness_score': 0 // the addRecord function needs something in the dataObj, so passing a null value
+			};
+			addRecord($q.defer(),'journal_entries',dataObj)
+			.then(
+				function(data) {
+					that.currJournalEntryId = data.insertId;
+				},
+				function(error){
+					console.log(error);
+				}
+			);
+
+		});
+
+		$q.all([
+			checkEntry
+		]).then(
+			function(){
+			// the symptom data object passed in params has the keys below. Add journal_entry_id
+			/* var symptomDataObj = {
+				'severity': sev,
+				'symptom_id': 6,
+			};*/
+			var dataObj = {
+				'severity': symptomDataObj.severity,
+				'symptom_id': symptomDataObj.symptom_id,
+				'journal_entry_id': that.currJournalEntryId
+			};
+			addRecord($q.defer(),'journal_entry_components',dataObj)
+			.then(
+				function(data) {
+					returnPromise.resolve(data);
+				},
+				function(error){
+					returnPromise.reject(error);
+				}
+			);
+		});
+
+		return returnPromise.promise;
+	}
 
 }]);
