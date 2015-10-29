@@ -63,18 +63,8 @@ function(api,$scope,$timeout,$q,$element,$modal){
 				break;
 			case 'symptom-card':
 				var tableName = 'journal_entry_components';
+
 				// save a new entry to db
-				/*
-							api.updateOne($q.defer(),tableName,dataObj,tableId)
-							.then(
-								function(data){
-									
-								},
-								function(error){
-									console.log(error);
-								}
-							);
-				*/
 				var modalInstance = $modal.open({
 					animation: true,
 					templateUrl: 'myModalContent.html',
@@ -261,6 +251,19 @@ function($scope, $locale,api){
     	//$scope.card.severity = 7;
     	var sev = $scope.getSeverity();
     	$scope.saveSliderPosition(); // ???
+
+				/*
+		api.updateOne($q.defer(),tableName,dataObj,tableId)
+			.then(
+					function(data){
+									
+					},
+					function(error){
+						console.log(error);
+					}
+				);
+				*/
+
     	$scope.onEditClick("default");
     	$scope.saved = true;    	
     	//console.log("Directive sev: ", sev);
