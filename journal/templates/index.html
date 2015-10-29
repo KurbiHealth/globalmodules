@@ -56,7 +56,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 	        <h3 class="modal-title" style="text-align: center;">Add a Symptom</h3>
 		</div><!--END /.modal-header-->
         
-			<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
+		<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
 				<div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="col-md-6">
@@ -85,7 +85,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
 								<div ng-repeat="(key, val) in rightView" style="margin-top:5px;">
 									<accordion-group is-disabled=false is-open=false>
-										<accordion-heading style="background:red;">
+										<accordion-heading>
 											<!--span-->
 											<h4 style="float:left; padding:8px 0;">{{key}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0;"></i>
@@ -103,7 +103,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								</div>
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
-								<div ng-repeat="(key, val) in symList | filter:symptomSearch" style="margin-top:5px">
+								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<h4 style="float:left; padding:8px 0;">{{val}}</h4>
@@ -116,17 +116,16 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <button class="btn btn-default" type="button" ng-click="addSymptom(val)">Add</button>
 									</accordion-group>
 								</div>
-							</accordion>					
-
+							</accordion>
 						</div>
 					</div><!-- END /.row -->
 				</div>
-      </div><!-- END /.modal-body -->
+		</div><!-- END /.modal-body -->
       
-      <div class="modal-footer">
-      	<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
-      	<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-      </div><!-- END /.modal-footer -->
+		<div class="modal-footer">
+			<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
+			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		</div><!-- END /.modal-footer -->
     </script>
 
 	<div class="row">

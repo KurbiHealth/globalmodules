@@ -305,9 +305,9 @@ function($scope, $locale, symptoms, $modalInstance){
 	//$scope.severityToAdd = {value: -1};
 	$scope.symsToAddList = {};
 	$scope.modalSeverities = {};
-	$scope.testSev = {};
 	$scope.addedSymptoms = 0;
 	$scope.addedSymps = {};
+	$scope.searchList = [];
 	//$scope.addSymptom = addSymptom;
 
 	$scope.addSymptom = function (symptom) {
@@ -340,15 +340,15 @@ function($scope, $locale, symptoms, $modalInstance){
 			}			
 		}
 
-		console.log("Print symp: ", focusSymptom);
-		console.log("Print sev: ", severity);		
-		console.log("Before update: ", $scope.modalSeverities[focusSymptom]);
+		//console.log("Print symp: ", focusSymptom);
+		//console.log("Print sev: ", severity);		
+		//console.log("Before update: ", $scope.modalSeverities[focusSymptom]);
 
 		if (focusSymptom !== undefined) {
 			$scope.modalSeverities[focusSymptom] = severity;
 		}
 		//console.log("Focused: ", focusSymptom);
-		console.log("After Update: ", $scope.modalSeverities[focusSymptom]);
+		//console.log("After Update: ", $scope.modalSeverities[focusSymptom]);
 	};
 
 	$scope.clickLeftView = function(index, category) {
@@ -397,9 +397,9 @@ function($scope, $locale, symptoms, $modalInstance){
 			$scope.clickStack.push(category);
 			//$scope.$apply();
 			//$scope.nextleftView = $scope.currentLeftView[category];
-			console.log("Left History: ", $scope.historyStack);
-			console.log("Left: ", $scope.leftView);
-			console.log("Right: ", $scope.rightView);
+			//console.log("Left History: ", $scope.historyStack);
+			//console.log("Left: ", $scope.leftView);
+			//console.log("Right: ", $scope.rightView);
 			console.log("Left Click: ", $scope.clickStack);			
 			//console.log("rightView: ", $scope.currentRightView);
 			//console.log("leftView: ", $scope.currentLeftView);
@@ -441,9 +441,9 @@ function($scope, $locale, symptoms, $modalInstance){
 				tempHistory.push($scope.rightView);
 				$scope.historyStack.push(tempHistory);
 				$scope.clickStack.push(symptom);
-				console.log("Right History: ", $scope.historyStack);
-				console.log("Left: ", $scope.leftView);
-				console.log("Right: ", $scope.rightView);
+				//console.log("Right History: ", $scope.historyStack);
+				//console.log("Left: ", $scope.leftView);
+				//console.log("Right: ", $scope.rightView);
 				console.log("Right Click: ", $scope.clickStack);
 			/*}
 			else if ($scope.currentRightView[symptom] !== undefined) {
@@ -521,13 +521,33 @@ function($scope, $locale, symptoms, $modalInstance){
 			if (key !== symptom) {
 				$scope.clickedList[key] = false;
 			}
-						
 		}
+
 		$scope.clickedList[symptom] = !$scope.clickedList[symptom];
 	};
 
 	$scope.showSymptomsAdded = function () {
-		//
+		var tempList = [];
+		var found = false;
+
+		for (var added in $scope.addedSymps) {
+			if ($scope.addedSymps[added] === "addedSymptom") {
+				tempList.push(added);
+				found = true;
+			}
+		}
+
+		if (found) {
+			$scope.symptomSearch = "";
+			$scope.searchList = [];
+			$scope.searchList = tempList.slice();
+			$scope.showSearchView = true;
+
+			for (var key in $scope.clickedList) {
+				$scope.clickedList[key] = false;
+			}			
+		}
+
 	};
 
 	$scope.ok = function () {
@@ -587,6 +607,7 @@ function($scope, $locale, symptoms, $modalInstance){
 	$scope.clickBack = function () {
 		var historyCopy = [];
 		var clickCopy = [];
+		$scope.showSearchView = false;
 
 		if ($scope.historyStack.length > 1) {
 			//if (!$scope.backClicked) {
@@ -614,9 +635,9 @@ function($scope, $locale, symptoms, $modalInstance){
 				$scope.clickedList[key] = false;
 			}
 
-			console.log("Current Click: ", currentClick);
-			console.log("Last Left: ", currentView[0]);
-			console.log("Last Right: ", currentView[1]);
+			//console.log("Current Click: ", currentClick);
+			//console.log("Last Left: ", currentView[0]);
+			//console.log("Last Right: ", currentView[1]);
 
 			if (currentView[1] !== undefined) {
 				$scope.leftView = currentView[0];
@@ -628,7 +649,13 @@ function($scope, $locale, symptoms, $modalInstance){
 
 	$scope.modalSearchChange = function (change) {
 		if ($scope.symptomSearch.length > 0 && change !== "blur") {
+			$scope.searchList = [];
+			$scope.searchList = $scope.symList.slice();
 			$scope.showSearchView = true;
+
+			for (var key in $scope.clickedList) {
+				$scope.clickedList[key] = false;
+			}			
 		}
 		/*else {
 			$scope.showSearchView = false;
@@ -657,6 +684,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				//}
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
+					//$scope.searchList.push(key);
 					$scope.showPlus[key] = true;
 				}
 			}
@@ -682,7 +710,7 @@ function($scope, $locale, symptoms, $modalInstance){
 		tempHistory.push($scope.rightView);
 		$scope.historyStack.push(tempHistory);
 		$scope.clickStack.push(topLevel[0]);
-		console.log("Build History: ", $scope.historyStack);
+		//console.log("Build History: ", $scope.historyStack);
 	};
 
 	$scope.getSymCategories = function(symObj) {
