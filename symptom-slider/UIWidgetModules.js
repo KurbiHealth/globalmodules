@@ -16,13 +16,13 @@ angular.module('ui.WellnessSlider', [])
 				//$scope.severityToAdd.value = 5;
 				$scope.updateSymSeverity = function (severityToSet) {
 					$scope.updateSeverity(severityToSet);
-					//console.log("Widget Ctrl Current Deg: ", $scope.currentDeg);
+					console.log("Widget Ctrl Current Deg: ", $scope.currentDeg);
 				};
 				/*$scope.getSymSeverity = function () {
 					console.log("Widget Ctrl GET");
 				}*/
 			},
-			link: function (scope, element, attrs, ctrl) {
+			link: function (scope, element, attrs) {
 				/*This method will be called whet the 'objectToInject' value is changes*/
 	            /*$scope.$watch('saveSev', function (value) {
 	                //Checking if the given value is not undefined
