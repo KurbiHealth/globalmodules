@@ -78,10 +78,10 @@ function(api,$scope,$timeout,$q,$element,$modal){
 				});
 
 			    modalInstance.result.then(
-			    	function (dataObjList, symNameList) {
+			    	function (dataObjList) {
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
-							api.addRecord($q.defer(),tableName,dataObjList[index])
+							/*api.addRecord($q.defer(),tableName,dataObjList[index])
 								.then(
 									function(data) {
 										$scope.updateCardUI(100, type, symNameList[index]);									
@@ -90,7 +90,9 @@ function(api,$scope,$timeout,$q,$element,$modal){
 									function(error){
 										console.log(error);
 									}
-								);			    			
+								);*/
+
+			    			$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
 						//$scope.selected = selectedItem;
 			    	}, 
@@ -568,19 +570,21 @@ function($scope, $locale, symptoms, $modalInstance){
 		if (Object.keys($scope.symsToAddList).length > 0) {
 			//console.log("Add List: ", $scope.symsToAddList);
 			var dataObjList = [];
-			var symNameList = [];
+			//var symNameList = [];
 			var timeSaved = Date.now();
 
 			for (var key in $scope.symsToAddList) {
 				var dataObj = {
+					'symptomName': key,
 					'severity': $scope.symsToAddList[key],
 					'symptom_id': 6,
 					'journal_entry_id': 1,
 					'date': timeSaved
 				};
-				symNameList.push(key);
+				//symNameList.push(key);
 				dataObjList.push(dataObj);
 			}
+			//console.log("symNameList: ", symNameList);
 	    	//var sev = $scope.symsToAddList.pop();
 	    	//var sev = $scope.pray;
 	    	//console.log("Modal severity: ", sev);
@@ -596,7 +600,7 @@ function($scope, $locale, symptoms, $modalInstance){
 			//console.log("Saved symptom: ", symName);
 
 			//$scope.addSymptom(tableName, dataObj, symName);
-			$modalInstance.close(dataObjList, symNameList);
+			$modalInstance.close(dataObjList);
 		}
 		else {
 			$modalInstance.dismiss('cancel');
