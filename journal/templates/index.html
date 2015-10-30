@@ -39,6 +39,11 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 .addedSymptom {
 	background:rgba(65,14,126,0.3);
 }
+
+.focusleftView {
+	color: #410E7E !important;
+	font-weight: bold !important;
+}
 </style>
 
 <div ng-controller="CardControllerInit">
@@ -57,7 +62,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 	        <h3 class="modal-title" style="text-align: center;">Add a Symptom</h3>
 		</div><!--END /.modal-header-->
         
-			<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
+		<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
 				<div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="col-md-6">
@@ -76,7 +81,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 							<ul class="symptom-cats">
 								<div ng-repeat="(ky, vl) in leftView">
 									<li>
-									<a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: #333333; font-size: 14px;" ng-class="{ 'selected-class-name': $index == selectedIndex }">{{ky}} <i class="fa fa-caret-right" ng-show="selectedCategory.value == ky"></i></a>
+									<a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: #333333; font-size: 14px;" ng-class="{'focusleftView': selectedCategory.value == ky}">{{ky}} <i class="fa fa-caret-right" style="color: #410E7E;" ng-show="selectedCategory.value == ky"></i></a>
 									</li>
 								</div>
 							</ul>			
@@ -104,7 +109,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								</div>
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
-								<div ng-repeat="(key, val) in symList | filter:symptomSearch" style="margin-top:5px">
+								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<h4 style="float:left; padding:8px 0;">{{val}}</h4>
@@ -117,17 +122,16 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <button class="btn btn-default" type="button" ng-click="addSymptom(val)">Add</button>
 									</accordion-group>
 								</div>
-							</accordion>					
-
+							</accordion>
 						</div>
 					</div><!-- END /.row -->
 				</div>
-      </div><!-- END /.modal-body -->
+		</div><!-- END /.modal-body -->
       
-      <div class="modal-footer">
-      	<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
-      	<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-      </div><!-- END /.modal-footer -->
+		<div class="modal-footer">
+			<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
+			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		</div><!-- END /.modal-footer -->
     </script>
 
 <style>

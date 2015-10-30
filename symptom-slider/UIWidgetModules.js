@@ -16,7 +16,7 @@ angular.module('ui.WellnessSlider', [])
 				//$scope.severityToAdd.value = 5;
 				$scope.updateSymSeverity = function (severityToSet) {
 					$scope.updateSeverity(severityToSet);
-					console.log("Widget Ctrl Current Deg: ", $scope.currentDeg);
+					//console.log("Widget Ctrl Current Deg: ", $scope.currentDeg);
 				};
 				/*$scope.getSymSeverity = function () {
 					console.log("Widget Ctrl GET");
