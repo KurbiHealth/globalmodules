@@ -21,7 +21,9 @@ function ($http, $q, $log, user, config, $state) {
 		careTeamInit: careTeamInit,
 		getJournalCards: getJournalCards,
 		goalsInit: goalsInit,
-		liveChartList: liveChartList
+		liveChartList: liveChartList,
+		addSymptom: addSymptom,
+		getSymptomList: getSymptomList
 	};
 
 	/*------------------------------------------------
@@ -496,7 +498,7 @@ console.log(componentsData);
 				function(data){
 					var d = _fixTimestamp(data[0].journal_entries.created);
 					that.date = _getStringDate(d);
-					var today = new Date;
+					var today = _getStringDate(new Date);
 					if(that.date != today){
 						that.today = false;
 					}else{
@@ -592,7 +594,6 @@ console.log(componentsData);
 					components
 				).then(function(){
 					that.journalEntry.components = [];
-console.log(that.componentsList);
 					var data = that.componentsList;
 					var details = [];
 
@@ -776,44 +777,48 @@ console.log(that.componentsList);
 	}
 
 	function addSymptom(returnPromise,symptomDataObj){
-		// check to see whether there is a journal_entries record for today; if not, create one
+		// SET VARIABLES
+
 		var today = _getStringDate(new Date);
 		var that = this;
+		that.currJournalEntryId = '';
 
-		var checkEntry = query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|has|' + today
+		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
+
+		var checkEntry = $q.defer();
+		query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|eq|' + today
 		})
 		.then(function(data){
-			// if there is a value in journalEntry, then there is a record, use it to save new component record
-			// if this fails, create a journalEntry record for today
-			that.currJournalEntryId = data.id;
-		})
-		.catch(function(error){
-			// the query failed, so adding new journal_entries record for today's date
-			var dataObj = {
-				'wellness_score': 0 // the addRecord function needs something in the dataObj, so passing a null value
-			};
-			addRecord($q.defer(),'journal_entries',dataObj)
-			.then(
-				function(data) {
-					that.currJournalEntryId = data.insertId;
-				},
-				function(error){
-					console.log(error);
-				}
-			);
-
+			if(data.length == 0){
+				var dataObj = {
+					'wellness_score': 0
+				};
+				addRecord($q.defer(),'journal_entries',dataObj)
+				.then(
+					function(data) {
+						that.currJournalEntryId = data.insertId;
+						checkEntry.resolve();
+					},
+					function(error){
+						console.log(error);
+					}
+				);
+			}else{
+				that.currJournalEntryId = data.id;
+				checkEntry.resolve();
+			}
 		});
 
+		// WHEN DONE ABOVE...
+
 		$q.all([
-			checkEntry
+			checkEntry.promise
 		]).then(
 			function(){
-			// the symptom data object passed in params has the keys below. Add journal_entry_id
-			/* var symptomDataObj = {
-				'severity': sev,
-				'symptom_id': 6,
-			};*/
+		
+		// ADD A SYMPTOM RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
+
 			var dataObj = {
 				'severity': symptomDataObj.severity,
 				'symptom_id': symptomDataObj.symptom_id,
@@ -822,12 +827,37 @@ console.log(that.componentsList);
 			addRecord($q.defer(),'journal_entry_components',dataObj)
 			.then(
 				function(data) {
-					returnPromise.resolve(data);
+					query($q.defer(),'journal_entry_components/symptoms',{
+						field: 'symptoms.id|eq|' + data.insertId
+					})
+					.then(function(data){
+						returnPromise.resolve(data);
+					});
 				},
 				function(error){
 					returnPromise.reject(error);
 				}
 			);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function getSymptomList(){
+		var returnPromise = $q.defer();
+		
+		query($q.defer(),'symptom_categories/symptoms',{})
+		.then(function(data){
+			var returnObj = {};
+			for(var i in data){
+				if(data[i].symptom_categories.category in returnObj){
+					
+				}else{
+					returnObj[data[i].symptom_categories.category] = {};
+				}
+				returnObj[data[i].symptom_categories.category][data[i].symptoms.technical_name] = data[i].symptoms.id;
+			}
+			returnPromise.resolve(returnObj);
 		});
 
 		return returnPromise.promise;
