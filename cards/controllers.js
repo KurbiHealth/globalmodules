@@ -19,7 +19,7 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 	};
 	$scope.cards = cardDataService.cardData;
 
-	api.getJournalCards($q.defer())
+	/*api.getJournalCards($q.defer())
 	.then(
 		function(data){
 			$scope.journalEntries = data;
@@ -47,7 +47,7 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 		function(error){
 			console.log(error);
 		}
-	);
+	);*/
 
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
@@ -55,15 +55,11 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
-			$('.journal-day').masonry(
-			{
-				itemSelector: '.card',
-				columnWidth: '.card',
-				isFitWidth: true,
-				stamp: '.journal-day-header'
-			}
-			); 
-		},150);
+			$('.journal-day').masonry({
+				itemSelector: '.block',
+				columnWidth: .25
+			});
+		},50);
 	});
 
 	$scope.addCard = function(type,date){
@@ -94,17 +90,7 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 			    	function (dataObjList) {
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
-							api.addRecord($q.defer(),tableName,dataObjList[index])
-								.then(
-									function(data) {
-										$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);									
-										console.log("Add Record Data: ", data);
-									},
-									function(error){
-										console.log(error);
-									}
-								);
-
+							api.addSymptom($q.defer(),dataObjList[index]);
 			    			$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
 						//$scope.selected = selectedItem;
@@ -614,7 +600,6 @@ function($scope, $locale, symptoms, $modalInstance){
 			// get values from edit form
 			//var symName = focusSymptom;
 			//console.log("Saved symptom: ", symName);
-
 			//$scope.addSymptom(tableName, dataObj, symName);
 			$modalInstance.close(dataObjList);
 		}

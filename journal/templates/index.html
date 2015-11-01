@@ -1,5 +1,6 @@
 <style>
 .journal-day{padding:0;}
+
 ul.symptom-cats {
 	margin: 0;
 	padding: 0;
@@ -133,13 +134,18 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 		</div><!-- END /.modal-footer -->
     </script>
 
+<style>
+.cardController{padding-left:0; padding-right:0}
+.journal-day{width:100%;}
+</style>
+
 	<div class="row">
 
 		<div ng-controller="CardController" class="cardContainer col-md-12">
 
-			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" ><!-- emit-when="{event: 'renderingDay'}" -->
-				<div class="journal-day-header">{{day.date}}</div>
-				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'renderingCard', conditionFirst: $first, conditionLast: $last}"></div><!--  -->
+			<div ng-repeat="day in journalEntries" class="journal-day">
+				<div class="journal-day-header block">{{day.date}}</div>
+				<div class="card {{card.type}} block" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered'}"></div><!--  -->
 			</div>
 
 		</div>
