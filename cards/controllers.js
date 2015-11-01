@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal',
-function(api,$scope,$timeout,$q,$element,$modal){
+	'$timeout','$q','$element','$modal', 'cardDataService',
+function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 	$scope.symptoms = {
 		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
 				'Ears': {'Ear Ache':6},
@@ -17,6 +17,7 @@ function(api,$scope,$timeout,$q,$element,$modal){
 		'Knees': {'Cap': {'Swelling':17}},
 		'Feet': {'Heel': {'Stinging':18}}
 	};
+	$scope.cards = cardDataService.cardData;
 
 	api.getJournalCards($q.defer())
 	.then(
@@ -29,6 +30,18 @@ function(api,$scope,$timeout,$q,$element,$modal){
 					date: today.toDateString(),
 					components: []
 				});
+			}
+
+			for (var day in data) {
+				var obj = data[day];
+				console.log("obj: ", obj);
+				for (var components in obj) {
+					console.log("components: ", obj[components]);
+					for (var card in obj[components]) {
+						console.log("card: ", card);
+						cardDataService.addCard(card);
+					}
+				}
 			}
 		},
 		function(error){
@@ -81,16 +94,16 @@ function(api,$scope,$timeout,$q,$element,$modal){
 			    	function (dataObjList) {
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
-							/*api.addRecord($q.defer(),tableName,dataObjList[index])
+							api.addRecord($q.defer(),tableName,dataObjList[index])
 								.then(
 									function(data) {
-										$scope.updateCardUI(100, type, symNameList[index]);									
+										$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);									
 										console.log("Add Record Data: ", data);
 									},
 									function(error){
 										console.log(error);
 									}
-								);*/
+								);
 
 			    			$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
@@ -224,8 +237,8 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
-function($scope, $locale,api){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api', 'cardDataService',
+function($scope, $locale, api, cardDataService){
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -233,6 +246,8 @@ function($scope, $locale,api){
 	$scope.timeSaved = $scope.day.date;
 	$scope.defaultSlider = "default";
 	$scope.grabSlider = "grab";
+	//$scope.cards = cardDataService.cardData;
+
 	//$scope.severityToAdd = {value: -1};
 	//$scope.directiveDelegate = {};
 
@@ -242,6 +257,7 @@ function($scope, $locale,api){
 
     $scope.onEditClick = function(sliderStyle)
     {
+    	//console.log("Symptom Controller: ", $scope.cards);
     	$scope.saved = false;
     	$scope.reversed = !$scope.reversed;
     	$scope.setSliderStyle(sliderStyle);
