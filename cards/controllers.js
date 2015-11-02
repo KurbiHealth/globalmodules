@@ -18,6 +18,26 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 		'Feet': {'Heel': {'Stinging':18}}
 	};
 	$scope.cards = cardDataService.cardData;
+	$scope.idCount = 1;
+
+	$scope.initCardService = function () {
+		for (var day in $scope.journalEntries) {
+			var obj = $scope.journalEntries[day];
+			//console.log("obj: ", obj);
+			for (var index in obj.components) {
+				var card = obj.components[index];
+				$scope.idCount = card.id;
+				//console.log("card: ", card);
+				//for (var card in obj.components[index]) {
+					//console.log("id: ", card.id);
+					//console.log("type: ", card.type);
+					//console.log("title: ", card.title);
+					//console.log("sev: ", card.severity);
+				cardDataService.addCard(card);
+				//}
+			}
+		}		
+	};
 
 	/*api.getJournalCards($q.defer())
 	.then(
@@ -60,6 +80,8 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 				columnWidth: .25
 			});
 		},50);
+
+		$scope.initCardService();
 	});
 
 	$scope.addCard = function(type,date){
@@ -68,10 +90,12 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 		switch (type) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
-				$scope.updateCardUI(100, type, newTitle);				
+				++$scope.idCount;
+				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				$scope.updateCardUI(cardObj);
 				break;
 			case 'symptom-card':
-				var tableName = 'journal_entry_components';
+				//var tableName = 'journal_entry_components';
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -91,7 +115,10 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
 							api.addSymptom($q.defer(),dataObjList[index]);
-			    			$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
+							++$scope.idCount;
+							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, severity: dataObjList[index].severity};
+							$scope.updateCardUI(cardObj);
+			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
 						//$scope.selected = selectedItem;
 			    	}, 
@@ -102,7 +129,10 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 				break;
 			case 'image-card':
 				newTitle = "New Image";
-				$scope.updateCardUI(100, type, newTitle);
+				++$scope.idCount;
+				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				$scope.updateCardUI(cardObj);				
+				//$scope.updateCardUI(100, type, newTitle);
 				break;
 			default:
 				break;
@@ -148,11 +178,17 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 	    
 	}); */
 
-	$scope.updateCardUI = function (newId, type, newTitle) {
+	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		$scope.journalEntries[0].components.unshift(
-			{id: newId, 'type': type, title: newTitle}
-		);
+		console.log("cardObj: ", $scope.journalEntries[0]);
+		if ($scope.journalEntries[0].components === undefined) {
+			$scope.journalEntries[0]['components'] = [];
+		}
+
+		$scope.journalEntries[0].components.unshift(cardObj);		
+		//$scope.journalEntries[0].components.unshift(
+			//{id: newId, 'type': type, title: newTitle}
+		//);
 
 		// update the masonry grid layout
 		$timeout(function(){
