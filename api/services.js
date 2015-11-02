@@ -251,9 +251,12 @@ console.log('error in query function-api service: ',error);
 		// this converts a Time object into a y/m/d string
 		// that can be used in a mysql sql query
 		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		if(day < 10)
+			var day = '0' + day;
 		if(month < 10)
 			var month = '0' + month;
-		var r = d.getFullYear() + '-' + month + '-' + d.getDate();
+		var r = d.getFullYear() + '-' + month + '-' + day;
 		return r;
 	}
 
@@ -264,8 +267,9 @@ console.log('error in query function-api service: ',error);
 	function postsInit($scope,careTeam){
 		tempPosts1 = [];
 		tempPosts2 = [];
-console.log(careTeam);
-console.log(user);
+
+		user.getUser();
+
 		promise = $q.defer();
 		messageRequest1 = query(promise,'messages',{
 			field: 'messages.parent_message_id|eq|0',
@@ -288,14 +292,13 @@ console.log(user);
 					temp.messageId = data[i].messages.id;
 					// MATCH UP USER DATA FOR THE MESSAGE
 					var uid = data[i].messages.user_id;
-					if(user.id == uid){
-console.log(user);
+					if(user.id == uid.toString()){
 						temp.author = user.firstName + ' ' + user.lastName;
-						temp.avatar = '/design/user_images' + user.image_file_name;
+						temp.avatar = '/design/user_images/' + user.imageFileName;
 					}else{
 						for(i in careTeam){
 							if(careTeam[i].userId == uid){
-								temp.avatar = '/design/user_images' + careTeam[i].image_file_name;
+								temp.avatar = '/design/user_images/' + careTeam[i].image_file_name;
 							}else{
 								temp.avatar = '';
 							}
@@ -335,7 +338,7 @@ console.log(user);
 					temp.avatar = '';
 					for(j in careTeam){
 						if(careTeam[j].userId == uid){
-							temp.avatar = '/design/user_images' + careTeam[j].image_file_name;
+							temp.avatar = '/design/user_images/' + careTeam[j].image_file_name;
 						}
 					}
 					temp.messageId = data2[i].messages.id;
@@ -542,6 +545,7 @@ console.log(componentsData);
 		}	
 
 		// GET THE ENTRIES FOR A DAY
+		// in this step we set up the journal_entry object that gets passed back
 		$q.all([
 			getDate
 		]).then(function(){
@@ -557,7 +561,8 @@ console.log(componentsData);
 				console.log('error with dateString: ',dateString);
 				return false;
 			}
-			journalEntries.then(function(data){
+			journalEntries
+			.then(function(data){
 				that.tempData = data;
 
 		// CREATE THE MASTER JOURNAL ENTRY OBJECT
@@ -566,6 +571,9 @@ console.log(componentsData);
 		// MARK WHETHER ENTRY IS FOR TODAY OR NOT
 					today: that.today
 				};
+			}).
+			catch(function(error){
+				console.log(error);
 			});
 
 		// GO THROUGH ALL JOURNAL ENTRIES, CREATE RAW COMPONENTS LIST
@@ -583,6 +591,7 @@ console.log(componentsData);
 					components.push(query(promise,'journal_entry_components/journal_entries',{
 						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].journal_entries.id
 					}).then(function(componentsData){
+// WHAT DO YOU DO IF THERE ARE NO ENTRIES FOR TODAY?
 						for(j in componentsData){
 							that.componentsList.push(componentsData[j].journal_entry_components);
 						}
@@ -631,24 +640,27 @@ console.log(componentsData);
 							})
 							//details.push(getOne(promise,'symptoms',data[i].symptom_id)
 							.then(function(detail){
-								// add detail to the component
-								that.tempComp = {
-									id: '',
-									type: '',
-									title: '',
-									date: '',
-									journal_entry_id: '',
-									details: {}
-								};
-								that.tempComp.type = 'symptom-card';
-								that.tempComp.id = detail[0].journal_entry_components.id;
-								that.tempComp.details = detail[0].symptoms;
-								that.tempComp.details.severity = detail[0].journal_entry_components.severity;
-								that.tempComp.severity = detail[0].journal_entry_components.severity;
-								that.tempComp.date = detail[0].journal_entry_components.created;
-								that.tempComp.title = detail[0].symptoms.technical_name;
-								that.tempComp.journal_entry_id = detail[0].journal_entry_components.journal_entry_id;
-								that.journalEntry.components.push(that.tempComp);
+								// if there is a problem with the db record, there will be an empty array here
+								if(detail.length > 0){
+									// add detail to the component
+									that.tempComp = {
+										id: '',
+										type: '',
+										title: '',
+										date: '',
+										journal_entry_id: '',
+										details: {}
+									};
+									that.tempComp.type = 'symptom-card';
+									that.tempComp.id = detail[0].journal_entry_components.id;
+									that.tempComp.details = detail[0].symptoms;
+									that.tempComp.details.severity = detail[0].journal_entry_components.severity;
+									that.tempComp.severity = detail[0].journal_entry_components.severity;
+									that.tempComp.date = detail[0].journal_entry_components.created;
+									that.tempComp.title = detail[0].symptoms.technical_name;
+									that.tempComp.journal_entry_id = detail[0].journal_entry_components.journal_entry_id;
+									that.journalEntry.components.push(that.tempComp);
+								}
 							}));
 						}
 

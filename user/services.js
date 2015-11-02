@@ -4,13 +4,13 @@
 
 kurbiApp.factory('user', ['$cookies', function ($cookies) {
 
-	loggedIn 	= false;
-	email 		= '';
-	firstName 	= '';
-	lastName 	= '';
-	id 			= 0;
-	token 		= '';
-	completeUser = '';
+	loggedIn 		= false;
+	email 			= '';
+	firstName 		= '';
+	lastName 		= '';
+	id 				= '';
+	imageFileName 	= '';
+	token 			= '';
 
 	return {
 
@@ -20,6 +20,7 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 		email: email,
 		token: token,
 		loggedIn: loggedIn,
+		imageFileName: imageFileName,
 		// functions
 		saveUser: saveUser,
 		getUser: getUser,
@@ -27,21 +28,20 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 
 	}
 
-	function saveUser(email,firstName,lastName,id,user){
+	function saveUser(user){
 		// set local values
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.id = id;
-		this.completeUser = user;
-
+		this.email = user.email;
+		this.firstName = user.first_name;
+		this.lastName = user.last_name;
+		this.id = user.id;
+		this.imageFileName = user.image_file_name;
 
 		// set values in cookie
-		$cookies.userEmail = email;
-		$cookies.userFirstName = firstName;
-		$cookies.userLastName = lastName;
-		$cookies.userId = id;
-		$cookies.completeUser = user;
+		$cookies.userEmail = this.email;
+		$cookies.userFirstName = this.firstName;
+		$cookies.userLastName = this.lastName;
+		$cookies.userId = this.id.toString();
+		$cookies.imageFileName = this.imageFileName;
 	}
 
 	function getUser(){
@@ -51,7 +51,7 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 			'lastName': 	'',
 			'id': 			'',
 			'token': 		'',
-			'user': 		''
+			'imageFileName':''
 		};
 
 		// Email
@@ -84,11 +84,11 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 		}else{
 			tempObj.token = this.token = $cookies.token;
 		}
-		// Complete User Record
-		if(this.completeUser != ''){
-			tempObj.completeUser = this.completeUser;
+		// Image File Name
+		if(this.imageFileName != ''){
+			tempObj.imageFileName = this.imageFileName;
 		}else{
-			tempObj.completeUser = this.completeUser = $cookies.completeUser;
+			tempObj.imageFileName = this.imageFileName = $cookies.imageFileName;
 		}
 
 		return tempObj;
