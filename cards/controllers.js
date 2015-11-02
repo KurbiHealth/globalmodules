@@ -1,6 +1,73 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal',
-function(api,$scope,$timeout,$q,$element,$modal){
+	'$timeout','$q','$element','$modal', 'cardDataService',
+function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
+	$scope.symptoms = {
+		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
+				'Ears': {'Ear Ache':6},
+				'Nose': {'Runny Nose':7},
+				'Jaw': {'Clicking':8},
+				'Face': {'Sunburn':9},
+				'Scalp': {'Itchy':10},
+				'Brain': {'Migraine':11}},
+		'Neck': {'Throat': {'Sore Throat':12}},
+		'Torso': {'Stomach': {'Gas':13}},
+		'Arms': {'Elbow': {'Burning':14}},
+		'Back': {'Spine': {'Inflamation':15}},
+		'Hips': {'Joint': {'Pain':16}},
+		'Knees': {'Cap': {'Swelling':17}},
+		'Feet': {'Heel': {'Stinging':18}}
+	};
+	$scope.cards = cardDataService.cardData;
+	$scope.idCount = 1;
+
+	$scope.initCardService = function () {
+		for (var day in $scope.journalEntries) {
+			var obj = $scope.journalEntries[day];
+			//console.log("obj: ", obj);
+			for (var index in obj.components) {
+				var card = obj.components[index];
+				$scope.idCount = card.id;
+				//console.log("card: ", card);
+				//for (var card in obj.components[index]) {
+					//console.log("id: ", card.id);
+					//console.log("type: ", card.type);
+					//console.log("title: ", card.title);
+					//console.log("sev: ", card.severity);
+				cardDataService.addCard(card);
+				//}
+			}
+		}		
+	};
+
+	/*api.getJournalCards($q.defer())
+	.then(
+		function(data){
+			$scope.journalEntries = data;
+			console.log("Data: ", data);
+			if(data[0].today == false){
+				var today = new Date;
+				$scope.journalEntries.unshift({
+					date: today.toDateString(),
+					components: []
+				});
+			}
+
+			for (var day in data) {
+				var obj = data[day];
+				console.log("obj: ", obj);
+				for (var components in obj) {
+					console.log("components: ", obj[components]);
+					for (var card in obj[components]) {
+						console.log("card: ", card);
+						cardDataService.addCard(card);
+					}
+				}
+			}
+		},
+		function(error){
+			console.log(error);
+		}
+	);*/
 
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
@@ -13,6 +80,8 @@ function(api,$scope,$timeout,$q,$element,$modal){
 				columnWidth: .25
 			});
 		},50);
+
+		$scope.initCardService();
 	});
 
 	$scope.addCard = function(type,date){
@@ -21,10 +90,12 @@ function(api,$scope,$timeout,$q,$element,$modal){
 		switch (type) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
-				$scope.updateCardUI(100, type, newTitle);				
+				++$scope.idCount;
+				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				$scope.updateCardUI(cardObj);
 				break;
 			case 'symptom-card':
-				var tableName = 'journal_entry_components';
+				//var tableName = 'journal_entry_components';
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -44,7 +115,10 @@ function(api,$scope,$timeout,$q,$element,$modal){
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
 							api.addSymptom($q.defer(),dataObjList[index]);
-			    			$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
+							++$scope.idCount;
+							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, severity: dataObjList[index].severity};
+							$scope.updateCardUI(cardObj);
+			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
 						//$scope.selected = selectedItem;
 			    	}, 
@@ -55,7 +129,10 @@ function(api,$scope,$timeout,$q,$element,$modal){
 				break;
 			case 'image-card':
 				newTitle = "New Image";
-				$scope.updateCardUI(100, type, newTitle);
+				++$scope.idCount;
+				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				$scope.updateCardUI(cardObj);				
+				//$scope.updateCardUI(100, type, newTitle);
 				break;
 			default:
 				break;
@@ -101,11 +178,17 @@ function(api,$scope,$timeout,$q,$element,$modal){
 	    
 	}); */
 
-	$scope.updateCardUI = function (newId, type, newTitle) {
+	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		$scope.journalEntries[0].components.unshift(
-			{id: newId, 'type': type, title: newTitle}
-		);
+		console.log("cardObj: ", $scope.journalEntries[0]);
+		if ($scope.journalEntries[0].components === undefined) {
+			$scope.journalEntries[0]['components'] = [];
+		}
+
+		$scope.journalEntries[0].components.unshift(cardObj);		
+		//$scope.journalEntries[0].components.unshift(
+			//{id: newId, 'type': type, title: newTitle}
+		//);
 
 		// update the masonry grid layout
 		$timeout(function(){
@@ -176,8 +259,8 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
-function($scope, $locale,api){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api', 'cardDataService',
+function($scope, $locale, api, cardDataService){
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -185,6 +268,8 @@ function($scope, $locale,api){
 	$scope.timeSaved = $scope.day.date;
 	$scope.defaultSlider = "default";
 	$scope.grabSlider = "grab";
+	//$scope.cards = cardDataService.cardData;
+
 	//$scope.severityToAdd = {value: -1};
 	//$scope.directiveDelegate = {};
 
@@ -194,6 +279,7 @@ function($scope, $locale,api){
 
     $scope.onEditClick = function(sliderStyle)
     {
+    	//console.log("Symptom Controller: ", $scope.cards);
     	$scope.saved = false;
     	$scope.reversed = !$scope.reversed;
     	$scope.setSliderStyle(sliderStyle);
