@@ -864,14 +864,3 @@ console.log(componentsData);
 	}
 
 }]);
-
-kurbiApp.factory('cardDataService', function() {
-  	var cards = {
-	    cardData: [],
-	    addCard: function(card) {
-	      this.cardData.push(card);
-	    }
-  	};
-
-  return cards;
-});
