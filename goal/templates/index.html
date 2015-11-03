@@ -1,65 +1,7 @@
-<!--<div style="" ng-controller="GoalController as goalCtrl">
-	
-	<div style="padding: 20px; margin-bottom: 20px; border: 1px solid #cccccc;">
-		<b>Add Goal:</b>
-	</div>
-
-	<form name="goalForm" class="add-goal" ng-submit="addGoal()" >
-
-		<div class="form-group" style="margin:5px 10px;">
-			<label for="goal-category">Goal Category:</label>
-			<select class="form-control" ng-model="goalCtrl.goal.activity">
-			  <option value="0"></option>
-			  <option value="1">Exercise</option>
-			  <option value="2">Travel</option>
-			  <option value="3">Sleep</option>
-			  <option value="4">Diet</option>
-			  <option value="5">Make</option>
-			  <option value="6">Work</option>
-			  <option value="7">Learn</option>
-			  <option value="8">Find</option>
-			</select>
-		</div><!--END /.form-group--*>
-	  
-		<div class="form-group" style="margin:5px 10px;">
-			<label for="goal" class="sr-only">What's your goal?</label>
-			<input type="text" class="form-control" id="goal" placeholder="What's your goal?" ng-model="goalCtrl.goal.body">
-		</div><!--END /.form-group--*>
-
-		<div class="form-group" style="margin:5px 10px;">
-			<label for="goal-action" class="sr-only">What's your first step?</label>
-			<input type="text" class="form-control" id="goal-action" placeholder="What's your first step?" ng-model="goalCtrl.goal.action">
-		</div><!--END /.form-group--*>
-
-		<div class="form-group" style="margin:5px 10px;">
-			<label for="action-frequency">How many times per week?</label>
-			<select class="form-control" ng-model="goalCtrl.goal.frequency">
-			  <option value="0"></option>
-			  <option value="1">1 Time</option>
-			  <option value="2">2 Times</option>
-			  <option value="3">3 Times</option>
-			  <option value="4">4 Times</option>
-			  <option value="5">5 Times</option>
-			  <option value="6">6 Times</option>
-			  <option value="7">7 Times</option>
-			</select>
-		</div><!--END /.form-group--*>
-
-		<div class="modal-footer" style="border-bottom:1px solid #e5e5e5;border-top:none;">
-		    <button type="submit" class="btn btn-primary" ng-click="ok($event)">OK</button>
-		</div>
-
-	</form>
-
-	<button class="btn btn-warning" style="margin-top: -88px;
-    margin-left: 140px;" ng-click="cancel($event)">Cancel</button>
-
-</div>-->
-
 <div class="row">
 	<div class="col-md-10 col-md-offset-1">
 		<div id="goal-header">
-			<h1>We know what you’d like to do. Now, let’s choose a path to get there.</h1>
+			<h1>Current Activity Categories</h1>
 			<ul>
 				<li><a href="#" class="active"><img src="design/img/exercise.png" width="40" height="40" alt="Exercise" /> <span>Exercise</span></a></li>
 				<li><a href="#"><img src="design/img/travel.png" width="40" height="40" alt="Travel" /> <span>Travel</span></a></li>
@@ -89,7 +31,8 @@
 					<h2>Outdoor Yoga on the Square</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center">
+						<img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -111,7 +54,7 @@
 				</div><!--END /.goal-card-body-->
 				</a>
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 		
@@ -131,7 +74,7 @@
 					<h2>Crossfit on a Mom's Schedule</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -151,7 +94,7 @@
 					<h2>Go C25K with Back Pain</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -171,7 +114,7 @@
 					<h2>MSers Water Polo Group</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -191,7 +134,7 @@
 					<h2>Let's Play Raquetball!</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -211,7 +154,7 @@
 					<h2>Punch Back Pain in the Face</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -231,7 +174,7 @@
 					<h2>12 Week Stretching Routine</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -251,7 +194,7 @@
 					<h2>Easy Balance Exercises for MS</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -271,7 +214,7 @@
 					<h2>5 Simple Yoga Poses for MS</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -291,7 +234,7 @@
 					<h2>Zumba for Beginners</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
@@ -311,7 +254,7 @@
 					<h2>Teach Yourself Adaptive Tai Chi</h2>
 				</div><!--END /.goal-card-body-->
 				<div class="goal-card-footer table">
-					<a href="#" class="pull-left table-center"><img src="http://placehold.it/30x30" alt="Member Name"> Created by: Tasha Sampson</a>
+					<a href="#" class="pull-left table-center"><img src="/design/user_images/Av_5.png" alt="Member Name"> Created by: Tasha Sampson</a>
 				</div><!--END /.goal-card-footer-->
 			</div><!--END /.goal-card-->
 			
