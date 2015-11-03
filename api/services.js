@@ -686,13 +686,14 @@ console.log(componentsData);
 
 	function goalsInit(){
 		returnGoalsPromise = $q.defer();
-		getList($q.defer(),'goals',{})
+		query($q.defer(),'goals/goal_activities',{})
 		.then(function(data){
 			goalList = [];
 			for(i in data){
 				var temp = {};
-				temp.created = _fixTimestamp(data[i].created);
-				temp.name = data[i].name;
+				temp.created = _fixTimestamp(data[i].goals.created);
+				temp.name = data[i].goals.name;
+				temp.iconPath = data[i].goal_activities.icon_path;
 				goalList.push(temp);
 			} 
 			returnGoalsPromise.resolve(goalList);

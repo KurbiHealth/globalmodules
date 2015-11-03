@@ -1,22 +1,7 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
 	'$timeout','$q','$element','$modal', 'cardDataService',
 function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
-	$scope.symptoms = {
-		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
-				'Ears': {'Ear Ache':6},
-				'Nose': {'Runny Nose':7},
-				'Jaw': {'Clicking':8},
-				'Face': {'Sunburn':9},
-				'Scalp': {'Itchy':10},
-				'Brain': {'Migraine':11}},
-		'Neck': {'Throat': {'Sore Throat':12}},
-		'Torso': {'Stomach': {'Gas':13}},
-		'Arms': {'Elbow': {'Burning':14}},
-		'Back': {'Spine': {'Inflamation':15}},
-		'Hips': {'Joint': {'Pain':16}},
-		'Knees': {'Cap': {'Swelling':17}},
-		'Feet': {'Heel': {'Stinging':18}}
-	};
+	
 	$scope.cards = cardDataService.cardData;
 	$scope.idCount = 1;
 
@@ -38,36 +23,6 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 			}
 		}		
 	};
-
-	/*api.getJournalCards($q.defer())
-	.then(
-		function(data){
-			$scope.journalEntries = data;
-			console.log("Data: ", data);
-			if(data[0].today == false){
-				var today = new Date;
-				$scope.journalEntries.unshift({
-					date: today.toDateString(),
-					components: []
-				});
-			}
-
-			for (var day in data) {
-				var obj = data[day];
-				console.log("obj: ", obj);
-				for (var components in obj) {
-					console.log("components: ", obj[components]);
-					for (var card in obj[components]) {
-						console.log("card: ", card);
-						cardDataService.addCard(card);
-					}
-				}
-			}
-		},
-		function(error){
-			console.log(error);
-		}
-	);*/
 
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
