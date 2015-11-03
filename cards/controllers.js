@@ -39,36 +39,6 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 		}		
 	};
 
-	/*api.getJournalCards($q.defer())
-	.then(
-		function(data){
-			$scope.journalEntries = data;
-			console.log("Data: ", data);
-			if(data[0].today == false){
-				var today = new Date;
-				$scope.journalEntries.unshift({
-					date: today.toDateString(),
-					components: []
-				});
-			}
-
-			for (var day in data) {
-				var obj = data[day];
-				console.log("obj: ", obj);
-				for (var components in obj) {
-					console.log("components: ", obj[components]);
-					for (var card in obj[components]) {
-						console.log("card: ", card);
-						cardDataService.addCard(card);
-					}
-				}
-			}
-		},
-		function(error){
-			console.log(error);
-		}
-	);*/
-
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
 		// cards are done being rendered, but there still is a brief

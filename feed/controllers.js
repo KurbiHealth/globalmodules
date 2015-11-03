@@ -4,6 +4,10 @@ function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 
 	this.postsInit = function(){
 
+		// The careTeamInit() function is already being called in 
+		// Main Controller in order to make the sidebar work, but 
+		// it also needs to be called here as a quick way to provide
+		// user info to the posts for author info
 		api.careTeamInit().then(function(data){
 			$scope.careTeamList = data;
 			api.postsInit($rootScope,data);
