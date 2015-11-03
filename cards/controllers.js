@@ -1,8 +1,23 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal', 'cardDataService',
-function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
-	
-	$scope.cards = cardDataService.cardData;
+	'$timeout','$q','$element','$modal',
+function(api,$scope,$timeout,$q,$element,$modal) {
+	/*$scope.symptoms = {
+		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
+				'Ears': {'Ear Ache':6},
+				'Nose': {'Runny Nose':7},
+				'Jaw': {'Clicking':8},
+				'Face': {'Sunburn':9},
+				'Scalp': {'Itchy':10},
+				'Brain': {'Migraine':11}},
+		'Neck': {'Throat': {'Sore Throat':12}},
+		'Torso': {'Stomach': {'Gas':13}},
+		'Arms': {'Elbow': {'Burning':14}},
+		'Back': {'Spine': {'Inflamation':15}},
+		'Hips': {'Joint': {'Pain':16}},
+		'Knees': {'Cap': {'Swelling':17}},
+		'Feet': {'Heel': {'Stinging':18}}
+	};*/
+	//$scope.cards = cardDataService.cardData;
 	$scope.idCount = 1;
 
 	$scope.initCardService = function () {
@@ -18,7 +33,7 @@ function(api,$scope,$timeout,$q,$element,$modal, cardDataService) {
 					//console.log("type: ", card.type);
 					//console.log("title: ", card.title);
 					//console.log("sev: ", card.severity);
-				cardDataService.addCard(card);
+				//cardDataService.addCard(card);
 				//}
 			}
 		}		
@@ -214,8 +229,8 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api', 'cardDataService',
-function($scope, $locale, api, cardDataService){
+kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
+function($scope, $locale, api){
 	console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
@@ -570,7 +585,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				var dataObj = {
 					'symptomName': key,
 					'severity': $scope.symsToAddList[key],
-					'symptom_id': 6,
+					'symptom_id': 7,
 					'journal_entry_id': 1,
 					'date': timeSaved
 				};
