@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal',
-function(api,$scope,$timeout,$q,$element,$modal) {
+	'$timeout','$q','$element','$modal','$state',
+function(api,$scope,$timeout,$q,$element,$modal,$state) {
 	/*$scope.symptoms = {
 		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
 				'Ears': {'Ear Ache':6},
@@ -48,11 +48,11 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 console.log('allRendered detected');
 			$('.journal-day').masonry({
 				itemSelector: '.block',
-				columnWidth: .25
+				columnWidth: .33
 			});
 		},50);
 
-		$scope.initCardService();
+		$scope.initCardService(); // what does this do?? -Matt
 	});
 
 	$scope.addCard = function(type,date){
@@ -163,10 +163,11 @@ console.log('allRendered detected');
 		//);
 
 		// update the masonry grid layout
-		$timeout(function(){
+		/*$timeout(function(){
 			$('.journal-day').masonry('reloadItems');
 			$('.journal-day').masonry('layout');
-		},650);		
+		},650);*/
+		$state.reload();	
 	};
 
 	$scope.$watch('files', function () {

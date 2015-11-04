@@ -850,7 +850,6 @@ console.log('error in query function-api service: ',error);
 		that.currJournalEntryId = '';
 
 		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
-
 		var checkEntry = $q.defer();
 		query($q.defer(),'journal_entries',{
 			field: 'journal_entries.created|eq|' + today
@@ -893,7 +892,7 @@ console.log('error in query function-api service: ',error);
 			addRecord($q.defer(),'journal_entry_components',dataObj)
 			.then(
 				function(data) {
-					query($q.defer(),'journal_entry_components/symptoms',{
+					query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
 						field: 'symptoms.id|eq|' + data.insertId
 					})
 					.then(function(data){
