@@ -267,8 +267,10 @@ console.log('error in query function-api service: ',error);
 	function postsInit($scope,careTeam){
 		tempPosts1 = [];
 		tempPosts2 = [];
+		currSymptoms = [];
 
 		user.getUser();
+		var that = this;
 
 		promise = $q.defer();
 		messageRequest1 = query(promise,'messages',{
@@ -402,8 +404,28 @@ console.log('error in query function-api service: ',error);
 						else
 							temp[i].comments = [];
 					}
-	//_getSymptoms();
-					$scope.feed = temp;
+
+					var symptomPromise = $q.defer();
+					var goalPromise = $q.defer();
+					that.componentsList = [];
+					that.goalList = [];
+
+					_getSymptoms(that,symptomPromise);
+					_getGoals(that,goalPromise);
+
+					$q.all([symptomPromise.promise,goalPromise.promise])
+					.then(function(){
+						var returnArr = temp.concat(that.componentsList);
+						returnArr.sort(function(a,b){
+							var c = new Date(a.created);
+							var d = new Date(b.created);
+							return c-d;
+						});
+						
+						// add goals to top of array
+						$scope.goalsForFeed = that.goalList;
+						$scope.feed = returnArr;
+					});
 				});
 			},
 			function (error) {
@@ -414,43 +436,74 @@ console.log('error in query function-api service: ',error);
 		);
 	}
 
-	function _getSymptoms(){
-		var that = this;
-		that.componentsList = [];
+	function _getSymptoms(that,symptomPromise){
 		// get all symptoms from journal_entry_components where
-		// symptom_id != null/''
-
-		// go through each one and 
-		var components = [];
+		// go through each one and get the symptom details
 		var details = [];
-		promise = $q.defer();
-		components.push(query(promise,'journal_entry_components/journal_entries',{
-			field: 'journal_entry_components.symptom_id|eq|' + data[i].journal_entries.id
-		}).then(function(componentsData){
-console.log(componentsData);
+
+		query($q.defer(),'journal_entry_components/journal_entries',{
+			field: 'journal_entry_components.symptom_id|gt|'
+		})
+		.then(function(componentsData){
 			for(j in componentsData){
+				details.push(
+					query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+						field: 'journal_entry_components.id|eq|' + componentsData[j].journal_entry_components.id
+					})
+					.then(function(newstuff){
+						// add detail to the component
+						var tempComp = {
+							id: '',
+							type: '',
+							title: '',
+							created: '',
+							details: {}
+						};
+						if(newstuff.length > 0){
+							tempComp.type = 'symptom-card';
+							tempComp.id = newstuff.id;
+							tempComp.details = newstuff[0].symptoms;
+							tempComp.details.severity = newstuff[0].journal_entry_components.severity;
+							tempComp.severity = newstuff[0].journal_entry_components.severity;
+							tempComp.title = newstuff[0].symptoms.technical_name;
+							tempComp.created = _fixTimestamp(newstuff[0].journal_entry_components.created);
+							that.componentsList.push(tempComp);
+						}
+					})
+				); // end details.push()
+			} // end for(j in componentsData)
+			$q.all(details)
+			.then(function(){
+				symptomPromise.resolve();
+			});
+		});
+	}
 
-				details.push(getOne(promise,'symptoms',data[i].symptom_id)
-				.then(function(detail){
-					// add detail to the component
-					that.tempComp = {
-						id: '',
-						type: '',
-						title: '',
-						details: {}
-					};
-					that.tempComp.type = 'symptom-card';
-					that.tempComp.id = data[i].id;
-					that.tempComp.details = detail.symptoms;
-					that.tempComp.details.severity = data[i].severity;
-					that.tempComp.severity = data[i].severity;
-					that.tempComp.title = detail.symptoms.technical_name;
-					that.journalEntry.components.push(that.tempComp);
-				}));
-
-				that.componentsList.push(componentsData[j].journal_entry_components);
+	function _getGoals(that,goalPromise){
+		query($q.defer(),'goals/goal_activities',{})
+		.then(function(data){
+			for(i in data){
+				// add detail to the component
+				var tempComp = {
+					id: '',
+					type: '',
+					title: '',
+					created: '',
+					activityIconPath: '',
+					details: {}
+				};
+				if(data.length > 0){
+					tempComp.type = 'goal-card';
+					tempComp.id = data[i].goals.id;
+					tempComp.details = data[i].goals;
+					tempComp.title = data[i].goals.name;
+					tempComp.created = _fixTimestamp(data[i].goals.created);
+					tempComp.activityIconPath = data[i].goal_activities.icon_path;
+					that.goalList.push(tempComp);
+				}
 			}
-		}));
+			goalPromise.resolve();
+		});
 	}
 
 	function careTeamInit(){

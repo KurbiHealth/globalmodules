@@ -52,9 +52,13 @@ angular.module('CardsModule', [])
 	            case 'vitalSigns-card':
 	                template = 'live-chart-card.html';
 	                break;
+	            // Card types for Square (feed)
 	            case 'post-card':
 	                template = 'post-card.html';
 	                break;
+	            case 'goal-card':
+	            	template = 'goal-card.html';
+	            	break;
 	            default:
 	            	template = 'text-card.html';
 	            	break;
@@ -69,13 +73,15 @@ angular.module('CardsModule', [])
 	};
 })
 
-.directive("emitWhen", function($timeout,$rootScope){
+.directive("emitWhen", function($timeout){
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
             var params = scope.$eval(attrs.emitWhen),
                 event = params.event;
+console.log('emitWhen saw ' + event);
 			if(scope.$last === true){
+console.log('end of emitWhen, ' + event);
 				$timeout(function () {
                     scope.$emit(event);
                 });

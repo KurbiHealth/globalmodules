@@ -45,6 +45,7 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
+console.log('allRendered detected');
 			$('.journal-day').masonry({
 				itemSelector: '.block',
 				columnWidth: .25
@@ -235,7 +236,7 @@ function($scope, $locale, api){
 	$scope.reversed = true;
 	$scope.saved = false;
 	$scope.severity = 0;
-	$scope.timeSaved = $scope.day.date;
+	$scope.timeSaved = new Date();
 	$scope.defaultSlider = "default";
 	$scope.grabSlider = "grab";
 	//$scope.cards = cardDataService.cardData;
