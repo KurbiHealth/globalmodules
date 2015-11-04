@@ -27,7 +27,7 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 			for (var index in obj.components) {
 				var card = obj.components[index];
 				$scope.idCount = card.id;
-				//console.log("card: ", card);
+				console.log("card: ", card);
 				//for (var card in obj.components[index]) {
 					//console.log("id: ", card.id);
 					//console.log("type: ", card.type);
@@ -86,7 +86,8 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 					    	// save a new entry-type to db
 							api.addSymptom($q.defer(),dataObjList[index]);
 							++$scope.idCount;
-							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, severity: dataObjList[index].severity};
+							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, 
+											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id}};
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
@@ -150,7 +151,7 @@ function(api,$scope,$timeout,$q,$element,$modal) {
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		console.log("cardObj: ", $scope.journalEntries[0]);
+		console.log("cardObj: ", cardObj);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
@@ -321,6 +322,7 @@ function($scope, $locale, symptoms, $modalInstance){
 	$scope.addedSymptoms = 0;
 	$scope.addedSymps = {};
 	$scope.searchList = [];
+	$scope.symptomIds = [];
 	//$scope.addSymptom = addSymptom;
 
 	$scope.addSymptom = function (symptom) {
@@ -585,7 +587,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				var dataObj = {
 					'symptomName': key,
 					'severity': $scope.symsToAddList[key],
-					'symptom_id': 7,
+					'symptom_id': $scope.symptomIds[key],
 					'journal_entry_id': 1,
 					'date': timeSaved
 				};
@@ -698,6 +700,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				//}
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
+					$scope.symptomIds[key] = objToIterate[key];
 					//$scope.searchList.push(key);
 					$scope.showPlus[key] = true;
 				}
@@ -784,6 +787,10 @@ function($scope, $locale, symptoms, $modalInstance){
 			}
 		}
 		return false;
+	};
+
+	$scope.getSymptomId = function (symptom) {
+		return $scope.symptomIds[symptom];
 	};
 
 	$scope.buildSearchList($scope.symptoms);
