@@ -1,41 +1,140 @@
-kurbiApp.controller('GoalController', ['$scope','$rootScope','api','$q',
-function ($scope,$rootScope,api,$q) {
+kurbiApp.controller('GoalController', ['$scope','$rootScope','api',
+	'$q','$state','user',
+function ($scope,$rootScope,api,$q,$state,user) {
 
-	this.goal = {};
-	var that = this;
+	// FLYOUT - ACTIVITIES FORM
 
-	$scope.addGoal = function() {
-		// get form values
-		var temp = {};
-		temp.name = that.goal.body;
-
-		// save to global array for goals (used in sidebar)
-		$rootScope.goalsList.push(temp);
-
-		// save to database
-		// 1. add a 'goals' record
-		var addGoal = api.addRecord($q.defer(),'goals',{
-			name: that.goal.body,
-			goal_activity_id: that.goal.activity
-		});
-		addGoal.then(function(data){
-			that.tempId = data.insertId;
-		});
-
-		// 2. use new id from 'goals' to add a 'goals_actions' record
-		$q.all([addGoal]).then(function(){
-			var addGoalAction = api.addRecord($q.defer(),'goals_actions',{
-				name: that.goal.action,
-				goal_id: that.tempId,
-				frequency: that.goal.frequency
-			});
-			addGoalAction.then(function(){
-				console.log('done');
-			});
-		});
-		
-		// close the page slider
-		$scope.$parent.$close();
+	$scope.getGoalActivityId = function(activity){
+		$rootScope.currentGoalActivity = activity;
+		$rootScope.openAside('right',true,'modules/goal/templates/add-path.html');
 	};
+
+	// FLYOUT - SAVE GOAL AND/OR PATH
+
+	$scope.goal = {};
+	$scope.currentGoalId = '';
+	$scope.currentPathId = '';
+	$scope.path = {
+		name: '',
+		overview: '',
+		fullDescription: '',
+		pathSteps: [],
+		backgroundImage: '',
+		location: '',
+		frequency: '',
+		toolkitItems: [],
+	};
+	$scope.path.toolkitItems.push('');
+	$scope.path.pathSteps.push('');
+
+	$scope.addGoal = function(goal) {
+		
+		// save to database
+		var addGoal = api.addRecord($q.defer(),'goals',{
+			name: goal.name,
+			goal_activity_id: $rootScope.currentGoalActivity.id
+		})
+		.then(function(data){
+			$scope.currentGoalId = data.insertId;
+			// save to global array for goals (used in sidebar)
+			goal.id = data.insertId;
+			$rootScope.goalsList.push(goal);
+			// close the page slider
+			$scope.$parent.$close();
+			// reload the page to show the new goal
+			$state.reload();
+		});
+
+	};
+
+	$scope.addToolkitItem = function(){
+		$scope.path.toolkitItems.push('');
+	}
+
+	$scope.addPathStep = function(){
+		$scope.path.pathSteps.push('');
+	}
+
+	$scope.addPath = function(path){
+console.log(path);
+console.log($scope.goal);
+
+/*user.getUser();
+addPath = api.addRecord($q.defer(),'paths',{
+	name: 'Path Name',
+	user_id: 1,
+	goal_id: 1,
+	overview: 'overview',
+	full_description: 'description',
+	background_image: '',
+	location: 'madison',
+	weekly_frequency: 3
+})
+.then(function(data){
+console.log(data);
+});*/
+		var nextStage = [];
+		// 1. save the goal
+		api.addRecord($q.defer(),'goals',{
+			name: $scope.goal.name,
+			goal_activity_id: $rootScope.currentGoalActivity.id
+		})
+		.then(function(data){
+console.log(data);
+			$scope.currentGoalId = data.insertId;
+			$scope.goal.id = data.insertId;
+
+			// 2. use new id from 'goals' to add a 'paths' record
+			user.getUser();
+			api.addRecord($q.defer(),'paths',{
+				name: path.name,
+				user_id: Number(user.id),
+				goal_id: $scope.currentGoalId,
+				overview: path.overview,
+				full_description: path.fullDescription,
+				background_image: path.backgroundImage.name,
+				location: path.location,
+				weekly_frequency: path.frequency
+			})
+			.then(function(data){
+				$scope.currentPathId = data.insertId;
+console.log(data);
+				// 3. add paths_steps
+				for(j in path.pathSteps){
+					nextStage.push(
+						api.addRecord($q.defer(),'path_steps',{
+							name: path.pathSteps[j],
+							path_id: $scope.currentPathId,
+						})
+						.then(function(data){
+						})
+					);
+				}
+
+				// 4. add path_toolkit_items
+				for(j in path.toolkitItems){
+					nextStage.push(
+						api.addRecord($q.defer(),'path_toolkit_items',{
+							name: path.toolkitItems[j],
+							path_id: $scope.currentPathId,
+						})
+						.then(function(data){
+						})
+					);
+				}
+			});
+		});
+
+		$q.all(nextStage)
+		.then(function(){
+			// close the page slider
+//$scope.$parent.$close();
+			// save to global array for goals (used in sidebar)
+			$rootScope.goalsList.push($scope.goal);
+			// reload the page to show the new goal
+			$state.reload();
+		});
+
+	}
 
 }]);

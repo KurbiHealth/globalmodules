@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal','$state',
-function(api,$scope,$timeout,$q,$element,$modal,$state) {
+	'$timeout','$q','$element','$modal','$state','cloudinary',
+function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 	/*$scope.symptoms = {
 		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
 				'Ears': {'Ear Ache':6},
@@ -27,7 +27,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state) {
 			for (var index in obj.components) {
 				var card = obj.components[index];
 				$scope.idCount = card.id;
-				console.log("card: ", card);
+//console.log("card: ", card);
 				//for (var card in obj.components[index]) {
 					//console.log("id: ", card.id);
 					//console.log("type: ", card.type);
@@ -45,7 +45,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state) {
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
 		$timeout(function(){
-console.log('allRendered detected');
+//console.log('allRendered detected');
 			$('.journal-day').masonry({
 				itemSelector: '.block',
 				columnWidth: .33
@@ -113,43 +113,6 @@ console.log('allRendered detected');
 		//$scope.addSymptomCard();
 	};
 
-	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
-	http://desandro.github.io/masonry/demos/infinite-scroll.html
-	$(function(){
-	    
-	    var $container = $('#container');
-	    
-	    $container.imagesLoaded(function(){
-	      $container.masonry({
-	        itemSelector: '.box',
-	        columnWidth: 100
-	      });
-	    });
-	    
-	    $container.infinitescroll({
-	      navSelector  : '#page-nav',    // selector for the paged navigation 
-	      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
-	      itemSelector : '.box',     // selector for all items you'll retrieve
-	      loading: {
-	          finishedMsg: 'No more pages to load.',
-	          img: 'http://i.imgur.com/6RMhx.gif'
-	        }
-	      },
-	      // trigger Masonry as a callback
-	      function( newElements ) {
-	        // hide new items while they are loading
-	        var $newElems = $( newElements ).css({ opacity: 0 });
-	        // ensure that images load before adding to masonry layout
-	        $newElems.imagesLoaded(function(){
-	          // show elems now they're ready
-	          $newElems.animate({ opacity: 1 });
-	          $container.masonry( 'appended', $newElems, true ); 
-	        });
-	      }
-	    );
-	    
-	}); */
-
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
 		console.log("cardObj: ", cardObj);
@@ -169,28 +132,6 @@ console.log('allRendered detected');
 		},650);*/
 		$state.reload();	
 	};
-
-	$scope.$watch('files', function () {
-        $scope.upload($scope.files);
-    });
-
-    $scope.upload = function (files) {
-        if (files && files.length) {
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                Upload.upload({
-                    url: 'upload/url',
-                    fields: {'username': $scope.username},
-                    file: file
-                }).progress(function (evt) {
-                    var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
-                }).success(function (data, status, headers, config) {
-                    console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-                });
-            }
-        }
-    };
 
 	/*$scope.open = function (size) {
 
@@ -232,9 +173,10 @@ function($scope, $locale, api){
 
 }]);
 
+
 kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
 function($scope, $locale, api){
-	console.log("Symptom Controller");
+	//console.log("Symptom Controller");
 	$scope.reversed = true;
 	$scope.saved = false;
 	$scope.severity = 0;

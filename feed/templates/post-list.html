@@ -6,9 +6,19 @@
 	float:left;
 }
 #post-list-container .goal-card{
-	width:650px !important;
+	/*width:650px !important;
 	max-width:650px !important;
-	min-width:650px !important;
+	min-width:650px !important;*/
+	width:100% !important;
+	max-width:100% !important;
+	min-width:100% !important;
+}
+@media(max-width: 767px) {
+	#post-list-container .goal-card{
+		width:100% !important;
+		max-width:100% !important;
+		min-width:100% !important;
+	}
 }
 #post-list-container .goal-card .card-title, #post-list-container .goal-card .card-footer{
 	display:none;

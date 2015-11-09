@@ -23,7 +23,10 @@ function ($http, $q, $log, user, config, $state) {
 		goalsInit: goalsInit,
 		liveChartList: liveChartList,
 		addSymptom: addSymptom,
-		getSymptomList: getSymptomList
+		getSymptomList: getSymptomList,
+		getGoalActivitiesList: getGoalActivitiesList,
+		saveGoal: saveGoal,
+		savePath: savePath
 	};
 
 	/*------------------------------------------------
@@ -926,6 +929,71 @@ console.log('error in query function-api service: ',error);
 		});
 
 		return returnPromise.promise;
+	}
+
+	function getGoalActivitiesList(){
+		var returnPromise = $q.defer();
+
+		getList($q.defer(),'goal_activities')
+		.then(function(data){
+			returnPromise.resolve(data);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function saveGoal(){
+		// does this happen separately from savePath()?
+	}
+
+	function savePath(){
+
+		//addRecord($q.defer(),'path')
+		//.then(function(data){});
+
+	}
+
+	function addImage(data){
+		var returnPromise = $q.defer();
+		var imgUrl = 'v' + data.version + '/' + data.public_id + '.' + data.format;
+		var today = new Date();
+		today = _getStringDate(today);
+// 1. get journal entry id
+// 2. add an image record
+// 3. use image id in adding a journal_entry_components record
+		api.query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|eq|' + today,
+			orderBy: 'desc',
+			limit
+		})
+		.then(function(data){
+			if(data.length == 0){
+				// insert a record in journal_entries
+				addRecord($q.defer(),'journal_entries',{
+
+				})
+				.then(function(data){
+					addRecord($q.defer(),'journal_entry_components',{
+						'journal_entry_id': data.insertId,
+						'image_id': ''
+					})
+					.then(function(data){
+						// insert
+
+						returnPromise.resolve();
+					});
+				});
+			}else{
+				addRecord($q.defer(),'journal_entry_components',{
+					'image_id': data.id
+				})
+				.then(function(data){
+					// insert
+				});
+			}
+		});
+
+		return returnPromise;
 	}
 
 }]);
