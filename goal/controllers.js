@@ -2,14 +2,8 @@ kurbiApp.controller('GoalController', ['$scope','$rootScope','api',
 	'$q','$state','user',
 function ($scope,$rootScope,api,$q,$state,user) {
 
-	// FLYOUT - ACTIVITIES FORM
 
-	$scope.getGoalActivityId = function(activity){
-		$rootScope.currentGoalActivity = activity;
-		$rootScope.openAside('right',true,'modules/goal/templates/add-path.html');
-	};
-
-	// FLYOUT - SAVE GOAL AND/OR PATH
+	// SET UP VARIABLES
 
 	$scope.goal = {};
 	$scope.currentGoalId = '';
@@ -26,6 +20,18 @@ function ($scope,$rootScope,api,$q,$state,user) {
 	};
 	$scope.path.toolkitItems.push('');
 	$scope.path.pathSteps.push('');
+
+
+	// FLYOUT - ACTIVITIES FORM
+
+	$scope.getGoalActivityId = function(activity){
+		$rootScope.currentGoalActivity = activity;
+		$scope.$parent.$close();
+		$rootScope.openAside('right',true,'modules/goal/templates/add-path.html');
+	};
+
+
+	// FLYOUT - SAVE GOAL AND/OR PATH
 
 	$scope.addGoal = function(goal) {
 		
@@ -47,6 +53,7 @@ function ($scope,$rootScope,api,$q,$state,user) {
 
 	};
 
+
 	$scope.addToolkitItem = function(){
 		$scope.path.toolkitItems.push('');
 	}
@@ -56,35 +63,18 @@ function ($scope,$rootScope,api,$q,$state,user) {
 	}
 
 	$scope.addPath = function(path){
-console.log(path);
-console.log($scope.goal);
 
-/*user.getUser();
-addPath = api.addRecord($q.defer(),'paths',{
-	name: 'Path Name',
-	user_id: 1,
-	goal_id: 1,
-	overview: 'overview',
-	full_description: 'description',
-	background_image: '',
-	location: 'madison',
-	weekly_frequency: 3
-})
-.then(function(data){
-console.log(data);
-});*/
 		var nextStage = [];
-		// 1. save the goal
+	// 1. save the goal
 		api.addRecord($q.defer(),'goals',{
 			name: $scope.goal.name,
 			goal_activity_id: $rootScope.currentGoalActivity.id
 		})
 		.then(function(data){
-console.log(data);
 			$scope.currentGoalId = data.insertId;
 			$scope.goal.id = data.insertId;
 
-			// 2. use new id from 'goals' to add a 'paths' record
+	// 2. use new id from 'goals' to add a 'paths' record
 			user.getUser();
 			api.addRecord($q.defer(),'paths',{
 				name: path.name,
@@ -98,8 +88,8 @@ console.log(data);
 			})
 			.then(function(data){
 				$scope.currentPathId = data.insertId;
-console.log(data);
-				// 3. add paths_steps
+
+	// 3. add paths_steps
 				for(j in path.pathSteps){
 					nextStage.push(
 						api.addRecord($q.defer(),'path_steps',{
@@ -111,7 +101,7 @@ console.log(data);
 					);
 				}
 
-				// 4. add path_toolkit_items
+	// 4. add path_toolkit_items
 				for(j in path.toolkitItems){
 					nextStage.push(
 						api.addRecord($q.defer(),'path_toolkit_items',{
@@ -128,7 +118,7 @@ console.log(data);
 		$q.all(nextStage)
 		.then(function(){
 			// close the page slider
-//$scope.$parent.$close();
+			$scope.$parent.$close();
 			// save to global array for goals (used in sidebar)
 			$rootScope.goalsList.push($scope.goal);
 			// reload the page to show the new goal
