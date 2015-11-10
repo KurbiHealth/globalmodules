@@ -2,14 +2,8 @@ kurbiApp.controller('GoalController', ['$scope','$rootScope','api',
 	'$q','$state','user',
 function ($scope,$rootScope,api,$q,$state,user) {
 
-	// FLYOUT - ACTIVITIES FORM
 
-	$scope.getGoalActivityId = function(activity){
-		$rootScope.currentGoalActivity = activity;
-		$rootScope.openAside('right',true,'modules/goal/templates/add-path.html');
-	};
-
-	// FLYOUT - SAVE GOAL AND/OR PATH
+	// SET UP VARIABLES
 
 	$scope.goal = {};
 	$scope.currentGoalId = '';
@@ -26,6 +20,18 @@ function ($scope,$rootScope,api,$q,$state,user) {
 	};
 	$scope.path.toolkitItems.push('');
 	$scope.path.pathSteps.push('');
+
+
+	// FLYOUT - ACTIVITIES FORM
+
+	$scope.getGoalActivityId = function(activity){
+		$rootScope.currentGoalActivity = activity;
+		$scope.$parent.$close();
+		$rootScope.openAside('right',true,'modules/goal/templates/add-path.html');
+	};
+
+
+	// FLYOUT - SAVE GOAL AND/OR PATH
 
 	$scope.addGoal = function(goal) {
 		
@@ -46,6 +52,7 @@ function ($scope,$rootScope,api,$q,$state,user) {
 		});
 
 	};
+
 
 	$scope.addToolkitItem = function(){
 		$scope.path.toolkitItems.push('');
