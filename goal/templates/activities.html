@@ -12,7 +12,7 @@
 		<div ng-repeat="activity in goalActivitiesList" class="path-details-hero" style="background: #f5f5f5; min-height: 50px;width:90%;margin: 10px 0 10px 25px;">
 			<img src="/design/img/{{activity.icon_path}}" class="profile-small" style="margin:5px 0 0 5px;"/>
 			<h4 style="position: absolute;top: 15px;left: 60px;">{{activity.name}}</h2>
-			<a class="btn btn-default" role="button" ng-click="getGoalActivityId(activity)" style="color: #333333;float: right;margin: 10px 0 0 0;">Choose</a>
+			<a class="btn btn-default" role="button" ng-click="getGoalActivityId(activity);cancel($event);" style="color: #333333;float: right;margin: 10px 0 0 0;">Choose</a>
 		</div><!--END /.path-details-hero-->
 		
 	</div><!--END /.path-details-container-->
