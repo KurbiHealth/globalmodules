@@ -32,6 +32,7 @@ svg.pie {
   position:relative;
   height:220px;
   width: 220px;
+  margin: 0 auto;
 }
 .middleCircle {
   position:absolute;

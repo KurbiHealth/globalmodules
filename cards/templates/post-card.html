@@ -11,9 +11,9 @@
 			<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
 		</div>
 		<div ng-if="card.avatar != ''">
-			<img ng-src="card.avatar" alt="{{card.author}}" height="40" width="40" class="profile-small" />
+			<img alt="{{card.author}}" height="40" width="40" class="profile-small" src="{{card.avatar}}" />
 		</div>
-		<h3>{{card.author}}</h3>
+		<h3 style="position: absolute;right: -80px;">{{card.author}}</h3>
 	</a>
 	<div class="post-content">
 		<p>{{card.message}}</p>

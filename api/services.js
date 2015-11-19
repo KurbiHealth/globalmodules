@@ -21,7 +21,12 @@ function ($http, $q, $log, user, config, $state) {
 		careTeamInit: careTeamInit,
 		getJournalCards: getJournalCards,
 		goalsInit: goalsInit,
-		liveChartList: liveChartList
+		liveChartList: liveChartList,
+		addSymptom: addSymptom,
+		getSymptomList: getSymptomList,
+		getGoalActivitiesList: getGoalActivitiesList,
+		saveGoal: saveGoal,
+		savePath: savePath
 	};
 
 	/*------------------------------------------------
@@ -221,13 +226,16 @@ console.log('error in query function-api service: ',error);
 	------------------------------------------------*/
 
 	function _fixTimestamp(date){
-		// what is mysql_datetime.getTime() ?
+		// The datetime value in the database is off because the 
+		// db is set to a different timezone then EST, so rather
+		// then try and change the db, I set up this function to
+		// fix the time, as a temporary fix
 		var t = date.split(/[- :T]/);
 		t[5] = t[5].replace('.000Z', '');
 		var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
 		var tz_offset = d.getTimezoneOffset() * 60 * 1000;
 		var corrected_datetime = new Date(d - tz_offset);
-		return corrected_datetime;	
+		return corrected_datetime;
 	}
 
 	function _fixChartDate(date){
@@ -243,11 +251,15 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function _getStringDate(d){
-		if(d.getMonth() < 9)
-			var month = '0' + (d.getMonth() + 1);
-		else
-			var month = d.getMonth();
-		var r = d.getFullYear() + '-' + month + '-' + d.getDate();
+		// this converts a Time object into a y/m/d string
+		// that can be used in a mysql sql query
+		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		if(day < 10)
+			var day = '0' + day;
+		if(month < 10)
+			var month = '0' + month;
+		var r = d.getFullYear() + '-' + month + '-' + day;
 		return r;
 	}
 
@@ -258,8 +270,11 @@ console.log('error in query function-api service: ',error);
 	function postsInit($scope,careTeam){
 		tempPosts1 = [];
 		tempPosts2 = [];
-console.log(careTeam);
-console.log(user);
+		currSymptoms = [];
+
+		user.getUser();
+		var that = this;
+
 		promise = $q.defer();
 		messageRequest1 = query(promise,'messages',{
 			field: 'messages.parent_message_id|eq|0',
@@ -282,14 +297,13 @@ console.log(user);
 					temp.messageId = data[i].messages.id;
 					// MATCH UP USER DATA FOR THE MESSAGE
 					var uid = data[i].messages.user_id;
-					if(user.id == uid){
-console.log(user);
+					if(user.id == uid.toString()){
 						temp.author = user.firstName + ' ' + user.lastName;
-						temp.avatar = '/design/user_images' + user.image_file_name;
+						temp.avatar = '/design/user_images/' + user.imageFileName;
 					}else{
 						for(i in careTeam){
 							if(careTeam[i].userId == uid){
-								temp.avatar = '/design/user_images' + careTeam[i].image_file_name;
+								temp.avatar = '/design/user_images/' + careTeam[i].image_file_name;
 							}else{
 								temp.avatar = '';
 							}
@@ -329,7 +343,7 @@ console.log(user);
 					temp.avatar = '';
 					for(j in careTeam){
 						if(careTeam[j].userId == uid){
-							temp.avatar = '/design/user_images' + careTeam[j].image_file_name;
+							temp.avatar = '/design/user_images/' + careTeam[j].image_file_name;
 						}
 					}
 					temp.messageId = data2[i].messages.id;
@@ -393,8 +407,28 @@ console.log(user);
 						else
 							temp[i].comments = [];
 					}
-	//_getSymptoms();
-					$scope.feed = temp;
+
+					var symptomPromise = $q.defer();
+					var goalPromise = $q.defer();
+					that.componentsList = [];
+					that.goalList = [];
+
+					_getSymptoms(that,symptomPromise);
+					_getGoals(that,goalPromise);
+
+					$q.all([symptomPromise.promise,goalPromise.promise])
+					.then(function(){
+						var returnArr = temp.concat(that.componentsList);
+						returnArr.sort(function(a,b){
+							var c = new Date(a.created);
+							var d = new Date(b.created);
+							return c-d;
+						});
+						
+						// add goals to top of array
+						$scope.goalsForFeed = that.goalList;
+						$scope.feed = returnArr;
+					});
 				});
 			},
 			function (error) {
@@ -405,43 +439,74 @@ console.log(user);
 		);
 	}
 
-	function _getSymptoms(){
-		var that = this;
-		that.componentsList = [];
+	function _getSymptoms(that,symptomPromise){
 		// get all symptoms from journal_entry_components where
-		// symptom_id != null/''
-
-		// go through each one and 
-		var components = [];
+		// go through each one and get the symptom details
 		var details = [];
-		promise = $q.defer();
-		components.push(query(promise,'journal_entry_components/journal_entries',{
-			field: 'journal_entry_components.symptom_id|eq|' + data[i].journal_entries.id
-		}).then(function(componentsData){
-console.log(componentsData);
+
+		query($q.defer(),'journal_entry_components/journal_entries',{
+			field: 'journal_entry_components.symptom_id|gt|'
+		})
+		.then(function(componentsData){
 			for(j in componentsData){
+				details.push(
+					query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+						field: 'journal_entry_components.id|eq|' + componentsData[j].journal_entry_components.id
+					})
+					.then(function(newstuff){
+						// add detail to the component
+						var tempComp = {
+							id: '',
+							type: '',
+							title: '',
+							created: '',
+							details: {}
+						};
+						if(newstuff.length > 0){
+							tempComp.type = 'symptom-card';
+							tempComp.id = newstuff.id;
+							tempComp.details = newstuff[0].symptoms;
+							tempComp.details.severity = newstuff[0].journal_entry_components.severity;
+							tempComp.severity = newstuff[0].journal_entry_components.severity;
+							tempComp.title = newstuff[0].symptoms.technical_name;
+							tempComp.created = _fixTimestamp(newstuff[0].journal_entry_components.created);
+							that.componentsList.push(tempComp);
+						}
+					})
+				); // end details.push()
+			} // end for(j in componentsData)
+			$q.all(details)
+			.then(function(){
+				symptomPromise.resolve();
+			});
+		});
+	}
 
-				details.push(getOne(promise,'symptoms',data[i].symptom_id)
-				.then(function(detail){
-					// add detail to the component
-					that.tempComp = {
-						id: '',
-						type: '',
-						title: '',
-						details: {}
-					};
-					that.tempComp.type = 'symptom-card';
-					that.tempComp.id = data[i].id;
-					that.tempComp.details = detail.symptoms;
-					that.tempComp.details.severity = data[i].severity;
-					that.tempComp.severity = data[i].severity;
-					that.tempComp.title = detail.symptoms.technical_name;
-					that.journalEntry.components.push(that.tempComp);
-				}));
-
-				that.componentsList.push(componentsData[j].journal_entry_components);
+	function _getGoals(that,goalPromise){
+		query($q.defer(),'goals/goal_activities',{})
+		.then(function(data){
+			for(i in data){
+				// add detail to the component
+				var tempComp = {
+					id: '',
+					type: '',
+					title: '',
+					created: '',
+					activityIconPath: '',
+					details: {}
+				};
+				if(data.length > 0){
+					tempComp.type = 'goal-card';
+					tempComp.id = data[i].goals.id;
+					tempComp.details = data[i].goals;
+					tempComp.title = data[i].goals.name;
+					tempComp.created = _fixTimestamp(data[i].goals.created);
+					tempComp.activityIconPath = data[i].goal_activities.icon_path;
+					that.goalList.push(tempComp);
+				}
 			}
-		}));
+			goalPromise.resolve();
+		});
 	}
 
 	function careTeamInit(){
@@ -485,14 +550,14 @@ console.log(componentsData);
 
 		if(date == null || date == ''){
 			var getDate = query($q.defer(),'journal_entries',{
-				orderBy: 'journal_entries.created|asc',
+				orderBy: 'journal_entries.created|desc',
 				limit: 1
 			});
 			getDate.then(
 				function(data){
 					var d = _fixTimestamp(data[0].journal_entries.created);
 					that.date = _getStringDate(d);
-					var today = new Date;
+					var today = _getStringDate(new Date);
 					if(that.date != today){
 						that.today = false;
 					}else{
@@ -513,7 +578,7 @@ console.log(componentsData);
 					if(data == null){
 						that.today = false;
 						query($q.defer,'journal_entries',{
-							field: 'journal_entries.created|gt|'+date,
+							orderBy: 'journal_entries.created|desc',
 							limit: 1
 						}).then(
 							function(data){console.log('line 392');
@@ -536,6 +601,7 @@ console.log(componentsData);
 		}	
 
 		// GET THE ENTRIES FOR A DAY
+		// in this step we set up the journal_entry object that gets passed back
 		$q.all([
 			getDate
 		]).then(function(){
@@ -551,7 +617,8 @@ console.log(componentsData);
 				console.log('error with dateString: ',dateString);
 				return false;
 			}
-			journalEntries.then(function(data){
+			journalEntries
+			.then(function(data){
 				that.tempData = data;
 
 		// CREATE THE MASTER JOURNAL ENTRY OBJECT
@@ -560,6 +627,9 @@ console.log(componentsData);
 		// MARK WHETHER ENTRY IS FOR TODAY OR NOT
 					today: that.today
 				};
+			}).
+			catch(function(error){
+				console.log(error);
 			});
 
 		// GO THROUGH ALL JOURNAL ENTRIES, CREATE RAW COMPONENTS LIST
@@ -577,6 +647,7 @@ console.log(componentsData);
 					components.push(query(promise,'journal_entry_components/journal_entries',{
 						field: 'journal_entry_components.journal_entry_id|eq|' + data[i].journal_entries.id
 					}).then(function(componentsData){
+// WHAT DO YOU DO IF THERE ARE NO ENTRIES FOR TODAY?
 						for(j in componentsData){
 							that.componentsList.push(componentsData[j].journal_entry_components);
 						}
@@ -588,7 +659,6 @@ console.log(componentsData);
 					components
 				).then(function(){
 					that.journalEntry.components = [];
-
 					var data = that.componentsList;
 					var details = [];
 
@@ -621,22 +691,32 @@ console.log(componentsData);
 						// check for symptom type
 						if(data[i].symptom_id != null){
 							// severity, symptom_id
-							details.push(getOne(promise,'symptoms',data[i].symptom_id)
+							details.push(query(promise,'journal_entries/journal_entry_components/symptoms',{
+								field: 'journal_entry_components.id|eq|' + data[i].id
+							})
+							//details.push(getOne(promise,'symptoms',data[i].symptom_id)
 							.then(function(detail){
-								// add detail to the component
-								that.tempComp = {
-									id: '',
-									type: '',
-									title: '',
-									details: {}
-								};
-								that.tempComp.type = 'symptom-card';
-								that.tempComp.id = data[i].id;
-								that.tempComp.details = detail.symptoms;
-								that.tempComp.details.severity = data[i].severity;
-								that.tempComp.severity = data[i].severity;
-								that.tempComp.title = detail.symptoms.technical_name;
-								that.journalEntry.components.push(that.tempComp);
+								// if there is a problem with the db record, there will be an empty array here
+								if(detail.length > 0){
+									// add detail to the component
+									that.tempComp = {
+										id: '',
+										type: '',
+										title: '',
+										date: '',
+										journal_entry_id: '',
+										details: {}
+									};
+									that.tempComp.type = 'symptom-card';
+									that.tempComp.id = detail[0].journal_entry_components.id;
+									that.tempComp.details = detail[0].symptoms;
+									that.tempComp.details.severity = detail[0].journal_entry_components.severity;
+									that.tempComp.severity = detail[0].journal_entry_components.severity;
+									that.tempComp.date = detail[0].journal_entry_components.created;
+									that.tempComp.title = detail[0].symptoms.technical_name;
+									that.tempComp.journal_entry_id = detail[0].journal_entry_components.journal_entry_id;
+									that.journalEntry.components.push(that.tempComp);
+								}
 							}));
 						}
 
@@ -645,9 +725,13 @@ console.log(componentsData);
 
 					}// end for(i in data)
 
-					var list = [];
-					list.push(that.journalEntry);
-					returnPromise.resolve(list);
+					$q.all(
+						details
+					).then(function(){
+						var list = [];
+						list.push(that.journalEntry);
+						returnPromise.resolve(list);
+					});
 
 				}); // end $q.all(componentPromises)
 			}); // end $q.all([journalEntries])
@@ -658,13 +742,14 @@ console.log(componentsData);
 
 	function goalsInit(){
 		returnGoalsPromise = $q.defer();
-		getList($q.defer(),'goals',{})
+		query($q.defer(),'goals/goal_activities',{})
 		.then(function(data){
 			goalList = [];
 			for(i in data){
 				var temp = {};
-				temp.created = _fixTimestamp(data[i].created);
-				temp.name = data[i].name;
+				temp.created = _fixTimestamp(data[i].goals.created);
+				temp.name = data[i].goals.name;
+				temp.iconPath = data[i].goal_activities.icon_path;
 				goalList.push(temp);
 			} 
 			returnGoalsPromise.resolve(goalList);
@@ -760,6 +845,155 @@ console.log(componentsData);
 		return returnLiveChartDataPromise.promise;
 	}
 
-	function addSymptom(){}
+	function addSymptom(returnPromise,symptomDataObj){
+		// SET VARIABLES
+
+		var today = _getStringDate(new Date);
+		var that = this;
+		that.currJournalEntryId = '';
+
+		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
+		var checkEntry = $q.defer();
+		query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|eq|' + today
+		})
+		.then(function(data){
+			if(data.length == 0){
+				var dataObj = {
+					'wellness_score': 0
+				};
+				addRecord($q.defer(),'journal_entries',dataObj)
+				.then(
+					function(data) {
+						that.currJournalEntryId = data.insertId;
+						checkEntry.resolve();
+					},
+					function(error){
+						console.log(error);
+					}
+				);
+			}else{
+				that.currJournalEntryId = data.id;
+				checkEntry.resolve();
+			}
+		});
+
+		// WHEN DONE ABOVE...
+
+		$q.all([
+			checkEntry.promise
+		]).then(
+			function(){
+		
+		// ADD A SYMPTOM RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
+
+			var dataObj = {
+				'severity': symptomDataObj.severity,
+				'symptom_id': symptomDataObj.symptom_id,
+				'journal_entry_id': that.currJournalEntryId
+			};
+			addRecord($q.defer(),'journal_entry_components',dataObj)
+			.then(
+				function(data) {
+					query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+						field: 'symptoms.id|eq|' + data.insertId
+					})
+					.then(function(data){
+						returnPromise.resolve(data);
+					});
+				},
+				function(error){
+					returnPromise.reject(error);
+				}
+			);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function getSymptomList(){
+		var returnPromise = $q.defer();
+		
+		query($q.defer(),'symptom_categories/symptoms',{})
+		.then(function(data){
+			var returnObj = {};
+			for(var i in data){
+				if(data[i].symptom_categories.category in returnObj){
+					
+				}else{
+					returnObj[data[i].symptom_categories.category] = {};
+				}
+				returnObj[data[i].symptom_categories.category][data[i].symptoms.technical_name] = data[i].symptoms.id;
+			}
+			returnPromise.resolve(returnObj);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function getGoalActivitiesList(){
+		var returnPromise = $q.defer();
+
+		getList($q.defer(),'goal_activities')
+		.then(function(data){
+			returnPromise.resolve(data);
+		});
+
+		return returnPromise.promise;
+	}
+
+	function saveGoal(){
+		// does this happen separately from savePath()?
+	}
+
+	function savePath(){
+
+		//addRecord($q.defer(),'path')
+		//.then(function(data){});
+
+	}
+
+	function addImage(data){
+		var returnPromise = $q.defer();
+		var imgUrl = 'v' + data.version + '/' + data.public_id + '.' + data.format;
+		var today = new Date();
+		today = _getStringDate(today);
+// 1. get journal entry id
+// 2. add an image record
+// 3. use image id in adding a journal_entry_components record
+		api.query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|eq|' + today,
+			orderBy: 'desc',
+			limit
+		})
+		.then(function(data){
+			if(data.length == 0){
+				// insert a record in journal_entries
+				addRecord($q.defer(),'journal_entries',{
+
+				})
+				.then(function(data){
+					addRecord($q.defer(),'journal_entry_components',{
+						'journal_entry_id': data.insertId,
+						'image_id': ''
+					})
+					.then(function(data){
+						// insert
+
+						returnPromise.resolve();
+					});
+				});
+			}else{
+				addRecord($q.defer(),'journal_entry_components',{
+					'image_id': data.id
+				})
+				.then(function(data){
+					// insert
+				});
+			}
+		});
+
+		return returnPromise;
+	}
 
 }]);

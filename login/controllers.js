@@ -8,7 +8,7 @@ function ($location, $scope, $q, api, user, $state) {
 			function(result){
 				// add values to user service
 				if(user){
-					user.saveUser(result.user.email,result.user.first_name,result.user.last_name,result.user.id,result.user);
+					user.saveUser(result.user);
 					user.loggedIn = true;
 					user.setToken(result.token);
 					// redirect to home

@@ -22,7 +22,7 @@ angular.module('ui.WellnessSlider', [])
 					console.log("Widget Ctrl GET");
 				}*/
 			},
-			link: function (scope, element, attrs, ctrl) {
+			link: function (scope, element, attrs) {
 				/*This method will be called whet the 'objectToInject' value is changes*/
 	            /*$scope.$watch('saveSev', function (value) {
 	                //Checking if the given value is not undefined

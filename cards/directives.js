@@ -52,9 +52,13 @@ angular.module('CardsModule', [])
 	            case 'vitalSigns-card':
 	                template = 'live-chart-card.html';
 	                break;
+	            // Card types for Square (feed)
 	            case 'post-card':
 	                template = 'post-card.html';
 	                break;
+	            case 'goal-card':
+	            	template = 'goal-card.html';
+	            	break;
 	            default:
 	            	template = 'text-card.html';
 	            	break;
@@ -69,29 +73,16 @@ angular.module('CardsModule', [])
 	};
 })
 
-.directive("emitWhen", function($timeout,$rootScope){
+.directive("emitWhen", function($timeout){
     return {
         restrict: 'A',
-       /* scope: {
-        	$last: '@'
-        },*/
         link: function(scope, element, attrs) {
             var params = scope.$eval(attrs.emitWhen),
                 event = params.event;
-                //,
-                //first = params.conditionFirst,
-                //last = params.conditionLast;
-            $rootScope.templast = scope.$last;
-console.log(this);
-//console.log(kurbiGlobal);
-console.log('$rootscope.templast',$rootScope.templast);
-			if(event == 'renderingCard'){
-				if(scope.$last === true){
-console.log(angular.copy(scope.$last));
-					$timeout(function () {
-	                    scope.$emit('allRendered');
-	                });
-				}
+			if(scope.$last === true){
+				$timeout(function () {
+                    scope.$emit(event);
+                });
 			}
         }
     }

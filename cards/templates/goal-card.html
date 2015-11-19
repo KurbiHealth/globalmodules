@@ -1,0 +1,27 @@
+	<div class="card-front" ng-class="{ 'hidden': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text"></span>
+			<i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
+
+		</div>
+		<div class="card-content">
+			<img ng-src="/design/img/{{card.activityIconPath}}" class="pull-left profile-small"/>
+			<p style="padding: 10px 20px 10px 0;"><strong>Goal</strong>: {{card.title}}</p>
+			<!--<img src="/design/img/{{card.activityIconPath}}" class="pull-right profile-small"/>-->
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>
+	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
+		<div class="card-title grey-text text-darken-4">
+			<span class="card-title-text">Edit: {{card.title}}</span><i class="md md-close pull-right activator" ng-click="reversed = ! reversed"></i>
+		</div>
+		<div class="card-content">
+			<textarea>Goal: {{card.title}}</textarea>
+			<input type="submit" name="submit" value="Save" />
+		</div>
+		<div class="card-footer">
+			<p>9:45pm</p>
+		</div>
+	</div>

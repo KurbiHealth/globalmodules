@@ -1,5 +1,6 @@
 <style>
 .journal-day{padding:0;}
+
 ul.symptom-cats {
 	margin: 0;
 	padding: 0;
@@ -35,6 +36,15 @@ ul.symptom-cats li a {
 a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a.accordion-toggle:visited {
 	text-decoration: none;
 }
+
+.addedSymptom {
+	background:rgba(65,14,126,0.3);
+}
+
+.focusleftView {
+	color: #410E7E !important;
+	font-weight: bold !important;
+}
 </style>
 
 <div ng-controller="CardControllerInit">
@@ -42,7 +52,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 	<div id="journal-entry">
 		<span class="pull-left">ADD: &nbsp;</span>
 		<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
-		<i class="md md-camera-alt pull-left" ng-click="addCard('image-card')"></i>
+		<i class="md md-camera-alt pull-left" ng-click="openAside('right',true,'modules/file-upload/templates/upload-image.html')"></i>
 		<i class="md md-healing pull-left" ng-click="addCard('symptom-card')"></i>
 		<!--i class="md md-healing pull-left" data-toggle="modal" href="#form-content" ng-click="addCard('symptom-card')"></i-->
 	</div>
@@ -53,12 +63,12 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 	        <h3 class="modal-title" style="text-align: center;">Add a Symptom</h3>
 		</div><!--END /.modal-header-->
         
-			<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
+		<div class="modal-body" style="overflow: auto; min-height: 300px; padding: 20px 20px 30px 20px;">
 				<div>
 					<div class="row" style="margin-bottom:10px;">
 						<div class="col-md-6">
 							<a href="#" class="label" ng-click="clickBack()" style="color: #333333; font-size: 14px;"><i class="fa fa-angle-double-left"></i> Back</a>
-							<a href="#" class="label" ng-click="" style="color: #333333; font-size: 14px;">Symptoms Added: {{addedSymptoms}}</a>
+							<a href="#" class="label" ng-click="showSymptomsAdded()" style="color: #333333; font-size: 14px;">Symptoms Added: {{addedSymptoms}}</a>
 						</div><!-- END /.col -->
 						<div class="col-md-6">
 							<div class="input-group">
@@ -68,16 +78,16 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 						</div><!-- END /.col -->
 					</div><!-- END /.row -->
 					<div class="row">
-						<div class="col-md-6" style="overflow: scroll;">
+						<div class="col-md-6">
 							<ul class="symptom-cats">
 								<div ng-repeat="(ky, vl) in leftView">
 									<li>
-									<a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: #333333; font-size: 14px;" ng-class="{ 'selected-class-name': $index == selectedIndex }">{{ky}} <i class="fa fa-caret-right" ng-show="selectedCategory.value == ky"></i></a>
+									<a href="#" class="label" ng-click="clickLeftView($index, ky)" style="color: #333333; font-size: 14px;" ng-class="{'focusleftView': selectedCategory.value == ky}">{{ky}} <i class="fa fa-caret-right pull-right" style="color: #410E7E;" ng-show="selectedCategory.value == ky"></i></a>
 									</li>
 								</div>
 							</ul>			
 						</div>        
-						<div class="col-md-6" style="overflow: scroll;">
+						<div class="col-md-6">
 							<accordion close-others="closeOthers" ng-show="!showSearchView">
 								<!--div ng-repeat="(key, val) in leftView" ng-if="key == currentCat"-->
 								<div ng-repeat="(key, val) in rightView" style="margin-top:5px;">
@@ -87,11 +97,11 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 											<h4 style="float:left; padding:8px 0 8px 10px;">{{key}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
-											<div ng-click="clickRightView($index, key, clickedList)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
+											<div ng-class="addedSymps[key]" ng-click="clickRightView($index, key)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 											<!--/span-->
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
-									    <div ring-slider cursor-attr="grab" severity-num="0"></div>
+									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <button class="btn btn-default" type="button" ng-click="addSymptom(key)">Add</button>
 									</accordion-group>
 									<!--div class="well" ng-click="clickLeftView($index, key)">
@@ -100,39 +110,44 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								</div>
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
-								<div ng-repeat="(key, val) in symList | filter:symptomSearch" style="margin-top:5px">
+								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px;">{{val}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
-											<div ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
+											<div ng-class="addedSymps[val]" ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
-									    <div ring-slider cursor-attr="grab" severity-num="0"></div>
+									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val]"></div>
 									    <button class="btn btn-default" type="button" ng-click="addSymptom(val)">Add</button>
 									</accordion-group>
 								</div>
-							</accordion>					
-
+							</accordion>
 						</div>
 					</div><!-- END /.row -->
 				</div>
-      </div><!-- END /.modal-body -->
+		</div><!-- END /.modal-body -->
       
-      <div class="modal-footer">
-      	<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
-      	<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-      </div><!-- END /.modal-footer -->
+		<div class="modal-footer">
+			<button class="btn btn-success" type="button" ng-click="ok()">Save</button>
+			<button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+		</div><!-- END /.modal-footer -->
     </script>
+
+<style>
+.cardController{padding-left:0; padding-right:0}
+.journal-day{width:100%;}
+.journal-day-header{width:100%;}
+</style>
 
 	<div class="row">
 
-		<div ng-controller="CardController" class="cardContainer col-md-12">
+		<div ng-controller="CardController" class="cardContainer col-md-8 col-md-offset-2">
 
-			<div ng-repeat="day in journalEntries" class="journal-day" style="width:100% !important;" ><!-- emit-when="{event: 'renderingDay'}" -->
-				<div class="journal-day-header">{{day.date}}</div>
-				<div class="card {{card.type}}" ng-repeat="card in day.components" card="card" emit-when="{event: 'renderingCard', conditionFirst: $first, conditionLast: $last}"></div><!--  -->
+			<div ng-repeat="day in journalEntries" class="journal-day">
+				<div class="journal-day-header block">{{day.date}}</div>
+				<div class="card {{card.type}} block" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered'}"></div><!--  -->
 			</div>
 
 		</div>
