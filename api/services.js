@@ -16,6 +16,7 @@ function ($http, $q, $log, user, config, $state) {
 		getOne: getOne,
 		addRecord: addRecord,
 		query: query,
+		deleteOne: deleteOne,
 		// SPECIAL QUERIES
 		postsInit: postsInit,
 		careTeamInit: careTeamInit,
@@ -177,6 +178,31 @@ console.log('error in addRecord function-api service: ',error);
 		})
 		.error(function(error){
 console.log('error in addRecord function-api service: ',error);
+			if(error == 'Unauthorized'){
+				// Redirect user to our login page
+    			$state.go('public.logInPage');
+			}
+		});
+		return( promise.promise );
+	}
+
+	function deleteOne(promise,tableName,id){
+		user.getUser();
+		config = {
+			method: 'DELETE',
+			url: urlRoot + 'db/' + tableName + '/' + id,
+			headers: {
+				'x-custom-username': user.email,
+				'x-custom-token': user.token
+			},
+			data: {}
+		}
+		$http(config)
+		.success(function(data){
+			promise.resolve(data);
+		})
+		.error(function(error){
+console.log('error in getOne function-api service: ',error);
 			if(error == 'Unauthorized'){
 				// Redirect user to our login page
     			$state.go('public.logInPage');
