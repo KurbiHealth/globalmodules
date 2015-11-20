@@ -67,6 +67,7 @@ console.log('allRendered detected');
 				break;
 			case 'symptom-card':
 				//var tableName = 'journal_entry_components';
+				getSymptomsCount();
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -149,6 +150,14 @@ console.log('allRendered detected');
 	    );
 	    
 	}); */
+
+	function getSymptomsCount() {
+		api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+				count: 'journal_entry_components.id|eq|'
+			}).then(function(detail){
+				console.log("Symptoms count: ", detail);
+			});
+	};
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
