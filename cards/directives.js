@@ -79,9 +79,7 @@ angular.module('CardsModule', [])
         link: function(scope, element, attrs) {
             var params = scope.$eval(attrs.emitWhen),
                 event = params.event;
-console.log('emitWhen saw ' + event);
 			if(scope.$last === true){
-console.log('end of emitWhen, ' + event);
 				$timeout(function () {
                     scope.$emit(event);
                 });

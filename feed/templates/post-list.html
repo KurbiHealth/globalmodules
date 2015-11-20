@@ -6,9 +6,19 @@
 	float:left;
 }
 #post-list-container .goal-card{
-	width:650px !important;
-	max-width:650px !important;
-	min-width:650px !important;
+	width:100% !important;
+	width:100% !important;
+	max-width: 605px !important;
+}
+#post-list-innercontainer {
+	margin: 0 auto;
+	max-width: 610px;
+}
+@media(max-width: 767px) {
+	#post-list-container .goal-card{
+		width:100% !important;
+		max-width: 300px !important;
+	}
 }
 #post-list-container .goal-card .card-title, #post-list-container .goal-card .card-footer{
 	display:none;
@@ -19,15 +29,18 @@
 }
 </style>
 
-<!-- col-md-8 col-md-offset-2 -->
 <div class="row"  id="post-list-container" ng-controller="CardControllerInit">
 
-	<div class="col-md-9 col-md-offset-3">
-
-		<div class="card {{card.type}} block" ng-repeat="card in goalsForFeed" card="card" emit-when="{event: 'allRendered'}"></div>
-
-		<div class="card {{card.type}} block" ng-repeat="card in feed | orderBy : '-created'" card="card" emit-when="{event: 'allRendered'}"></div>
-
+	<div style="margin-top: 20px;" class="col-md-8 col-md-offset-2">
+	
+		<div id="post-list-innercontainer">
+			
+			<div class="card {{card.type}} block" ng-repeat="card in goalsForFeed" card="card" emit-when="{event: 'allRendered'}"></div>
+			
+			<div class="card {{card.type}} block" ng-repeat="card in feed | orderBy : '-created'" card="card" emit-when="{event: 'allRendered'}"></div>		
+		
+		</div>
+		
 	</div>
 
 <div>
