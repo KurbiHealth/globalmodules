@@ -1022,4 +1022,9 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
+	function deleteCard(id){
+		// use api.deleteOne(promise,'journal_entry_components',id)
+		
+	}
+
 }]);
