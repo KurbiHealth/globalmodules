@@ -22,13 +22,14 @@ ul.symptom-cats li a {
     color: #333;
     background-color: #ffffff;
     border-color: #cccccc;
+    border-radius: none;
 }
 .panel-group .panel {
     margin-bottom: 0;
     border-radius: 0px;
 }
 .panel-heading {
-	padding: 0 0 0 10px;
+	padding: 0;
 	position:relative;
 }
 
@@ -93,7 +94,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<!--span-->
-											<h4 style="float:left; padding:8px 0;">{{key}}</h4>
+											<h4 style="float:left; padding:8px 0 8px 10px;">{{key}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[key]" ng-click="clickRightView($index, key)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
@@ -112,7 +113,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
-											<h4 style="float:left; padding:8px 0;">{{val}}</h4>
+											<h4 style="float:left; padding:8px 0 8px 10px;">{{val}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[val]" ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
@@ -142,7 +143,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 	<div class="row">
 
-		<div ng-controller="CardController" class="cardContainer col-md-12">
+		<div ng-controller="CardController" class="cardContainer col-md-8 col-md-offset-2">
 
 			<div ng-repeat="day in journalEntries" class="journal-day">
 				<div class="journal-day-header block">{{day.date}}</div>
