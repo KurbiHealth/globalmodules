@@ -94,15 +94,18 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<!--span-->
-											<h4 style="float:left; padding:8px 0 8px 10px;">{{key}}</h4>
-											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0;"></i>
+											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{key}}</h4>
+											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[key]" ng-click="clickRightView($index, key)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 											<!--/span-->
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
-									    <button class="btn btn-default" type="button" ng-click="addSymptom(key)">Add</button>
+									    <div style="padding-top: 10px;">
+									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)">Add</button>
+									      <button type="button" class="btn btn-default" ng-click=""><i class="fa fa-trash-o"></i></button>
+									    </div>
 									</accordion-group>
 									<!--div class="well" ng-click="clickLeftView($index, key)">
 										<span>{{key}}</span>
@@ -113,14 +116,17 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
-											<h4 style="float:left; padding:8px 0 8px 10px;">{{val}}</h4>
-											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0;"></i>
+											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val}}</h4>
+											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[val]" ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val]"></div>
-									    <button class="btn btn-default" type="button" ng-click="addSymptom(val)">Add</button>
+									    <div style="padding-top: 10px;">
+										    <button type="button" class="btn btn-default" ng-click="addSymptom(val)">Add</button>
+										    <button type="button" class="btn btn-default" ng-click=""><i class="fa fa-trash-o"></i></button>
+										  </div>
 									</accordion-group>
 								</div>
 							</accordion>
@@ -145,7 +151,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 		<div ng-controller="CardController" class="cardContainer col-md-8 col-md-offset-2">
 
-			<div ng-repeat="day in journalEntries" class="journal-day">
+			<div ng-repeat="day in journalEntries" class="journal-day" style="margin: 0 auto; max-width: 610px;">
 				<div class="journal-day-header block">{{day.date}}</div>
 				<div class="card {{card.type}} block" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered'}"></div><!--  -->
 			</div>
