@@ -1,12 +1,16 @@
 kurbiApp.controller('GoalController', ['$scope','$rootScope','api',
-	'$q','$state','user',
-function ($scope,$rootScope,api,$q,$state,user) {
+	'$q','$state','user','cloudinary',
+function ($scope,$rootScope,api,$q,$state,user,cloudinary) {
 
 
 	// SET UP VARIABLES
 
 	$scope.goal = {};
 	$scope.currentGoalId = '';
+	$scope.goal = {
+		name: '',
+		activity_id: ''
+	};
 	$scope.currentPathId = '';
 	$scope.path = {
 		name: '',
@@ -112,6 +116,19 @@ function ($scope,$rootScope,api,$q,$state,user) {
 						})
 					);
 				}
+
+	// 5. add the background image
+				/*cloudinary.upload(path.backgroundImage, {})
+				.then(function (resp) {
+					nextStage.push(
+						api.addRecord($q.defer(),'path_toolkit_items',{
+							name: path.toolkitItems[j],
+							path_id: $scope.currentPathId,
+						})
+						.then(function(data){
+						})
+					);					
+				}); */
 			});
 		});
 
@@ -123,6 +140,76 @@ function ($scope,$rootScope,api,$q,$state,user) {
 			$rootScope.goalsList.push($scope.goal);
 			// reload the page to show the new goal
 			$state.reload();
+		});
+
+	}
+
+	$scope.loadGoalPath = function(goalId){
+
+/* TODO'S
+- Need to change the order of loading around to pull goal and then all paths for that goal
+- need to add a many2many table between goals and paths in db
+- need to add that m2m tbl info to join and validModels files in the api
+- need to modify the addPath to accomodate
+- need to add an ng-repeat that spits out an accordion section for each path, then fills out a 
+path display (with an edit button) for each path
+*/
+
+		$scope.currentPathId = pathId;
+		$scope.tempPath = {
+			name: '',
+			overview: '',
+			fullDescription: '',
+			pathSteps: [],
+			backgroundImage: '',
+			location: '',
+			frequency: '',
+			toolkitItems: [],
+		};
+
+		// load path
+		var nextStep = [];
+		api.getOne($q.defer(),'paths',pathId)
+		.then(function(data){ 
+			$scope.tempPath.name = data.name;
+
+			nextStep.push(
+				api.getOne($q.defer(),'goals',data.goal_id)
+				.then(function(data){
+					$scope.currentGoalId = data.id;
+					$scope.goal.name = data.name;
+					$scope.goal.activity_id = data.activity_id;
+					nextStep.push(
+						api.getOne($q.defer(),'goal_activities',data.activity_id)
+						.then(function(data){
+							$scope.goal.activity_name = data.name;
+						})
+					);
+				})
+			);
+
+			nextStep.push(
+				api.query($q.defer(),'path_steps',{
+					field: 'path_steps.path_id|eq|' + pathId
+				})
+				.then(function(data){
+					$scope.tempPath.pathSteps = data;
+				})
+			);
+
+			nextStep.push(
+				api.query($q.defer(),'path_toolkit_items',{
+					field: 'path_toolkit_items.path_id|eq|' + pathId
+				})
+				.then(function(data){
+					$scope.tempPath.toolkitItems = data;
+				})
+			);
+
+			$q.all(nextStep)
+			.then(function(){
+				$scope.path = $scope.tempPath;
+			});
 		});
 
 	}
