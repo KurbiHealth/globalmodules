@@ -6,6 +6,9 @@
 <div class="post-item">
 
 	<span class="post-timestamp">{{card.created | date:'short'}}</span>
+<!-- NEED TO HOOK UP REVERSE STUFF -->
+<i class="md md-more-vert pull-right activator" style="position: absolute; top: 5px; right: 0px;" ng-click="reversed = ! reversed"></i>
+<!-- NEED TO HOOK UP REVERSE STUFF -->
 	<a href="#" class="post-person">
 		<div ng-if="card.avatar == ''">
 			<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
