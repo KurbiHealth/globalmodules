@@ -52,7 +52,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			});
 		},50);
 
-		$scope.initCardService(); // what does this do?? -Matt
+		$scope.initCardService(); // what does this do?? -Matt, Grabs the next card Id - Andrew
+		getSymptomsCount();
 	});
 
 	$scope.addCard = function(type,date){
@@ -67,7 +68,15 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				break;
 			case 'symptom-card':
 				//var tableName = 'journal_entry_components';
-				getSymptomsCount();
+				//console.log("Add Symptoms count: ", getSymptomsCount());
+				//getSymptomsCount();
+				var topSymptomsArray = [];
+				$scope.topSymptomsArray = {};
+				$scope.symptomCountArray.length > 4 ? topSymptomsArray = $scope.symptomCountArray.slice(0,5) : topSymptomsArray = $scope.symptomCountArray.slice(0,$scope.symptomCountArray.length);
+				for (var symp in topSymptomsArray) {
+					//console.log("Loop: ", topSymptomsArray[symp]);
+					$scope.topSymptomsArray[topSymptomsArray[symp][0][0]] = topSymptomsArray[symp][0][1];
+				}
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -78,6 +87,9 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 					resolve: {
 						symptoms: function () {
 							return $scope.symptoms;
+						},
+						topSymptoms: function () {
+							return $scope.topSymptomsArray;
 						}
 					}
 				});
@@ -152,11 +164,40 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 	}); */
 
 	function getSymptomsCount() {
-		api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
-				count: 'journal_entry_components.id|eq|'
-			}).then(function(detail){
-				console.log("Symptoms count: ", detail);
-			});
+		$scope.symptomCountArray = [];
+		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+				count: 'journal_entry_components.symptom_id'}).then(
+					function(detail){
+						console.log("Symptoms count: ", detail);
+					});*/
+		api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+			.then(
+					function(journalArray){
+						//console.log("Symptoms count: ", journalArray);
+						var temp = {};
+						var idHolder = {};
+						for (var obj in journalArray){
+							//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+							temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+							idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+							//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+						}
+						for (var t in temp) {
+							$scope.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+						}
+						//console.log("Symptoms count: ", symptomCountDict);
+						$scope.symptomCountArray.sort(function(a, b){
+							if (a[1] > b[1]) //sort string descending
+								return -1;
+							if (a[1] < b[1])
+								return 1;
+							return 0; //default return value (no sorting)
+						});
+						//console.log("Symptoms count: ", symptomCountDict);
+					}
+				);
+
+		//return symptomCountDict;
 	};
 
 	$scope.updateCardUI = function (cardObj) {
@@ -284,9 +325,9 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance',
-function($scope, $locale, symptoms, $modalInstance){
-	console.log("ModalInstanceCtrl");
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms',
+function($scope, $locale, symptoms, $modalInstance, topSymptoms){
+	console.log("ModalInstanceCtrl: ", topSymptoms);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
@@ -708,15 +749,18 @@ function($scope, $locale, symptoms, $modalInstance){
 		//$scope.leftView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
 		$scope.leftView = symptomObj;
-		$scope.rightView = symptomObj[topLevel[0]];
-		$scope.selectedCategory.value = topLevel[0];
+		$scope.rightView = topSymptoms;
+		$scope.selectedCategory.value = -1;
+		//$scope.rightView = symptomObj[topLevel[0]];
+		//$scope.selectedCategory.value = topLevel[0];
 		//console.log("leftView: ", $scope.leftView);
 		$scope.deleteListFromList($scope.catArray, topLevel);
 		//console.log("Full List: ", $scope.catArray);
 		tempHistory.push($scope.leftView);		
 		tempHistory.push($scope.rightView);
 		$scope.historyStack.push(tempHistory);
-		$scope.clickStack.push(topLevel[0]);
+		$scope.clickStack.push("Top 5");
+		//$scope.clickStack.push(topLevel[0]);
 		//console.log("Build History: ", $scope.historyStack);
 	};
 
