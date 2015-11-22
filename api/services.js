@@ -19,17 +19,31 @@ function ($http, $q, $log, user, config, $state) {
 						function(journalArray){
 							console.log("Symptoms Init: ", journalArray);
 							var temp = {};
-							var idHolder = {};
+							//symptomsObject.symptomCountArray = [];
+							//symptomsObject.topSymptomsArray = {};
+							//var idHolder = {};
 							for (var obj in journalArray){
 								//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
-								temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
-								idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+								if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 'avgSeverity': journalArray[obj].journal_entry_components.severity, 'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
+									/*temp[journalArray[obj].symptoms.technical_name].count = 1;
+									temp[journalArray[obj].symptoms.technical_name].avgSeverity = journalArray[obj].journal_entry_components.severity;
+									temp[journalArray[obj].symptoms.technical_name].id = journalArray[obj].symptoms.id;
+									temp[journalArray[obj].symptoms.technical_name].date = journalArray[obj].journal_entry_components.created;*/
+								}
+								else{
+									temp[journalArray[obj].symptoms.technical_name].count+=1;
+									temp[journalArray[obj].symptoms.technical_name].avgSeverity = (temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+								}
+								//temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name].count = 1 : temp[journalArray[obj].symptoms.technical_name].count+=1;
+								//idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
 								//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
 							}
 							for (var t in temp) {
-								symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+								//symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+								symptomsObject.symptomCountArray.push([{'name': t, 'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 'date': temp[t].date}, temp[t].count]);
 							}
-							//console.log("Symptoms count: ", symptomCountDict);
+							console.log("Symptoms count: ", symptomsObject.symptomCountArray);
 							symptomsObject.symptomCountArray.sort(function(a, b){
 								if (a[1] > b[1]) //sort string descending
 									return -1;
@@ -37,12 +51,14 @@ function ($http, $q, $log, user, config, $state) {
 									return 1;
 								return 0; //default return value (no sorting)
 							});
-							//console.log("Symptoms count: ", symptomCountDict);
+							console.log("Symptoms count: ", symptomsObject.symptomCountArray);
 							var topSymptoms = [];
 							symptomsObject.symptomCountArray.length > topSymptomsLimit ? topSymptoms = symptomsObject.symptomCountArray.slice(0,topSymptomsLimit) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
 							for (var symp in topSymptoms) {
-								symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
-							}							
+								//symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+								symptomsObject.topSymptomsArray[topSymptoms[symp][0].name] = {'id': topSymptoms[symp][0].id, 'avgSev': topSymptoms[symp][0].avgSev, 'date': topSymptoms[symp][0].date};
+							}
+							console.log("Top count: ", symptomsObject.topSymptomsArray);
 						}
 				);
 			return;
