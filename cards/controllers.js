@@ -53,7 +53,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		},50);
 
 		$scope.initCardService(); // what does this do?? -Matt, Grabs the next card Id - Andrew
-		getSymptomsCount();
+		//getSymptomsCount();
 	});
 
 	$scope.addCard = function(type,date){
@@ -70,13 +70,14 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				//var tableName = 'journal_entry_components';
 				//console.log("Add Symptoms count: ", getSymptomsCount());
 				//getSymptomsCount();
-				var topSymptomsArray = [];
+				/*var topSymptomsArray = [];
 				$scope.topSymptomsArray = {};
 				$scope.symptomCountArray.length > 4 ? topSymptomsArray = $scope.symptomCountArray.slice(0,5) : topSymptomsArray = $scope.symptomCountArray.slice(0,$scope.symptomCountArray.length);
 				for (var symp in topSymptomsArray) {
 					//console.log("Loop: ", topSymptomsArray[symp]);
 					$scope.topSymptomsArray[topSymptomsArray[symp][0][0]] = topSymptomsArray[symp][0][1];
-				}
+				}*/
+				var topSymsLimit = 5;
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -89,7 +90,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							return $scope.symptoms;
 						},
 						topSymptoms: function () {
-							return $scope.topSymptomsArray;
+							return api.symptomsObject.getTopSymptoms(topSymsLimit);
 						}
 					}
 				});
@@ -105,6 +106,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
+			    		api.symptomsObject.update();
 						//$scope.selected = selectedItem;
 			    	}, 
 			    	function () {
@@ -163,13 +165,13 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 	    
 	}); */
 
-	function getSymptomsCount() {
+	/*function getSymptomsCount() {
 		$scope.symptomCountArray = [];
 		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
 				count: 'journal_entry_components.symptom_id'}).then(
 					function(detail){
 						console.log("Symptoms count: ", detail);
-					});*/
+					});
 		api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 			.then(
 					function(journalArray){
@@ -198,7 +200,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				);
 
 		//return symptomCountDict;
-	};
+	};*/
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI

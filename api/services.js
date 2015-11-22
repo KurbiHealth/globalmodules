@@ -7,6 +7,89 @@ function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
+	//var symptomCountArray = [];
+	//var topSymptomsArray = {};
+	var initTopSymptomsLimit = 5;
+	var symptomsObject = {
+		symptomCountArray: [],
+		topSymptomsArray: {},
+		initSystemsObject: function(topSymptomsLimit){
+			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+				.then(
+						function(journalArray){
+							console.log("Symptoms Init: ", journalArray);
+							var temp = {};
+							var idHolder = {};
+							for (var obj in journalArray){
+								//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+								temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+								idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+								//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+							}
+							for (var t in temp) {
+								symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+							}
+							//console.log("Symptoms count: ", symptomCountDict);
+							symptomsObject.symptomCountArray.sort(function(a, b){
+								if (a[1] > b[1]) //sort string descending
+									return -1;
+								if (a[1] < b[1])
+									return 1;
+								return 0; //default return value (no sorting)
+							});
+							//console.log("Symptoms count: ", symptomCountDict);
+							var topSymptoms = [];
+							symptomsObject.symptomCountArray.length > topSymptomsLimit ? topSymptoms = symptomsObject.symptomCountArray.slice(0,topSymptomsLimit) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
+							for (var symp in topSymptoms) {
+								symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+							}							
+						}
+				);
+			return;
+		},
+		getTopSymptoms: function(numSymsToReturn){
+			var topSymptoms = [];
+			symptomsObject.symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomsObject.symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
+			for (var symp in topSymptoms) {
+				symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+			}
+console.log("GET TOP");
+			return symptomsObject.topSymptomsArray;
+		},
+		getSymptomsCounts: function(){
+			return symptomsObject.symptomCountArray;
+		},
+		update: function(){
+			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+				.then(
+						function(journalArray){
+							console.log("Symptoms Update: ", journalArray);
+							var temp = {};
+							var idHolder = {};
+							for (var obj in journalArray){
+								//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+								temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+								idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+								//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+							}
+							for (var t in temp) {
+								symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+							}
+							//console.log("Symptoms count: ", symptomCountDict);
+							symptomsObject.symptomCountArray.sort(function(a, b){
+								if (a[1] > b[1]) //sort string descending
+									return -1;
+								if (a[1] < b[1])
+									return 1;
+								return 0; //default return value (no sorting)
+							});
+							//console.log("Symptoms count: ", symptomCountDict);						
+						}
+				);
+			return;
+		}		
+	};
+	symptomsObject.initSystemsObject(initTopSymptomsLimit);
 
 	return {
 		// CORE QUERIES
@@ -27,7 +110,8 @@ function ($http, $q, $log, user, config, $state) {
 		getSymptomList: getSymptomList,
 		getGoalActivitiesList: getGoalActivitiesList,
 		saveGoal: saveGoal,
-		savePath: savePath
+		savePath: savePath,
+		symptomsObject: symptomsObject
 	};
 
 	/*------------------------------------------------
@@ -463,6 +547,7 @@ console.log('error in query function-api service: ',error);
 				return error;
 			}
 		);
+		//symptomsObject();
 	}
 
 	function _getSymptoms(that,symptomPromise){
@@ -1022,4 +1107,82 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
+	/*function symptomsObject(){
+		//var symptomCountArray = [];
+		//var topSymptomsArray = {};
+		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+				count: 'journal_entry_components.symptom_id'}).then(
+					function(detail){
+						console.log("Symptoms count: ", detail);
+					});
+		query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+			.then(
+					function(journalArray){
+						console.log("Symptoms count: ", journalArray);
+						var temp = {};
+						var idHolder = {};
+						for (var obj in journalArray){
+							//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+							temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+							idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+							//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+						}
+						for (var t in temp) {
+							symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+						}
+						//console.log("Symptoms count: ", symptomCountDict);
+						symptomCountArray.sort(function(a, b){
+							if (a[1] > b[1]) //sort string descending
+								return -1;
+							if (a[1] < b[1])
+								return 1;
+							return 0; //default return value (no sorting)
+						});
+						//console.log("Symptoms count: ", symptomCountDict);						
+					}
+				);
+
+		return{
+			getTopSymptoms : function(numSymsToReturn){
+				var topSymptoms = [];
+				symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomCountArray.slice(0,symptomCountArray.length);
+				for (var symp in topSymptoms) {
+					topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+				}
+
+				return topSymptomsArray;
+			},
+			getSymptomsCounts : function(){
+				return symptomCountArray;
+			},
+			update : function(){
+				query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+					.then(
+							function(journalArray){
+								//console.log("Symptoms count: ", journalArray);
+								var temp = {};
+								var idHolder = {};
+								for (var obj in journalArray){
+									//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+									temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+									idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+									//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+								}
+								for (var t in temp) {
+									symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+								}
+								//console.log("Symptoms count: ", symptomCountDict);
+								symptomCountArray.sort(function(a, b){
+									if (a[1] > b[1]) //sort string descending
+										return -1;
+									if (a[1] < b[1])
+										return 1;
+									return 0; //default return value (no sorting)
+								});
+								//console.log("Symptoms count: ", symptomCountDict);						
+							}
+						);
+			}
+		};
+	}*/
 }]);
