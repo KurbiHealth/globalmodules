@@ -90,7 +90,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							return $scope.symptoms;
 						},
 						topSymptoms: function () {
-							return $scope.topSymptoms;
+							return api.symptomsObject.topSymptomsCountObj;
 						}
 					}
 				});

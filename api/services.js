@@ -9,35 +9,36 @@ function ($http, $q, $log, user, config, $state) {
 	urlRoot = config.apiUrl;
 	//var initTopSymptomsLimit = 5;
 	var symptomsObject = {
-		//symptomCountArray: [],
+		topSymptomsCountObj: {},
 		topSymptomsArray: [],
 		initSystemsObject: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
-						function(journalArray){
-							var temp = {};
+					function(journalArray){
+						var temp = {};
+						//var tempArray = [];
 
-							for (var obj in journalArray){
-								if (temp[journalArray[obj].symptoms.technical_name] === undefined){
-									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
-										'avgSeverity': journalArray[obj].journal_entry_components.severity, 
-										'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
-								}
-								else{
-									temp[journalArray[obj].symptoms.technical_name].count+=1;
-									temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
-										(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
-								}
+						for (var obj in journalArray){
+							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+									'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
 							}
+							else{
+								temp[journalArray[obj].symptoms.technical_name].count+=1;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
+									(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+							}
+						}
 
-							for (var t in temp) {
-								/*symptomsObject.symptomCountArray.push({'name': t, 
-									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
-									'date': temp[t].date, 'count': temp[t].count});*/
-								symptomsObject.topSymptomsArray.push({'name': t, 
-									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
-									'date': temp[t].date, 'count': temp[t].count});								
-							}
+						for (var t in temp) {
+							//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+
+							symptomsObject.topSymptomsArray.push({'name': t, 
+								'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+								'date': temp[t].date, 'count': temp[t].count});								
+						}
 
 							/*symptomsObject.symptomCountArray.sort(function(a, b){
 								if (a.count > b.count) //sort string descending
@@ -56,7 +57,7 @@ function ($http, $q, $log, user, config, $state) {
 									'avgSev': topSymptoms[symp].avgSev, 'date': topSymptoms[symp].date, 'count': topSymptoms[symp].count};
 							}*/
 							//console.log("Top count: ", symptomsObject.topSymptomsArray);
-						}
+					}
 				);
 			return;
 		},
@@ -75,43 +76,49 @@ function ($http, $q, $log, user, config, $state) {
 		update: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
-						function(journalArray){
-							var temp = {};
-							var found = false;
+					function(journalArray){
+						var temp = {};
+						var found = false;
 
-							for (var obj in journalArray){
-								if (temp[journalArray[obj].symptoms.technical_name] === undefined){
-									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
-										'avgSeverity': journalArray[obj].journal_entry_components.severity, 
-										'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
-								}
-								else{
-									temp[journalArray[obj].symptoms.technical_name].count+=1;
-									temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
-										(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
-								}
+						for (var obj in journalArray){
+							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+									'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
 							}
-
-							for(var t in temp){
-								found = false;
-								for(var symObj in symptomsObject.topSymptomsArray) {
-									if(symObj.name === t){
-										symObj.avgSev = temp[symObj.name].avgSeverity;
-										symObj.count = temp[symObj.name].count;
-										found = true;
-										break;
-									}
-								}
-
-								if(!found){
-									symptomsObject.topSymptomsArray.push({'name': t, 
-										'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
-										'date': temp[t].date, 'count': temp[t].count});									
-								}
+							else{
+								temp[journalArray[obj].symptoms.technical_name].count+=1;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
+									(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
 							}
-
-							console.log("Top count: ", symptomsObject.topSymptomsArray);
 						}
+
+						for(var t in temp){
+							found = false;
+							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+							for(var symObj in symptomsObject.topSymptomsArray) {
+								if(symObj.name === t){
+									symObj.avgSev = temp[symObj.name].avgSeverity;
+									symObj.count = temp[symObj.name].count;
+									//symptomsObject.topSymptomsCountObj[t].date = temp[t].date;
+									//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
+									found = true;
+									break;
+								}
+							}
+
+							if(!found){
+								//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+								//symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+								
+								symptomsObject.topSymptomsArray.push({'name': t, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+									'date': temp[t].date, 'count': temp[t].count});
+							}
+						}
+
+						console.log("Top count: ", symptomsObject.topSymptomsArray);
+					}
 				);
 			return;
 		}		
