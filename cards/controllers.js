@@ -77,7 +77,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 					//console.log("Loop: ", topSymptomsArray[symp]);
 					$scope.topSymptomsArray[topSymptomsArray[symp][0][0]] = topSymptomsArray[symp][0][1];
 				}*/
-				var topSymsLimit = 5;
+				//var topSymsLimit = 5;
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -90,7 +90,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							return $scope.symptoms;
 						},
 						topSymptoms: function () {
-							return api.symptomsObject.getTopSymptoms(topSymsLimit);
+							return $scope.topSymptoms;
 						}
 					}
 				});

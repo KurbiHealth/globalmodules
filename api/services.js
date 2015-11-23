@@ -7,105 +7,116 @@ function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
-	//var symptomCountArray = [];
-	//var topSymptomsArray = {};
-	var initTopSymptomsLimit = 5;
+	//var initTopSymptomsLimit = 5;
 	var symptomsObject = {
-		symptomCountArray: [],
-		topSymptomsArray: {},
-		initSystemsObject: function(topSymptomsLimit){
+		//symptomCountArray: [],
+		topSymptomsArray: [],
+		initSystemsObject: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
 						function(journalArray){
-							console.log("Symptoms Init: ", journalArray);
 							var temp = {};
-							//symptomsObject.symptomCountArray = [];
-							//symptomsObject.topSymptomsArray = {};
-							//var idHolder = {};
+
 							for (var obj in journalArray){
-								//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
 								if (temp[journalArray[obj].symptoms.technical_name] === undefined){
-									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 'avgSeverity': journalArray[obj].journal_entry_components.severity, 'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
-									/*temp[journalArray[obj].symptoms.technical_name].count = 1;
-									temp[journalArray[obj].symptoms.technical_name].avgSeverity = journalArray[obj].journal_entry_components.severity;
-									temp[journalArray[obj].symptoms.technical_name].id = journalArray[obj].symptoms.id;
-									temp[journalArray[obj].symptoms.technical_name].date = journalArray[obj].journal_entry_components.created;*/
+									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+										'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+										'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
 								}
 								else{
 									temp[journalArray[obj].symptoms.technical_name].count+=1;
-									temp[journalArray[obj].symptoms.technical_name].avgSeverity = (temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+									temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
+										(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
 								}
-								//temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name].count = 1 : temp[journalArray[obj].symptoms.technical_name].count+=1;
-								//idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
-								//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
 							}
+
 							for (var t in temp) {
-								//symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
-								symptomsObject.symptomCountArray.push([{'name': t, 'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 'date': temp[t].date}, temp[t].count]);
+								/*symptomsObject.symptomCountArray.push({'name': t, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+									'date': temp[t].date, 'count': temp[t].count});*/
+								symptomsObject.topSymptomsArray.push({'name': t, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+									'date': temp[t].date, 'count': temp[t].count});								
 							}
-							console.log("Symptoms count: ", symptomsObject.symptomCountArray);
-							symptomsObject.symptomCountArray.sort(function(a, b){
-								if (a[1] > b[1]) //sort string descending
+
+							/*symptomsObject.symptomCountArray.sort(function(a, b){
+								if (a.count > b.count) //sort string descending
 									return -1;
-								if (a[1] < b[1])
+								if (a.count < b.count)
 									return 1;
 								return 0; //default return value (no sorting)
 							});
-							console.log("Symptoms count: ", symptomsObject.symptomCountArray);
+
 							var topSymptoms = [];
-							symptomsObject.symptomCountArray.length > topSymptomsLimit ? topSymptoms = symptomsObject.symptomCountArray.slice(0,topSymptomsLimit) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
+							symptomsObject.symptomCountArray.length > topSymptomsLimit ? 
+								topSymptoms = symptomsObject.symptomCountArray.slice(0,topSymptomsLimit) : 
+								topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
 							for (var symp in topSymptoms) {
-								//symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
-								symptomsObject.topSymptomsArray[topSymptoms[symp][0].name] = {'id': topSymptoms[symp][0].id, 'avgSev': topSymptoms[symp][0].avgSev, 'date': topSymptoms[symp][0].date};
-							}
-							console.log("Top count: ", symptomsObject.topSymptomsArray);
+								symptomsObject.topSymptomsArray[topSymptoms[symp].name] = {'id': topSymptoms[symp].id, 
+									'avgSev': topSymptoms[symp].avgSev, 'date': topSymptoms[symp].date, 'count': topSymptoms[symp].count};
+							}*/
+							//console.log("Top count: ", symptomsObject.topSymptomsArray);
 						}
 				);
 			return;
 		},
-		getTopSymptoms: function(numSymsToReturn){
+		/*getTopSymptoms: function(numSymsToReturn){
 			var topSymptoms = [];
 			symptomsObject.symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomsObject.symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
 			for (var symp in topSymptoms) {
 				symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
 			}
-console.log("GET TOP");
+
 			return symptomsObject.topSymptomsArray;
 		},
 		getSymptomsCounts: function(){
 			return symptomsObject.symptomCountArray;
-		},
+		},*/
 		update: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
 						function(journalArray){
-							console.log("Symptoms Update: ", journalArray);
 							var temp = {};
-							var idHolder = {};
+							var found = false;
+
 							for (var obj in journalArray){
-								//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
-								temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
-								idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
-								//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+								if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+									temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+										'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+										'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
+								}
+								else{
+									temp[journalArray[obj].symptoms.technical_name].count+=1;
+									temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
+										(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+								}
 							}
-							for (var t in temp) {
-								symptomsObject.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+
+							for(var t in temp){
+								found = false;
+								for(var symObj in symptomsObject.topSymptomsArray) {
+									if(symObj.name === t){
+										symObj.avgSev = temp[symObj.name].avgSeverity;
+										symObj.count = temp[symObj.name].count;
+										found = true;
+										break;
+									}
+								}
+
+								if(!found){
+									symptomsObject.topSymptomsArray.push({'name': t, 
+										'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+										'date': temp[t].date, 'count': temp[t].count});									
+								}
 							}
-							//console.log("Symptoms count: ", symptomCountDict);
-							symptomsObject.symptomCountArray.sort(function(a, b){
-								if (a[1] > b[1]) //sort string descending
-									return -1;
-								if (a[1] < b[1])
-									return 1;
-								return 0; //default return value (no sorting)
-							});
-							//console.log("Symptoms count: ", symptomCountDict);						
+
+							console.log("Top count: ", symptomsObject.topSymptomsArray);
 						}
 				);
 			return;
 		}		
 	};
-	symptomsObject.initSystemsObject(initTopSymptomsLimit);
+	symptomsObject.initSystemsObject();
 
 	return {
 		// CORE QUERIES
