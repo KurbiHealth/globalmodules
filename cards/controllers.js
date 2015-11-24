@@ -106,7 +106,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
-			    		api.symptomsObject.update();
+			    		//api.symptomsObject.update();
 						//$scope.selected = selectedItem;
 			    	}, 
 			    	function () {

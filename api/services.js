@@ -20,9 +20,11 @@ function ($http, $q, $log, user, config, $state) {
 
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+								//console.log("Date: ", sympDate);
 								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
 									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
-									'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
+									'id': journalArray[obj].symptoms.id, 'date': sympDate};
 							}
 							else{
 								temp[journalArray[obj].symptoms.technical_name].count+=1;
@@ -97,9 +99,11 @@ function ($http, $q, $log, user, config, $state) {
 							found = false;
 							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
 							for(var symObj in symptomsObject.topSymptomsArray) {
-								if(symObj.name === t){
-									symObj.avgSev = temp[symObj.name].avgSeverity;
-									symObj.count = temp[symObj.name].count;
+								//console.log("Update symObj: ", symObj.name + " " + t);
+								if(symptomsObject.topSymptomsArray[symObj].name === t){
+									//console.log("Update symObj name: TRUE");
+									symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity;
+									symptomsObject.topSymptomsArray[symObj].count = temp[t].count;
 									//symptomsObject.topSymptomsCountObj[t].date = temp[t].date;
 									//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
 									found = true;
@@ -1045,6 +1049,7 @@ console.log('error in query function-api service: ',error);
 					})
 					.then(function(data){
 						returnPromise.resolve(data);
+						symptomsObject.update();
 					});
 				},
 				function(error){
