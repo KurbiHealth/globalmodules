@@ -20,16 +20,67 @@ function ($http, $q, $log, user, config, $state) {
 
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								var todaysDateObj = new Date();
+								var todaysYear = todaysDateObj.getFullYear();
+								var todaysMonth = todaysDateObj.getMonth() + 1;
+								var todaysDay = todaysDateObj.getDay();
+								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
 								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
-								//console.log("Date: ", sympDate);
+								var year = sympDate.substring(0,4);
+								var month = sympDate.substring(5,7);
+								var day = sympDate.substring(8,10);
+								var journalDate = month + "/" + day + "/" + year;
+
+								if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+									journalDate = "Today";
+								}
+								else if(todaysYear === year){
+									journalDate = month + "/" + day;
+								}
+								
+								console.log("Date: ", journalDate);
+								//var dateObj = new Date(journalDate);
+								//console.log("Date: ", dateObj);
 								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
 									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
-									'id': journalArray[obj].symptoms.id, 'date': sympDate};
+									'id': journalArray[obj].symptoms.id, 'date': journalDate};
 							}
 							else{
+								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
+									var todaysDateObj = new Date();
+									var todaysYear = todaysDateObj.getFullYear();
+									var todaysMonth = todaysDateObj.getMonth() + 1;
+									var todaysDay = todaysDateObj.getDay();
+									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+									var year = sympDate.substring(0,4);
+									var month = sympDate.substring(5,7);
+									var day = sympDate.substring(8,10);
+									var journalDate = month + "/" + day + "/" + year;
+
+									var tempMonth = temp[journalArray[obj].symptoms.technical_name].date.substring(0,2);
+									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);									
+
+									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+										temp[journalArray[obj].symptoms.technical_name].date = "Today";
+									}
+									else if(temp[journalArray[obj].symptoms.technical_name].date.length === 5 && year === todaysYear){
+										if(month > tempMonth || (month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+										}
+									}
+									else{
+										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
+
+										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
+										}
+									}
+								}
 								temp[journalArray[obj].symptoms.technical_name].count+=1;
-								temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
-									(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity+=journalArray[obj].journal_entry_components.severity;
 							}
 						}
 
@@ -84,14 +135,66 @@ function ($http, $q, $log, user, config, $state) {
 
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								var todaysDateObj = new Date();
+								var todaysYear = todaysDateObj.getFullYear();
+								var todaysMonth = todaysDateObj.getMonth() + 1;
+								var todaysDay = todaysDateObj.getDay();
+								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+								var year = sympDate.substring(0,4);
+								var month = sympDate.substring(5,7);
+								var day = sympDate.substring(8,10);
+								var journalDate = month + "/" + day + "/" + year;
+
+								if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+									journalDate = "Today";
+								}
+								else if(todaysYear === year){
+									journalDate = month + "/" + day;
+								}
+								
+								console.log("Date: ", journalDate);
+
 								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
 									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
-									'id': journalArray[obj].symptoms.id, 'date': journalArray[obj].journal_entry_components.created};
+									'id': journalArray[obj].symptoms.id, 'date': journalDate};
 							}
 							else{
+								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
+									var todaysDateObj = new Date();
+									var todaysYear = todaysDateObj.getFullYear();
+									var todaysMonth = todaysDateObj.getMonth() + 1;
+									var todaysDay = todaysDateObj.getDay();
+									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+									var year = sympDate.substring(0,4);
+									var month = sympDate.substring(5,7);
+									var day = sympDate.substring(8,10);
+									var journalDate = month + "/" + day + "/" + year;
+
+									var tempMonth = temp[journalArray[obj].symptoms.technical_name].date.substring(0,2);
+									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);									
+
+									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+										temp[journalArray[obj].symptoms.technical_name].date = "Today";
+									}
+									else if(temp[journalArray[obj].symptoms.technical_name].date.length === 5 && year === todaysYear){
+										if(month > tempMonth || (month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+										}
+									}
+									else{
+										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
+
+										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
+										}
+									}
+								}								
 								temp[journalArray[obj].symptoms.technical_name].count+=1;
-								temp[journalArray[obj].symptoms.technical_name].avgSeverity = 
-									(temp[journalArray[obj].symptoms.technical_name].avgSeverity + journalArray[obj].journal_entry_components.severity)/2;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity+=journalArray[obj].journal_entry_components.severity;
 							}
 						}
 
