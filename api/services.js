@@ -39,9 +39,9 @@ function ($http, $q, $log, user, config, $state) {
 									journalDate = month + "/" + day;
 								}
 
-								console.log("Date If: ", journalDate);
-								console.log("Years: ", todaysYear + " " + year);
-								console.log("Years compare: ", todaysYear === year);
+								console.log("initSystemsObject Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("Years: ", todaysYear + " " + year);
+								//console.log("Years compare: ", todaysYear === year);
 								
 								//var dateObj = new Date(journalDate);
 								//console.log("Date: ", dateObj);
@@ -67,15 +67,16 @@ function ($http, $q, $log, user, config, $state) {
 									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
 									var tempDate = tempMonth + "/" + tempDay;
 
-									console.log("Date Else: ", journalDate + " " + tempDate);
-									console.log("Years: ", todaysYear + " " + year);
-									console.log("Years compare: ", todaysYear === year);
+									console.log("initSystemsObject Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("Date Else: ", journalDate + " " + tempDate);
+									//console.log("Years: ", todaysYear + " " + year);
+									//console.log("Years compare: ", todaysYear === year);
 
 									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
 										temp[journalArray[obj].symptoms.technical_name].date = "Today";
 									}
 									else if(year === todaysYear){
-										console.log("Date Else If: ", temp[journalArray[obj].symptoms.technical_name].date);
+										//console.log("Date Else If: ", temp[journalArray[obj].symptoms.technical_name].date);
 										if(temp[journalArray[obj].symptoms.technical_name].date.length === 5){
 											if(month > tempMonth || (month === tempMonth && day > tempDay)){
 												temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
@@ -87,7 +88,7 @@ function ($http, $q, $log, user, config, $state) {
 									}
 									else{
 										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
-										console.log("Date Else2: ", temp[journalArray[obj].symptoms.technical_name].date);
+										//console.log("Date Else2: ", temp[journalArray[obj].symptoms.technical_name].date);
 										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
 											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
 										}
@@ -168,7 +169,8 @@ function ($http, $q, $log, user, config, $state) {
 									journalDate = month + "/" + day;
 								}
 								
-								console.log("Date: ", journalDate);
+								console.log("update Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("Date: ", journalDate);
 
 								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
 									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
@@ -177,9 +179,9 @@ function ($http, $q, $log, user, config, $state) {
 							else{
 								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
 									var todaysDateObj = new Date();
-									var todaysYear = todaysDateObj.getFullYear();
-									var todaysMonth = todaysDateObj.getMonth() + 1;
-									var todaysDay = todaysDateObj.getDay();
+									var todaysYear = todaysDateObj.getFullYear().toString();
+									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+									var todaysDay = todaysDateObj.getDay().toString();
 									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
 
 									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
@@ -189,19 +191,31 @@ function ($http, $q, $log, user, config, $state) {
 									var journalDate = month + "/" + day + "/" + year;
 
 									var tempMonth = temp[journalArray[obj].symptoms.technical_name].date.substring(0,2);
-									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);									
+									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
+									var tempDate = tempMonth + "/" + tempDay;
+
+									console.log("update Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("Date Else: ", journalDate + " " + tempDate);
+									//console.log("Years: ", todaysYear + " " + year);
+									//console.log("Years compare: ", todaysYear === year);
 
 									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
 										temp[journalArray[obj].symptoms.technical_name].date = "Today";
 									}
-									else if(temp[journalArray[obj].symptoms.technical_name].date.length === 5 && year === todaysYear){
-										if(month > tempMonth || (month === tempMonth && day > tempDay)){
+									else if(year === todaysYear){
+										//console.log("Date Else If: ", temp[journalArray[obj].symptoms.technical_name].date);
+										if(temp[journalArray[obj].symptoms.technical_name].date.length === 5){
+											if(month > tempMonth || (month === tempMonth && day > tempDay)){
+												temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+											}											
+										}
+										else{
 											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
 										}
 									}
 									else{
 										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
-
+										//console.log("Date Else2: ", temp[journalArray[obj].symptoms.technical_name].date);
 										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
 											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
 										}
