@@ -23,7 +23,7 @@ function ($http, $q, $log, user, config, $state) {
 								var todaysDateObj = new Date();
 								var todaysYear = todaysDateObj.getFullYear().toString();
 								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-								var todaysDay = todaysDateObj.getDay().toString();
+								var todaysDay = todaysDateObj.getDate().toString();
 								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
 
 								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
@@ -54,7 +54,7 @@ function ($http, $q, $log, user, config, $state) {
 									var todaysDateObj = new Date();
 									var todaysYear = todaysDateObj.getFullYear().toString();
 									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-									var todaysDay = todaysDateObj.getDay().toString();
+									var todaysDay = todaysDateObj.getDate().toString();
 									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
 
 									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
@@ -69,8 +69,9 @@ function ($http, $q, $log, user, config, $state) {
 
 									console.log("initSystemsObject Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
 									//console.log("Date Else: ", journalDate + " " + tempDate);
-									//console.log("Years: ", todaysYear + " " + year);
-									//console.log("Years compare: ", todaysYear === year);
+									//console.log("Years: ", );
+									console.log("Years compare: ", todaysYear + " " + year + " " + (todaysYear === year));
+									console.log("Date compare: ", todaysDate + " " + journalDate + " " + (todaysDate === journalDate));
 
 									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
 										temp[journalArray[obj].symptoms.technical_name].date = "Today";
@@ -151,9 +152,9 @@ function ($http, $q, $log, user, config, $state) {
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
 								var todaysDateObj = new Date();
-								var todaysYear = todaysDateObj.getFullYear();
-								var todaysMonth = todaysDateObj.getMonth() + 1;
-								var todaysDay = todaysDateObj.getDay();
+								var todaysYear = todaysDateObj.getFullYear().toString();
+								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+								var todaysDay = todaysDateObj.getDate().toString();
 								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
 
 								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
@@ -181,7 +182,7 @@ function ($http, $q, $log, user, config, $state) {
 									var todaysDateObj = new Date();
 									var todaysYear = todaysDateObj.getFullYear().toString();
 									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-									var todaysDay = todaysDateObj.getDay().toString();
+									var todaysDay = todaysDateObj.getDate().toString();
 									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
 
 									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
@@ -541,6 +542,19 @@ console.log('error in query function-api service: ',error);
 		var r = d.getFullYear() + '-' + month + '-' + day;
 		return r;
 	}
+
+	/*function _getFixedStringDate(d){
+		// this converts a Time object into a y/m/d string
+		// that can be used in a mysql sql query
+		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		if(day < 10)
+			var day = '0' + day;
+		if(month < 10)
+			var month = '0' + month;
+		var r = month + '-' + day + '-' + d.getFullYear();
+		return r;
+	}*/
 
 	/*------------------------------------------------
 		SPECIAL QUERIES 
@@ -1128,7 +1142,9 @@ console.log('error in query function-api service: ',error);
 	function addSymptom(returnPromise,symptomDataObj){
 		// SET VARIABLES
 
+		//var today = _getFixedStringDate(new Date());
 		var today = _getStringDate(new Date);
+		console.log("Add date: ", today);
 		var that = this;
 		that.currJournalEntryId = '';
 
