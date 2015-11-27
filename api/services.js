@@ -11,6 +11,7 @@ function ($http, $q, $log, user, config, $state) {
 	var symptomsObject = {
 		topSymptomsCountObj: {},
 		topSymptomsArray: [],
+		topSymptomsData: {},
 		initSystemsObject: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
@@ -105,8 +106,10 @@ function ($http, $q, $log, user, config, $state) {
 							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
 
 							symptomsObject.topSymptomsArray.push({'name': t, 
-								'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
-								'date': temp[t].date, 'count': temp[t].count});								
+								'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
+								'date': temp[t].date, 'count': temp[t].count});
+
+							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
 						}
 
 							/*symptomsObject.symptomCountArray.sort(function(a, b){
@@ -234,7 +237,7 @@ function ($http, $q, $log, user, config, $state) {
 								//console.log("Update symObj: ", symObj.name + " " + t);
 								if(symptomsObject.topSymptomsArray[symObj].name === t){
 									//console.log("Update symObj name: TRUE");
-									symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity;
+									symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity/temp[t].count;
 									symptomsObject.topSymptomsArray[symObj].count = temp[t].count;
 									symptomsObject.topSymptomsArray[symObj].date = temp[t].date;
 									//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
@@ -248,9 +251,11 @@ function ($http, $q, $log, user, config, $state) {
 								//symptomsObject.topSymptomsCountObj[t] = temp[t].id;
 								
 								symptomsObject.topSymptomsArray.push({'name': t, 
-									'id': temp[t].id, 'avgSev': temp[t].avgSeverity, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
 									'date': temp[t].date, 'count': temp[t].count});
 							}
+
+							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
 						}
 
 						console.log("Top count: ", symptomsObject.topSymptomsArray);

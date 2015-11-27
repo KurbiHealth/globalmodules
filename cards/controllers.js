@@ -91,6 +91,9 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 						},
 						topSymptoms: function () {
 							return api.symptomsObject.topSymptomsCountObj;
+						},
+						topSymptomsData: function(){
+							return api.symptomsObject.topSymptomsData;
 						}
 					}
 				});
@@ -327,9 +330,9 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms',
-function($scope, $locale, symptoms, $modalInstance, topSymptoms){
-	console.log("ModalInstanceCtrl: ", topSymptoms);
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
+function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
+	console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
@@ -361,19 +364,24 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms){
 	$scope.addSymptom = function (symptom) {
 		var severityToAdd = 0;
 
-		for (var key in $scope.modalSeverities) {
-			if (key === symptom) {
-				severityToAdd = $scope.modalSeverities[key];
+		if(topSymptomsData[symptom].date !== "Today"){
+			for (var key in $scope.modalSeverities) {
+				if (key === symptom) {
+					severityToAdd = $scope.modalSeverities[key];
+				}
+			}
+
+			if (severityToAdd > 0) {
+				$scope.symsToAddList[symptom] = severityToAdd;
+				$scope.addedSymps[symptom] = "addedSymptom";
+				++$scope.addedSymptoms;
+			}
+			else {
+				alert("Slider can't be at default position when adding");
 			}
 		}
-
-		if (severityToAdd > 0) {
-			$scope.symsToAddList[symptom] = severityToAdd;
-			$scope.addedSymps[symptom] = "addedSymptom";
-			++$scope.addedSymptoms;
-		}
-		else {
-			alert("Slider can't be at default position when adding");
+		else{
+			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and click edit on the card.");
 		}
 		//console.log("Add List: ", $scope.symsToAddList);
 	};
