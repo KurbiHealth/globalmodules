@@ -12,6 +12,7 @@ function ($http, $q, $log, user, config, $state) {
 		topSymptomsCountObj: {},
 		topSymptomsArray: [],
 		topSymptomsData: {},
+		topSeverityColorObj: {},
 		initSystemsObject: function(){
 			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
 				.then(
@@ -111,6 +112,8 @@ function ($http, $q, $log, user, config, $state) {
 
 							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
 						}
+
+						symptomsObject.setTopSeverityStyles();
 
 							/*symptomsObject.symptomCountArray.sort(function(a, b){
 								if (a.count > b.count) //sort string descending
@@ -262,7 +265,27 @@ function ($http, $q, $log, user, config, $state) {
 					}
 				);
 			return;
-		}		
+		},
+	    setTopSeverityStyles: function(){
+	    	for(var symp in symptomsObject.topSymptomsArray){
+	    		var averageSeverity = symptomsObject.topSymptomsArray[symp].avgSev;
+	    		var symptomName = symptomsObject.topSymptomsArray[symp].name;
+
+	    		if(averageSeverity >= 0 && averageSeverity < 4){
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'green';
+	    		}
+	    		else if(averageSeverity >= 4 && averageSeverity < 8){
+	    			symptomsObject.topSeverityColorObj[symptomName] = '#ffce00';
+	    		}
+	    		else if(averageSeverity >= 8 && averageSeverity < 12){
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'red';
+	    		}
+	    		else{
+	    			//This is an ERROR
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'gray';
+	    		}
+	    	}
+	    }
 	};
 	symptomsObject.initSystemsObject();
 
