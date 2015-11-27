@@ -236,7 +236,7 @@ function ($http, $q, $log, user, config, $state) {
 									//console.log("Update symObj name: TRUE");
 									symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity;
 									symptomsObject.topSymptomsArray[symObj].count = temp[t].count;
-									//symptomsObject.topSymptomsCountObj[t].date = temp[t].date;
+									symptomsObject.topSymptomsArray[symObj].date = temp[t].date;
 									//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
 									found = true;
 									break;
