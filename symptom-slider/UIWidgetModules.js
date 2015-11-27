@@ -70,7 +70,7 @@ angular.module('ui.WellnessSlider', [])
 	            if (angular.isDefined(attrs.severityNum))
 	            {
 	            	scope.severityNum = scope.$eval(attrs.severityNum);
-	            	console.log("Severity passed in: ", scope.severityNum);
+	            	//console.log("Severity passed in: ", scope.severityNum);
 	            	degree = severityToDegree(scope.severityNum);
 	            	scope.savedSev = Math.round(scope.severityNum);
 	            	scope.currentDeg = degree;
