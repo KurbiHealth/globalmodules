@@ -207,7 +207,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		console.log("cardObj: ", cardObj);
+		//console.log("cardObj: ", cardObj);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
@@ -332,7 +332,7 @@ function($scope, $locale, api){
 
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
 function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
-	console.log("ModalInstanceCtrl: ", topSymptomsData);
+	//console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
@@ -456,7 +456,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			//console.log("Left History: ", $scope.historyStack);
 			//console.log("Left: ", $scope.leftView);
 			//console.log("Right: ", $scope.rightView);
-			console.log("Left Click: ", $scope.clickStack);			
+			//console.log("Left Click: ", $scope.clickStack);			
 			//console.log("rightView: ", $scope.currentRightView);
 			//console.log("leftView: ", $scope.currentLeftView);
 		}
@@ -488,7 +488,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 
 			//newView = $scope.getSymCategories($scope.currentRightView[symptom]);
 			//newView = $scope.currentRightView[symptom];
-			console.log("IF1");
+			//console.log("IF1");
 			//if (newView !== undefined) {
 				//console.log("IF2");
 				$scope.rightView = newView;
@@ -500,7 +500,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				//console.log("Right History: ", $scope.historyStack);
 				//console.log("Left: ", $scope.leftView);
 				//console.log("Right: ", $scope.rightView);
-				console.log("Right Click: ", $scope.clickStack);
+				//console.log("Right Click: ", $scope.clickStack);
 			/*}
 			else if ($scope.currentRightView[symptom] !== undefined) {
 				console.log("ELSEIF1");
@@ -510,11 +510,11 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}*/
 
 			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
-				console.log("IF3");
+				//console.log("IF3");
 				//$scope.showPlus = true;
 				//$scope.disable.value = false;
 				if ($scope.firstClicked) {
-					console.log("IF4");
+					//console.log("IF4");
 					for (var key in $scope.clickedList) {
 						//console.log("key: ", key);
 						//console.log("value: ", $scope.clickedList[key]);
@@ -528,12 +528,12 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 					//$scope.open = !$scope.open;
 				}
 				else {
-					console.log("ELSE3");
+					//console.log("ELSE3");
 					$scope.firstClicked = true;
 				}
 			}
 			else {
-				console.log("ELSE2");
+				//console.log("ELSE2");
 				//$scope.showPlus = false;
 				//$scope.disable.value = true;
 			}
@@ -555,7 +555,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			console.log("ELSE1: ", symptom);
+			//console.log("ELSE1: ", symptom);
 
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);

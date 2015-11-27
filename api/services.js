@@ -41,7 +41,7 @@ function ($http, $q, $log, user, config, $state) {
 									journalDate = month + "/" + day;
 								}
 
-								console.log("initSystemsObject Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("initSystemsObject Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
 								//console.log("Years: ", todaysYear + " " + year);
 								//console.log("Years compare: ", todaysYear === year);
 								
@@ -69,11 +69,11 @@ function ($http, $q, $log, user, config, $state) {
 									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
 									var tempDate = tempMonth + "/" + tempDay;
 
-									console.log("initSystemsObject Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("initSystemsObject Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
 									//console.log("Date Else: ", journalDate + " " + tempDate);
 									//console.log("Years: ", );
-									console.log("Years compare: ", todaysYear + " " + year + " " + (todaysYear === year));
-									console.log("Date compare: ", todaysDate + " " + journalDate + " " + (todaysDate === journalDate));
+									//console.log("Years compare: ", todaysYear + " " + year + " " + (todaysYear === year));
+									//console.log("Date compare: ", todaysDate + " " + journalDate + " " + (todaysDate === journalDate));
 
 									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
 										temp[journalArray[obj].symptoms.technical_name].date = "Today";
@@ -176,7 +176,7 @@ function ($http, $q, $log, user, config, $state) {
 									journalDate = month + "/" + day;
 								}
 								
-								console.log("update Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("update Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
 								//console.log("Date: ", journalDate);
 
 								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
@@ -201,7 +201,7 @@ function ($http, $q, $log, user, config, $state) {
 									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
 									var tempDate = tempMonth + "/" + tempDay;
 
-									console.log("update Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("update Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
 									//console.log("Date Else: ", journalDate + " " + tempDate);
 									//console.log("Years: ", todaysYear + " " + year);
 									//console.log("Years compare: ", todaysYear === year);
@@ -261,6 +261,7 @@ function ($http, $q, $log, user, config, $state) {
 							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
 						}
 
+						symptomsObject.setTopSeverityStyles();
 						console.log("Top count: ", symptomsObject.topSymptomsArray);
 					}
 				);
@@ -275,7 +276,7 @@ function ($http, $q, $log, user, config, $state) {
 	    			symptomsObject.topSeverityColorObj[symptomName] = 'green';
 	    		}
 	    		else if(averageSeverity >= 4 && averageSeverity < 8){
-	    			symptomsObject.topSeverityColorObj[symptomName] = '#ffce00';
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'yellow';
 	    		}
 	    		else if(averageSeverity >= 8 && averageSeverity < 12){
 	    			symptomsObject.topSeverityColorObj[symptomName] = 'red';
