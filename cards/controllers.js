@@ -406,8 +406,31 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		delete $scope.symsToAddList[symptom];
 		$scope.addedSymps[symptom] = "";
 		--$scope.addedSymptoms;
-		console.log("Remove Symptom: ", $scope.symsToAddList);
-	}
+
+		//var tempList = [];
+
+		for(var s in $scope.searchList){
+			if($scope.searchList[s] === symptom){
+				delete $scope.searchList[s];
+			}
+		}
+		/*for (var added in $scope.addedSymps) {
+				if ($scope.addedSymps[added] === "addedSymptom") {
+					tempList.push(added);
+				
+					if()
+				}
+			}
+		}
+
+		$scope.searchList = [];
+		$scope.searchList = tempList.slice();*/
+
+		for (var key in $scope.clickedList) {
+			$scope.clickedList[key] = false;
+		}		
+		//console.log("Remove Symptom: ", $scope.symsToAddList);
+	};
 
 	$scope.updateSeverity = function (severity) {
 		var focusSymptom = undefined;
@@ -626,7 +649,6 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				$scope.clickedList[key] = false;
 			}			
 		}
-
 	};
 
 	$scope.ok = function () {
