@@ -397,10 +397,17 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}
 		}
 		else{
-			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and click edit on the card.");
+			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and edit it on the card.");
 		}
 		//console.log("Add List: ", $scope.symsToAddList);
 	};
+
+	$scope.removeSymptom = function(symptom){
+		delete $scope.symsToAddList[symptom];
+		$scope.addedSymps[symptom] = "";
+		--$scope.addedSymptoms;
+		console.log("Remove Symptom: ", $scope.symsToAddList);
+	}
 
 	$scope.updateSeverity = function (severity) {
 		var focusSymptom = undefined;
@@ -641,15 +648,20 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			var timeSaved = Date.now();
 
 			for (var key in $scope.symsToAddList) {
-				var dataObj = {
-					'symptomName': key,
-					'severity': $scope.symsToAddList[key],
-					'symptom_id': $scope.symptomIds[key],
-					'journal_entry_id': 1,
-					'date': timeSaved
-				};
-				//symNameList.push(key);
-				dataObjList.push(dataObj);
+				if(key !== undefined && $scope.symsToAddList[key] !== undefined){
+					var dataObj = {
+						'symptomName': key,
+						'severity': $scope.symsToAddList[key],
+						'symptom_id': $scope.symptomIds[key],
+						'journal_entry_id': 1,
+						'date': timeSaved
+					};
+					//symNameList.push(key);
+					dataObjList.push(dataObj);					
+				}
+				else{
+					console.log("ERROR Save Symptom: Trying to add undefined symptom object!");
+				}
 			}
 			//console.log("symNameList: ", symNameList);
 	    	//var sev = $scope.symsToAddList.pop();
@@ -666,7 +678,12 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			//var symName = focusSymptom;
 			//console.log("Saved symptom: ", symName);
 			//$scope.addSymptom(tableName, dataObj, symName);
-			$modalInstance.close(dataObjList);
+			if(dataObjList.length > 0){
+				$modalInstance.close(dataObjList);
+			}
+			else{
+				$modalInstance.dismiss('cancel');
+			}
 		}
 		else {
 			$modalInstance.dismiss('cancel');
