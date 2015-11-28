@@ -1322,6 +1322,11 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
+	function deleteCard(id){
+		// use api.deleteOne(promise,'journal_entry_components',id)
+		
+	}
+
 	/*function symptomsObject(){
 		//var symptomCountArray = [];
 		//var topSymptomsArray = {};
@@ -1400,4 +1405,5 @@ console.log('error in query function-api service: ',error);
 			}
 		};
 	}*/
+
 }]);
