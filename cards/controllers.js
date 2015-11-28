@@ -320,6 +320,22 @@ function($scope, $locale, api){
 		//$scope.directiveDelegate.invoke();
     };
 
+    $scope.deleteSymptom = function(cardIdToDelete){
+    	var indexToDelete = -1;
+    	for(var entry in $scope.journalEntries){
+    		for(var component in $scope.journalEntries[entry].components){
+    			//console.log($scope.journalEntries[entry].components[component]);
+
+    			if($scope.journalEntries[entry].components[component].journal_entry_id === cardIdToDelete){
+    				indexToDelete = component;
+    			}
+    		}
+    	}
+    	//Delete throws an error
+    	$scope.journalEntries[entry].components[indexToDelete] = {};
+    	//delete $scope.journalEntries[entry].components[indexToDelete];
+    };
+
 	/*$scope.ok = function() {
 	  $scope.showModal = false;
 	};
