@@ -113,7 +113,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								</div>
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
-								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
+								<div ng-repeat="(key, val) in searchList | filter:filterAddedSymptoms" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val}}</h4>

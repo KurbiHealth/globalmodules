@@ -409,11 +409,11 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 
 		//var tempList = [];
 
-		for(var s in $scope.searchList){
+		/*for(var s in $scope.searchList){
 			if($scope.searchList[s] === symptom){
 				delete $scope.searchList[s];
 			}
-		}
+		}*/
 		/*for (var added in $scope.addedSymps) {
 				if ($scope.addedSymps[added] === "addedSymptom") {
 					tempList.push(added);
@@ -451,6 +451,25 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 		//console.log("Focused: ", focusSymptom);
 		//console.log("After Update: ", $scope.modalSeverities[focusSymptom]);
+	};
+
+	$scope.filterAddedSymptoms = function(symptom){
+		switch ($scope.filterType){
+			case 'added':
+				return ($scope.symsToAddList !== undefined && $scope.symsToAddList[symptom] !== undefined);
+				break;
+			case 'search':
+			console.log("Filter Search: ", $scope.symptomSearch === "");
+			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length));
+			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
+			//console.log("Filter Search: ", symptom.toLowerCase() + " " + $scope.symptomSearch.toLowerCase());
+			//console.log("Filter Search: ", $scope.searchList);
+				return ($scope.symptomSearch === "" || symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
+				break;
+			default:
+				return false;
+				break;
+		};
 	};
 
 	$scope.clickLeftView = function(index, category) {
@@ -629,20 +648,21 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	};
 
 	$scope.showSymptomsAdded = function () {
-		var tempList = [];
+		//var tempList = [];
 		var found = false;
-
+		
 		for (var added in $scope.addedSymps) {
 			if ($scope.addedSymps[added] === "addedSymptom") {
-				tempList.push(added);
+				//tempList.push(added);
 				found = true;
 			}
 		}
 
 		if (found) {
 			$scope.symptomSearch = "";
-			$scope.searchList = [];
-			$scope.searchList = tempList.slice();
+			$scope.filterType = 'added';
+			//$scope.searchList = [];
+			//$scope.searchList = tempList.slice();
 			$scope.showSearchView = true;
 
 			for (var key in $scope.clickedList) {
@@ -761,9 +781,10 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 
 	$scope.modalSearchChange = function (change) {
 		if ($scope.symptomSearch.length > 0 && change !== "blur") {
-			$scope.searchList = [];
-			$scope.searchList = $scope.symList.slice();
+			//$scope.searchList = [];
+			//$scope.searchList = $scope.symList.slice();
 			$scope.showSearchView = true;
+			$scope.filterType = 'search';
 
 			for (var key in $scope.clickedList) {
 				$scope.clickedList[key] = false;
@@ -797,7 +818,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
-					//$scope.searchList.push(key);
+					$scope.searchList.push(key);
 					$scope.showPlus[key] = true;
 				}
 			}
