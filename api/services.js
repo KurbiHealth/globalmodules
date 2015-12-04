@@ -7,6 +7,288 @@ function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
+	//var initTopSymptomsLimit = 5;
+	var symptomsObject = {
+		topSymptomsCountObj: {},
+		topSymptomsArray: [],
+		topSymptomsData: {},
+		topSeverityColorObj: {},
+		initSystemsObject: function(){
+			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+				.then(
+					function(journalArray){
+						var temp = {};
+						//var tempArray = [];
+
+						for (var obj in journalArray){
+							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								var todaysDateObj = new Date();
+								var todaysYear = todaysDateObj.getFullYear().toString();
+								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+								var todaysDay = todaysDateObj.getDate().toString();
+								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+								var year = sympDate.substring(0,4);
+								var month = sympDate.substring(5,7);
+								var day = sympDate.substring(8,10);
+								var journalDate = month + "/" + day + "/" + year;
+
+								if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+									journalDate = "Today";
+								}
+								else if(todaysYear === year){
+									journalDate = month + "/" + day;
+								}
+
+								//console.log("initSystemsObject Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("Years: ", todaysYear + " " + year);
+								//console.log("Years compare: ", todaysYear === year);
+								
+								//var dateObj = new Date(journalDate);
+								//console.log("Date: ", dateObj);
+								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+									'id': journalArray[obj].symptoms.id, 'date': journalDate};
+							}
+							else{
+								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
+									var todaysDateObj = new Date();
+									var todaysYear = todaysDateObj.getFullYear().toString();
+									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+									var todaysDay = todaysDateObj.getDate().toString();
+									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+									var year = sympDate.substring(0,4);
+									var month = sympDate.substring(5,7);
+									var day = sympDate.substring(8,10);
+									var journalDate = month + "/" + day + "/" + year;
+
+									var tempMonth = temp[journalArray[obj].symptoms.technical_name].date.substring(0,2);
+									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
+									var tempDate = tempMonth + "/" + tempDay;
+
+									//console.log("initSystemsObject Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("Date Else: ", journalDate + " " + tempDate);
+									//console.log("Years: ", );
+									//console.log("Years compare: ", todaysYear + " " + year + " " + (todaysYear === year));
+									//console.log("Date compare: ", todaysDate + " " + journalDate + " " + (todaysDate === journalDate));
+
+									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+										temp[journalArray[obj].symptoms.technical_name].date = "Today";
+									}
+									else if(year === todaysYear){
+										//console.log("Date Else If: ", temp[journalArray[obj].symptoms.technical_name].date);
+										if(temp[journalArray[obj].symptoms.technical_name].date.length === 5){
+											if(month > tempMonth || (month === tempMonth && day > tempDay)){
+												temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+											}											
+										}
+										else{
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+										}
+									}
+									else{
+										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
+										//console.log("Date Else2: ", temp[journalArray[obj].symptoms.technical_name].date);
+										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
+										}
+									}
+								}
+								temp[journalArray[obj].symptoms.technical_name].count+=1;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity+=journalArray[obj].journal_entry_components.severity;
+							}
+						}
+
+						for (var t in temp) {
+							//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+
+							symptomsObject.topSymptomsArray.push({'name': t, 
+								'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
+								'date': temp[t].date, 'count': temp[t].count});
+
+							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
+						}
+
+						symptomsObject.setTopSeverityStyles();
+
+							/*symptomsObject.symptomCountArray.sort(function(a, b){
+								if (a.count > b.count) //sort string descending
+									return -1;
+								if (a.count < b.count)
+									return 1;
+								return 0; //default return value (no sorting)
+							});
+
+							var topSymptoms = [];
+							symptomsObject.symptomCountArray.length > topSymptomsLimit ? 
+								topSymptoms = symptomsObject.symptomCountArray.slice(0,topSymptomsLimit) : 
+								topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
+							for (var symp in topSymptoms) {
+								symptomsObject.topSymptomsArray[topSymptoms[symp].name] = {'id': topSymptoms[symp].id, 
+									'avgSev': topSymptoms[symp].avgSev, 'date': topSymptoms[symp].date, 'count': topSymptoms[symp].count};
+							}*/
+							//console.log("Top count: ", symptomsObject.topSymptomsArray);
+					}
+				);
+			return;
+		},
+		/*getTopSymptoms: function(numSymsToReturn){
+			var topSymptoms = [];
+			symptomsObject.symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomsObject.symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomsObject.symptomCountArray.slice(0,symptomsObject.symptomCountArray.length);
+			for (var symp in topSymptoms) {
+				symptomsObject.topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+			}
+
+			return symptomsObject.topSymptomsArray;
+		},
+		getSymptomsCounts: function(){
+			return symptomsObject.symptomCountArray;
+		},*/
+		update: function(){
+			query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+				.then(
+					function(journalArray){
+						var temp = {};
+						var found = false;
+
+						for (var obj in journalArray){
+							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
+								var todaysDateObj = new Date();
+								var todaysYear = todaysDateObj.getFullYear().toString();
+								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+								var todaysDay = todaysDateObj.getDate().toString();
+								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+								var year = sympDate.substring(0,4);
+								var month = sympDate.substring(5,7);
+								var day = sympDate.substring(8,10);
+								var journalDate = month + "/" + day + "/" + year;
+
+								if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+									journalDate = "Today";
+								}
+								else if(todaysYear === year){
+									journalDate = month + "/" + day;
+								}
+								
+								//console.log("update Date If: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+								//console.log("Date: ", journalDate);
+
+								temp[journalArray[obj].symptoms.technical_name] = {'count': 1, 
+									'avgSeverity': journalArray[obj].journal_entry_components.severity, 
+									'id': journalArray[obj].symptoms.id, 'date': journalDate};
+							}
+							else{
+								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
+									var todaysDateObj = new Date();
+									var todaysYear = todaysDateObj.getFullYear().toString();
+									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
+									var todaysDay = todaysDateObj.getDate().toString();
+									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+
+									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
+									var year = sympDate.substring(0,4);
+									var month = sympDate.substring(5,7);
+									var day = sympDate.substring(8,10);
+									var journalDate = month + "/" + day + "/" + year;
+
+									var tempMonth = temp[journalArray[obj].symptoms.technical_name].date.substring(0,2);
+									var tempDay = temp[journalArray[obj].symptoms.technical_name].date.substring(3,5);
+									var tempDate = tempMonth + "/" + tempDay;
+
+									//console.log("update Date Else: ", journalArray[obj].symptoms.technical_name + " " + journalArray[obj].journal_entry_components.created);
+									//console.log("Date Else: ", journalDate + " " + tempDate);
+									//console.log("Years: ", todaysYear + " " + year);
+									//console.log("Years compare: ", todaysYear === year);
+
+									if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+										temp[journalArray[obj].symptoms.technical_name].date = "Today";
+									}
+									else if(year === todaysYear){
+										//console.log("Date Else If: ", temp[journalArray[obj].symptoms.technical_name].date);
+										if(temp[journalArray[obj].symptoms.technical_name].date.length === 5){
+											if(month > tempMonth || (month === tempMonth && day > tempDay)){
+												temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+											}											
+										}
+										else{
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day;
+										}
+									}
+									else{
+										var tempYear = temp[journalArray[obj].symptoms.technical_name].date.substring(6,10);
+										//console.log("Date Else2: ", temp[journalArray[obj].symptoms.technical_name].date);
+										if(year > tempYear || (year === tempYear && month > tempMonth) || (year === tempYear && month === tempMonth && day > tempDay)){
+											temp[journalArray[obj].symptoms.technical_name].date = month + "/" + day + "/" + year;
+										}
+									}
+								}								
+								temp[journalArray[obj].symptoms.technical_name].count+=1;
+								temp[journalArray[obj].symptoms.technical_name].avgSeverity+=journalArray[obj].journal_entry_components.severity;
+							}
+						}
+
+						for(var t in temp){
+							found = false;
+							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+							for(var symObj in symptomsObject.topSymptomsArray) {
+								//console.log("Update symObj: ", symObj.name + " " + t);
+								if(symptomsObject.topSymptomsArray[symObj].name === t){
+									//console.log("Update symObj name: TRUE");
+									symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity/temp[t].count;
+									symptomsObject.topSymptomsArray[symObj].count = temp[t].count;
+									symptomsObject.topSymptomsArray[symObj].date = temp[t].date;
+									//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
+									found = true;
+									break;
+								}
+							}
+
+							if(!found){
+								//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+								//symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+								
+								symptomsObject.topSymptomsArray.push({'name': t, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
+									'date': temp[t].date, 'count': temp[t].count});
+							}
+
+							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
+						}
+
+						symptomsObject.setTopSeverityStyles();
+						console.log("Top count: ", symptomsObject.topSymptomsArray);
+					}
+				);
+			return;
+		},
+	    setTopSeverityStyles: function(){
+	    	for(var symp in symptomsObject.topSymptomsArray){
+	    		var averageSeverity = symptomsObject.topSymptomsArray[symp].avgSev;
+	    		var symptomName = symptomsObject.topSymptomsArray[symp].name;
+
+	    		if(averageSeverity >= 0 && averageSeverity < 4){
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'green';
+	    		}
+	    		else if(averageSeverity >= 4 && averageSeverity < 8){
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'yellow';
+	    		}
+	    		else if(averageSeverity >= 8 && averageSeverity < 12){
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'red';
+	    		}
+	    		else{
+	    			//This is an ERROR
+	    			symptomsObject.topSeverityColorObj[symptomName] = 'gray';
+	    		}
+	    	}
+	    }
+	};
+	symptomsObject.initSystemsObject();
 
 	return {
 		// CORE QUERIES
@@ -27,7 +309,8 @@ function ($http, $q, $log, user, config, $state) {
 		getSymptomList: getSymptomList,
 		getGoalActivitiesList: getGoalActivitiesList,
 		saveGoal: saveGoal,
-		savePath: savePath
+		savePath: savePath,
+		symptomsObject: symptomsObject
 	};
 
 	/*------------------------------------------------
@@ -289,6 +572,19 @@ console.log('error in query function-api service: ',error);
 		return r;
 	}
 
+	/*function _getFixedStringDate(d){
+		// this converts a Time object into a y/m/d string
+		// that can be used in a mysql sql query
+		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		if(day < 10)
+			var day = '0' + day;
+		if(month < 10)
+			var month = '0' + month;
+		var r = month + '-' + day + '-' + d.getFullYear();
+		return r;
+	}*/
+
 	/*------------------------------------------------
 		SPECIAL QUERIES 
 	------------------------------------------------*/
@@ -463,6 +759,7 @@ console.log('error in query function-api service: ',error);
 				return error;
 			}
 		);
+		//symptomsObject();
 	}
 
 	function _getSymptoms(that,symptomPromise){
@@ -874,7 +1171,9 @@ console.log('error in query function-api service: ',error);
 	function addSymptom(returnPromise,symptomDataObj){
 		// SET VARIABLES
 
+		//var today = _getFixedStringDate(new Date());
 		var today = _getStringDate(new Date);
+		console.log("Add date: ", today);
 		var that = this;
 		that.currJournalEntryId = '';
 
@@ -926,6 +1225,7 @@ console.log('error in query function-api service: ',error);
 					})
 					.then(function(data){
 						returnPromise.resolve(data);
+						symptomsObject.update();
 					});
 				},
 				function(error){
@@ -1021,5 +1321,89 @@ console.log('error in query function-api service: ',error);
 
 		return returnPromise;
 	}
+
+	function deleteCard(id){
+		// use api.deleteOne(promise,'journal_entry_components',id)
+		
+	}
+
+	/*function symptomsObject(){
+		//var symptomCountArray = [];
+		//var topSymptomsArray = {};
+		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+				count: 'journal_entry_components.symptom_id'}).then(
+					function(detail){
+						console.log("Symptoms count: ", detail);
+					});
+		query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+			.then(
+					function(journalArray){
+						console.log("Symptoms count: ", journalArray);
+						var temp = {};
+						var idHolder = {};
+						for (var obj in journalArray){
+							//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+							temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+							idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+							//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+						}
+						for (var t in temp) {
+							symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+						}
+						//console.log("Symptoms count: ", symptomCountDict);
+						symptomCountArray.sort(function(a, b){
+							if (a[1] > b[1]) //sort string descending
+								return -1;
+							if (a[1] < b[1])
+								return 1;
+							return 0; //default return value (no sorting)
+						});
+						//console.log("Symptoms count: ", symptomCountDict);						
+					}
+				);
+
+		return{
+			getTopSymptoms : function(numSymsToReturn){
+				var topSymptoms = [];
+				symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomCountArray.slice(0,symptomCountArray.length);
+				for (var symp in topSymptoms) {
+					topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
+				}
+
+				return topSymptomsArray;
+			},
+			getSymptomsCounts : function(){
+				return symptomCountArray;
+			},
+			update : function(){
+				query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+					.then(
+							function(journalArray){
+								//console.log("Symptoms count: ", journalArray);
+								var temp = {};
+								var idHolder = {};
+								for (var obj in journalArray){
+									//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+									temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+									idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+									//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+								}
+								for (var t in temp) {
+									symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+								}
+								//console.log("Symptoms count: ", symptomCountDict);
+								symptomCountArray.sort(function(a, b){
+									if (a[1] > b[1]) //sort string descending
+										return -1;
+									if (a[1] < b[1])
+										return 1;
+									return 0; //default return value (no sorting)
+								});
+								//console.log("Symptoms count: ", symptomCountDict);						
+							}
+						);
+			}
+		};
+	}*/
 
 }]);

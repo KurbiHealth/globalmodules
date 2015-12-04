@@ -52,7 +52,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			});
 		},50);
 
-		$scope.initCardService(); // what does this do?? -Matt
+		$scope.initCardService(); // what does this do?? -Matt, Grabs the next card Id - Andrew
+		//getSymptomsCount();
 	});
 
 	$scope.addCard = function(type,date){
@@ -67,6 +68,16 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				break;
 			case 'symptom-card':
 				//var tableName = 'journal_entry_components';
+				//console.log("Add Symptoms count: ", getSymptomsCount());
+				//getSymptomsCount();
+				/*var topSymptomsArray = [];
+				$scope.topSymptomsArray = {};
+				$scope.symptomCountArray.length > 4 ? topSymptomsArray = $scope.symptomCountArray.slice(0,5) : topSymptomsArray = $scope.symptomCountArray.slice(0,$scope.symptomCountArray.length);
+				for (var symp in topSymptomsArray) {
+					//console.log("Loop: ", topSymptomsArray[symp]);
+					$scope.topSymptomsArray[topSymptomsArray[symp][0][0]] = topSymptomsArray[symp][0][1];
+				}*/
+				//var topSymsLimit = 5;
 
 				// save a new entry to db
 				var modalInstance = $modal.open({
@@ -77,6 +88,12 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 					resolve: {
 						symptoms: function () {
 							return $scope.symptoms;
+						},
+						topSymptoms: function () {
+							return api.symptomsObject.topSymptomsCountObj;
+						},
+						topSymptomsData: function(){
+							return api.symptomsObject.topSymptomsData;
 						}
 					}
 				});
@@ -92,6 +109,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
+			    		//api.symptomsObject.update();
 						//$scope.selected = selectedItem;
 			    	}, 
 			    	function () {
@@ -113,9 +131,83 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		//$scope.addSymptomCard();
 	};
 
+	/* INFINITE SCROLL (GET A NEW DAY EVERY TIME USER SCROLLS DOWN)
+	http://desandro.github.io/masonry/demos/infinite-scroll.html
+	$(function(){
+	    
+	    var $container = $('#container');
+	    
+	    $container.imagesLoaded(function(){
+	      $container.masonry({
+	        itemSelector: '.box',
+	        columnWidth: 100
+	      });
+	    });
+	    
+	    $container.infinitescroll({
+	      navSelector  : '#page-nav',    // selector for the paged navigation 
+	      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
+	      itemSelector : '.box',     // selector for all items you'll retrieve
+	      loading: {
+	          finishedMsg: 'No more pages to load.',
+	          img: 'http://i.imgur.com/6RMhx.gif'
+	        }
+	      },
+	      // trigger Masonry as a callback
+	      function( newElements ) {
+	        // hide new items while they are loading
+	        var $newElems = $( newElements ).css({ opacity: 0 });
+	        // ensure that images load before adding to masonry layout
+	        $newElems.imagesLoaded(function(){
+	          // show elems now they're ready
+	          $newElems.animate({ opacity: 1 });
+	          $container.masonry( 'appended', $newElems, true ); 
+	        });
+	      }
+	    );
+	    
+	}); */
+
+	/*function getSymptomsCount() {
+		$scope.symptomCountArray = [];
+		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+				count: 'journal_entry_components.symptom_id'}).then(
+					function(detail){
+						console.log("Symptoms count: ", detail);
+					});
+		api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
+			.then(
+					function(journalArray){
+						//console.log("Symptoms count: ", journalArray);
+						var temp = {};
+						var idHolder = {};
+						for (var obj in journalArray){
+							//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
+							temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
+							idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
+							//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
+						}
+						for (var t in temp) {
+							$scope.symptomCountArray.push([[t, idHolder[t]], temp[t]]);
+						}
+						//console.log("Symptoms count: ", symptomCountDict);
+						$scope.symptomCountArray.sort(function(a, b){
+							if (a[1] > b[1]) //sort string descending
+								return -1;
+							if (a[1] < b[1])
+								return 1;
+							return 0; //default return value (no sorting)
+						});
+						//console.log("Symptoms count: ", symptomCountDict);
+					}
+				);
+
+		//return symptomCountDict;
+	};*/
+
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		console.log("cardObj: ", cardObj);
+		//console.log("cardObj: ", cardObj);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
@@ -238,9 +330,9 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance',
-function($scope, $locale, symptoms, $modalInstance){
-	console.log("ModalInstanceCtrl");
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
+function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
+	//console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
@@ -272,19 +364,24 @@ function($scope, $locale, symptoms, $modalInstance){
 	$scope.addSymptom = function (symptom) {
 		var severityToAdd = 0;
 
-		for (var key in $scope.modalSeverities) {
-			if (key === symptom) {
-				severityToAdd = $scope.modalSeverities[key];
+		if(topSymptomsData[symptom].date !== "Today"){
+			for (var key in $scope.modalSeverities) {
+				if (key === symptom) {
+					severityToAdd = $scope.modalSeverities[key];
+				}
+			}
+
+			if (severityToAdd > 0) {
+				$scope.symsToAddList[symptom] = severityToAdd;
+				$scope.addedSymps[symptom] = "addedSymptom";
+				++$scope.addedSymptoms;
+			}
+			else {
+				alert("Slider can't be at default position when adding");
 			}
 		}
-
-		if (severityToAdd > 0) {
-			$scope.symsToAddList[symptom] = severityToAdd;
-			$scope.addedSymps[symptom] = "addedSymptom";
-			++$scope.addedSymptoms;
-		}
-		else {
-			alert("Slider can't be at default position when adding");
+		else{
+			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and click edit on the card.");
 		}
 		//console.log("Add List: ", $scope.symsToAddList);
 	};
@@ -359,7 +456,7 @@ function($scope, $locale, symptoms, $modalInstance){
 			//console.log("Left History: ", $scope.historyStack);
 			//console.log("Left: ", $scope.leftView);
 			//console.log("Right: ", $scope.rightView);
-			console.log("Left Click: ", $scope.clickStack);			
+			//console.log("Left Click: ", $scope.clickStack);			
 			//console.log("rightView: ", $scope.currentRightView);
 			//console.log("leftView: ", $scope.currentLeftView);
 		}
@@ -391,7 +488,7 @@ function($scope, $locale, symptoms, $modalInstance){
 
 			//newView = $scope.getSymCategories($scope.currentRightView[symptom]);
 			//newView = $scope.currentRightView[symptom];
-			console.log("IF1");
+			//console.log("IF1");
 			//if (newView !== undefined) {
 				//console.log("IF2");
 				$scope.rightView = newView;
@@ -403,7 +500,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				//console.log("Right History: ", $scope.historyStack);
 				//console.log("Left: ", $scope.leftView);
 				//console.log("Right: ", $scope.rightView);
-				console.log("Right Click: ", $scope.clickStack);
+				//console.log("Right Click: ", $scope.clickStack);
 			/*}
 			else if ($scope.currentRightView[symptom] !== undefined) {
 				console.log("ELSEIF1");
@@ -413,11 +510,11 @@ function($scope, $locale, symptoms, $modalInstance){
 			}*/
 
 			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
-				console.log("IF3");
+				//console.log("IF3");
 				//$scope.showPlus = true;
 				//$scope.disable.value = false;
 				if ($scope.firstClicked) {
-					console.log("IF4");
+					//console.log("IF4");
 					for (var key in $scope.clickedList) {
 						//console.log("key: ", key);
 						//console.log("value: ", $scope.clickedList[key]);
@@ -431,12 +528,12 @@ function($scope, $locale, symptoms, $modalInstance){
 					//$scope.open = !$scope.open;
 				}
 				else {
-					console.log("ELSE3");
+					//console.log("ELSE3");
 					$scope.firstClicked = true;
 				}
 			}
 			else {
-				console.log("ELSE2");
+				//console.log("ELSE2");
 				//$scope.showPlus = false;
 				//$scope.disable.value = true;
 			}
@@ -458,7 +555,7 @@ function($scope, $locale, symptoms, $modalInstance){
 				
 			}
 			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			console.log("ELSE1: ", symptom);
+			//console.log("ELSE1: ", symptom);
 
 			//closed.value = !closed.value;
 			//console.log("ELSE1: ", closed.value);
@@ -662,15 +759,18 @@ function($scope, $locale, symptoms, $modalInstance){
 		//$scope.leftView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
 		$scope.leftView = symptomObj;
-		$scope.rightView = symptomObj[topLevel[0]];
-		$scope.selectedCategory.value = topLevel[0];
+		$scope.rightView = topSymptoms;
+		$scope.selectedCategory.value = -1;
+		//$scope.rightView = symptomObj[topLevel[0]];
+		//$scope.selectedCategory.value = topLevel[0];
 		//console.log("leftView: ", $scope.leftView);
 		$scope.deleteListFromList($scope.catArray, topLevel);
 		//console.log("Full List: ", $scope.catArray);
 		tempHistory.push($scope.leftView);		
 		tempHistory.push($scope.rightView);
 		$scope.historyStack.push(tempHistory);
-		$scope.clickStack.push(topLevel[0]);
+		$scope.clickStack.push("Top 5");
+		//$scope.clickStack.push(topLevel[0]);
 		//console.log("Build History: ", $scope.historyStack);
 	};
 
