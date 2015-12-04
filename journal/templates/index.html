@@ -104,7 +104,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <div style="padding-top: 10px;">
 									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)">Add</button>
-									      <button type="button" class="btn btn-default" ng-click=""><i class="fa fa-trash-o"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)"><i class="fa fa-trash-o"></i></button>
 									    </div>
 									</accordion-group>
 									<!--div class="well" ng-click="clickLeftView($index, key)">
@@ -113,7 +113,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								</div>
 							</accordion>
 							<accordion close-others="closeOthers" ng-show="showSearchView">
-								<div ng-repeat="(key, val) in searchList | filter:symptomSearch" style="margin-top:5px">
+								<div ng-repeat="(key, val) in searchList | filter:filterAddedSymptoms" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val}}</h4>
@@ -125,7 +125,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val]"></div>
 									    <div style="padding-top: 10px;">
 										    <button type="button" class="btn btn-default" ng-click="addSymptom(val)">Add</button>
-										    <button type="button" class="btn btn-default" ng-click=""><i class="fa fa-trash-o"></i></button>
+										    <button type="button" class="btn btn-default" ng-click="removeSymptom(val)"><i class="fa fa-trash-o"></i></button>
 										  </div>
 									</accordion-group>
 								</div>

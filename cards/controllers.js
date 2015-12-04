@@ -320,6 +320,22 @@ function($scope, $locale, api){
 		//$scope.directiveDelegate.invoke();
     };
 
+    $scope.deleteSymptom = function(cardIdToDelete){
+    	var indexToDelete = -1;
+    	for(var entry in $scope.journalEntries){
+    		for(var component in $scope.journalEntries[entry].components){
+    			//console.log($scope.journalEntries[entry].components[component]);
+
+    			if($scope.journalEntries[entry].components[component].journal_entry_id === cardIdToDelete){
+    				indexToDelete = component;
+    			}
+    		}
+    	}
+    	//Delete throws an error
+    	$scope.journalEntries[entry].components[indexToDelete] = {};
+    	//delete $scope.journalEntries[entry].components[indexToDelete];
+    };
+
 	/*$scope.ok = function() {
 	  $scope.showModal = false;
 	};
@@ -381,9 +397,39 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}
 		}
 		else{
-			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and click edit on the card.");
+			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and edit it on the card.");
 		}
 		//console.log("Add List: ", $scope.symsToAddList);
+	};
+
+	$scope.removeSymptom = function(symptom){
+		delete $scope.symsToAddList[symptom];
+		$scope.addedSymps[symptom] = "";
+		--$scope.addedSymptoms;
+
+		//var tempList = [];
+
+		/*for(var s in $scope.searchList){
+			if($scope.searchList[s] === symptom){
+				delete $scope.searchList[s];
+			}
+		}*/
+		/*for (var added in $scope.addedSymps) {
+				if ($scope.addedSymps[added] === "addedSymptom") {
+					tempList.push(added);
+				
+					if()
+				}
+			}
+		}
+
+		$scope.searchList = [];
+		$scope.searchList = tempList.slice();*/
+
+		for (var key in $scope.clickedList) {
+			$scope.clickedList[key] = false;
+		}		
+		//console.log("Remove Symptom: ", $scope.symsToAddList);
 	};
 
 	$scope.updateSeverity = function (severity) {
@@ -405,6 +451,25 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 		//console.log("Focused: ", focusSymptom);
 		//console.log("After Update: ", $scope.modalSeverities[focusSymptom]);
+	};
+
+	$scope.filterAddedSymptoms = function(symptom){
+		switch ($scope.filterType){
+			case 'added':
+				return ($scope.symsToAddList !== undefined && $scope.symsToAddList[symptom] !== undefined);
+				break;
+			case 'search':
+			console.log("Filter Search: ", $scope.symptomSearch === "");
+			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length));
+			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
+			//console.log("Filter Search: ", symptom.toLowerCase() + " " + $scope.symptomSearch.toLowerCase());
+			//console.log("Filter Search: ", $scope.searchList);
+				return ($scope.symptomSearch === "" || symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
+				break;
+			default:
+				return false;
+				break;
+		};
 	};
 
 	$scope.clickLeftView = function(index, category) {
@@ -583,27 +648,27 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	};
 
 	$scope.showSymptomsAdded = function () {
-		var tempList = [];
+		//var tempList = [];
 		var found = false;
-
+		
 		for (var added in $scope.addedSymps) {
 			if ($scope.addedSymps[added] === "addedSymptom") {
-				tempList.push(added);
+				//tempList.push(added);
 				found = true;
 			}
 		}
 
 		if (found) {
 			$scope.symptomSearch = "";
-			$scope.searchList = [];
-			$scope.searchList = tempList.slice();
+			$scope.filterType = 'added';
+			//$scope.searchList = [];
+			//$scope.searchList = tempList.slice();
 			$scope.showSearchView = true;
 
 			for (var key in $scope.clickedList) {
 				$scope.clickedList[key] = false;
 			}			
 		}
-
 	};
 
 	$scope.ok = function () {
@@ -625,15 +690,20 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			var timeSaved = Date.now();
 
 			for (var key in $scope.symsToAddList) {
-				var dataObj = {
-					'symptomName': key,
-					'severity': $scope.symsToAddList[key],
-					'symptom_id': $scope.symptomIds[key],
-					'journal_entry_id': 1,
-					'date': timeSaved
-				};
-				//symNameList.push(key);
-				dataObjList.push(dataObj);
+				if(key !== undefined && $scope.symsToAddList[key] !== undefined){
+					var dataObj = {
+						'symptomName': key,
+						'severity': $scope.symsToAddList[key],
+						'symptom_id': $scope.symptomIds[key],
+						'journal_entry_id': 1,
+						'date': timeSaved
+					};
+					//symNameList.push(key);
+					dataObjList.push(dataObj);					
+				}
+				else{
+					console.log("ERROR Save Symptom: Trying to add undefined symptom object!");
+				}
 			}
 			//console.log("symNameList: ", symNameList);
 	    	//var sev = $scope.symsToAddList.pop();
@@ -650,7 +720,12 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			//var symName = focusSymptom;
 			//console.log("Saved symptom: ", symName);
 			//$scope.addSymptom(tableName, dataObj, symName);
-			$modalInstance.close(dataObjList);
+			if(dataObjList.length > 0){
+				$modalInstance.close(dataObjList);
+			}
+			else{
+				$modalInstance.dismiss('cancel');
+			}
 		}
 		else {
 			$modalInstance.dismiss('cancel');
@@ -706,9 +781,10 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 
 	$scope.modalSearchChange = function (change) {
 		if ($scope.symptomSearch.length > 0 && change !== "blur") {
-			$scope.searchList = [];
-			$scope.searchList = $scope.symList.slice();
+			//$scope.searchList = [];
+			//$scope.searchList = $scope.symList.slice();
 			$scope.showSearchView = true;
+			$scope.filterType = 'search';
 
 			for (var key in $scope.clickedList) {
 				$scope.clickedList[key] = false;
@@ -742,7 +818,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
-					//$scope.searchList.push(key);
+					$scope.searchList.push(key);
 					$scope.showPlus[key] = true;
 				}
 			}
