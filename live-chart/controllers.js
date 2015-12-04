@@ -1,3 +1,19 @@
+kurbiApp.controller('TempLiveChartControllerList', ['$scope','$http','api',
+function($scope,$http,api){
+
+	$scope.liveChartList = [];
+
+	$scope.filterLiveChart = function(type){
+		type = type.toLowerCase();
+		if(type == 'all'){
+			$scope.filterLiveChartBy = '';
+		}else{
+			$scope.filterLiveChartBy = type;
+		}
+	}
+
+}]);
+
 kurbiApp.controller('LiveChartControllerList', ['$scope','$http','api',
 function($scope,$http,api){
 
