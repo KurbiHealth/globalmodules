@@ -1,0 +1,94 @@
+<div ng-controller="TempLiveChartControllerList">
+
+	<div class="row">
+
+		<div id="live-cart-filter" class="col-md-8 col-md-offset-2">
+
+			<span class="pull-left" style="height:37px;display:inline-block;">FILTER: &nbsp;</span>
+
+			<!-- http://zavoloklom.github.io/material-design-iconic-font/v1/icons.html -->
+			
+			<a href="" ng-click="filterLiveChart('all')">
+				<i class="md md-add-circle" style="color: black;"></i> 
+				All
+			</a>
+			<a href="" ng-click="filterLiveChart('condition')">
+				<i class="md md-add-circle" style="color: blue;"></i> 
+				Conditions
+			</a>
+			<a href="" ng-click="filterLiveChart('med')">
+				<i class="md md-add-circle" style="color: brown;"></i> 
+				Medications
+			</a>
+			<a href="" ng-click="filterLiveChart('appointment')">
+				<i class="md md-add-circle" style="color: red;"></i> 
+				Appointments
+			</a>
+
+		</div>
+
+		<div class="column-md-2"></div>
+
+	</div>
+
+	<div class="row" style="margin-top:10px;margin-bottom:10px;">
+
+		<div class="chart-header col-md-8 col-md-offset-2">
+			<div class="chart-name">
+				<button class="btn btn-primary chart-header-button" ng-click="showChart(0)" ng-class="{'btn-default': hiddenChart == 0, 'btn-primary': hiddenChart != 0}">Michelle Chart</button>
+				<button class="btn btn-default chart-header-button" ng-click="showChart(1)" ng-class="{'btn-default': hiddenChart == 1, 'btn-primary': hiddenChart != 1}">Wes Garnett Chart</button>
+			</div>
+		</div>
+
+	</div>
+
+<style>
+.t{ width:330px; }
+</style>
+
+	<div class="row">
+
+		<div >
+
+			<div id="michellechart" class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == 0}">
+
+				<!-- Appointment - Jessie -->
+				<img src="/design/img/demoTemp/Appt1.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+				<!-- MS -->
+				<img src="/design/img/demoTemp/MultipleSclerosis.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Nighttime Asthma -->
+				<img src="/design/img/demoTemp/Asthma.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Appointment - Britney -->
+				<img src="/design/img/demoTemp/Appt3.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+			</div>
+
+			<div id="weschart" class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == 1}">
+
+				<!-- Nighttime Asthma -->
+				<img src="/design/img/demoTemp/Asthma.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Appointment - ? -->
+				<img src="/design/img/demoTemp/Appt2.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+				<!-- L5 Disc Herniation -->
+				<img src="/design/img/demoTemp/BackPain.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Appointment - Jessie -->
+				<img src="/design/img/demoTemp/Appt1.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+				<!-- Fenofibrate -->
+				<img src="/design/img/demoTemp/BackPain.png" width="330" class="t block" ng-class="{'hidden': isHidden('med')}" />
+
+			</div>
+
+		</div>
+
+		<div class="col-md-4"></div>
+
+	</div>
+
+</div>

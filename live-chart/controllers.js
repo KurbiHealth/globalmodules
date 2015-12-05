@@ -1,3 +1,58 @@
+kurbiApp.controller('TempLiveChartControllerList', ['$scope','$http','api','$timeout',
+function($scope,$http,api,$timeout){
+
+	$scope.filterLiveChartBy = '';
+	$scope.hiddenChart = 1;
+
+	$scope.showChart = function(chart){
+		if(chart == 0)
+			$scope.hiddenChart = 1;
+		if(chart == 1)
+			$scope.hiddenChart = 0;
+		//$('.cardContainer').masonry('reloadItems');
+		//$('.cardContainer').masonry('layout');
+		$timeout(function(){
+//console.log('parsing live chart blocks');
+			$('.cardContainer').masonry({
+				itemSelector: '.block',
+				columnWidth: .33
+			});
+		},10);
+	}
+
+	$scope.isHidden = function(type) {
+	    if(type.toLowerCase().indexOf($scope.filterLiveChartBy) < 0) {
+	        return true;
+	    }
+	    return false;
+	}
+
+	$scope.filterLiveChart = function(type){
+		type = type.toLowerCase();
+		if(type == 'all'){
+			$scope.filterLiveChartBy = '';
+		}else{
+			$scope.filterLiveChartBy = type;
+		}
+		$timeout(function(){
+//console.log('parsing live chart blocks');
+			$('.cardContainer').masonry({
+				itemSelector: '.block',
+				columnWidth: .33
+			});
+		},10);
+	}
+
+	$timeout(function(){
+//console.log('parsing live chart blocks');
+		$('.cardContainer').masonry({
+			itemSelector: '.block',
+			columnWidth: .33
+		});
+	},400);
+
+}]);
+
 kurbiApp.controller('LiveChartControllerList', ['$scope','$http','api',
 function($scope,$http,api){
 

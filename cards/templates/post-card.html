@@ -5,47 +5,92 @@
 </style>
 <div class="post-item">
 
-	<span class="post-timestamp">{{card.created | date:'short'}}</span>
-<!-- NEED TO HOOK UP REVERSE STUFF -->
-<i class="md md-more-vert pull-right activator" style="position: absolute; top: 5px; right: 0px;" ng-click="reversed = ! reversed"></i>
-<!-- NEED TO HOOK UP REVERSE STUFF -->
-	<a href="#" class="post-person">
-		<div ng-if="card.avatar == ''">
-			<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
-		</div>
-		<div ng-if="card.avatar != ''">
-			<img alt="{{card.author}}" height="40" width="40" class="profile-small" src="{{card.avatar}}" />
-		</div>
-		<h3 style="position: absolute;right: -80px;">{{card.author}}</h3>
-	</a>
-	<div class="post-content">
-		<p>{{card.message}}</p>
-	</div><!--END .post-content-->
-
-	<!-- ng-if="post.comments.length > 0" -->
-
-	<div class="social-block">
-		<span ><a class="comments-open pull-left" ng-click ="limit = card.comments.length"><span>{{card.comments.length}}</span> Comments</a>
-		<!--<i class="fa fa-comment-o pull-right"></i>-->
-		<i class="fa fa-heart-o pull-right" data-toggle="modal" data-target="#joinModal"></i>
-		<div class="clear"></div>
-	</div><!--END .social-block-->
-
-	<div class="comment-block">
-		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
-				
-				<div ng-repeat="comment in card.comments | orderBy : '-published' | limitTo: limit">
-					<blockquote>
-						<div comment-detail></div>
-					</blockquote>
+	<div class="card-front" ng-class="{ 'hidden': reversed }">
+		<span class="post-timestamp">{{card.created | date:'short'}}</span>
+			<i class="md md-more-vert pull-right activator" style="position: absolute; top: 5px; right: 0px;" ng-click="reversed = ! reversed"></i>
+			<a href="#" class="post-person">
+				<div ng-if="card.avatar == ''">
+					<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
 				</div>
-				
-				<div add-comment></div>
-			</div><!--END .columns-->
-		</div><!--END .row-->
-	</div><!--END .comment-block-->
-
+				<div ng-if="card.avatar != ''">
+					<img alt="{{card.author}}" height="40" width="40" class="profile-small" src="{{card.avatar}}" />
+				</div>
+				<h3 style="position: absolute;right: -80px;">{{card.author}}</h3>
+			</a>
+			<div class="post-content">
+				<p>{{card.message}}</p>
+			</div><!--END .post-content-->
+		
+			<!-- ng-if="post.comments.length > 0" -->
+		
+			<div class="social-block">
+				<span ><a class="comments-open pull-left" ng-click ="limit = card.comments.length"><span>{{card.comments.length}}</span> Comments</a>
+				<!--<i class="fa fa-comment-o pull-right"></i>-->
+				<i class="fa fa-heart-o pull-right" data-toggle="modal" data-target="#joinModal"></i>
+				<div class="clear"></div>
+			</div><!--END .social-block-->
+		
+			<div class="comment-block">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						
+						<div ng-repeat="comment in card.comments | orderBy : '-published' | limitTo: limit">
+							<blockquote>
+								<div comment-detail></div>
+							</blockquote>
+						</div>
+						
+						<div add-comment></div>
+					</div><!--END .columns-->
+				</div><!--END .row-->
+			</div><!--END .comment-block-->
+	</div>
+	
+	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
+		<span class="post-timestamp">{{card.created | date:'short'}}</span>
+			<i class="md md-close pull-right activator" style="position: absolute; top: 5px; right: 0px;" ng-click="reversed = ! reversed"></i>
+			<a href="#" class="post-person">
+				<div ng-if="card.avatar == ''">
+					<img src="http://placehold.it/40x40" alt="{{card.author}}" height="40" width="40" class="profile-small" />
+				</div>
+				<div ng-if="card.avatar != ''">
+					<img alt="{{card.author}}" height="40" width="40" class="profile-small" src="{{card.avatar}}" />
+				</div>
+				<h3 style="position: absolute;right: -80px;">{{card.author}}</h3>
+			</a>
+			<div class="post-content">
+				<div class="form-group" style="margin: 0 auto; width: 95% !important;">
+		      <textarea style="padding-left: 5px; width: 100% !important; max-width: 100% !important; border: 1px solid #cccccc; border-radius: 4px;">{{card.message}}</textarea>
+		      <button class="btn btn-default" type="button" style="float: right;">Save</button>
+		      <div class="clear"></div>
+		    </div><!-- /input-group -->
+			</div><!--END .post-content-->
+		
+			<!-- ng-if="post.comments.length > 0" -->
+		
+			<div class="social-block">
+				<span ><a class="comments-open pull-left" ng-click ="limit = card.comments.length"><span>{{card.comments.length}}</span> Comments</a>
+				<!--<i class="fa fa-comment-o pull-right"></i>-->
+				<i class="fa fa-heart-o pull-right" data-toggle="modal" data-target="#joinModal"></i>
+				<div class="clear"></div>
+			</div><!--END .social-block-->
+		
+			<div class="comment-block">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						
+						<div ng-repeat="comment in card.comments | orderBy : '-published' | limitTo: limit">
+							<blockquote>
+								<div comment-detail></div>
+							</blockquote>
+						</div>
+						
+						<div add-comment></div>
+					</div><!--END .columns-->
+				</div><!--END .row-->
+			</div><!--END .comment-block-->
+	</div>
+	
 </div><!--END .post-item-->
 
 <!-- Modal -->
