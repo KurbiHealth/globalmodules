@@ -116,16 +116,16 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 								<div ng-repeat="(key, val) in searchList | filter:filterAddedSymptoms" style="margin-top:5px">
 									<accordion-group is-disabled=false is-open=false>
 										<accordion-heading>
-											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val}}</h4>
-											<i ng-class="{'fa fa-plus-circle':!clickedList[val], 'fa fa-minus-circle':clickedList[val]}" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
+											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val.name}}</h4>
+											<i ng-class="{'fa fa-plus-circle':!clickedList[val.name], 'fa fa-minus-circle':clickedList[val.name]}" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
-											<div ng-class="addedSymps[val]" ng-click="clickSearchView($index, val)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
+											<div ng-class="addedSymps[val.name]" ng-click="clickSearchView($index, val.name)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
 										</accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
-									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val]"></div>
+									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val.name]"></div>
 									    <div style="padding-top: 10px;">
-										    <button type="button" class="btn btn-default" ng-click="addSymptom(val)">Add</button>
-										    <button type="button" class="btn btn-default" ng-click="removeSymptom(val)"><i class="fa fa-trash-o"></i></button>
+										    <button type="button" class="btn btn-default" ng-click="addSymptom(val.name)">Add</button>
+										    <button type="button" class="btn btn-default" ng-click="removeSymptom(val.name)"><i class="fa fa-trash-o"></i></button>
 										  </div>
 									</accordion-group>
 								</div>
