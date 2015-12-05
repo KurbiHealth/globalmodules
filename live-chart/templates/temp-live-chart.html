@@ -12,15 +12,15 @@
 				<i class="md md-add-circle" style="color: black;"></i> 
 				All
 			</a>
-			<a href="" ng-click="filterLiveChart('conditions')">
+			<a href="" ng-click="filterLiveChart('condition')">
 				<i class="md md-add-circle" style="color: blue;"></i> 
 				Conditions
 			</a>
-			<a href="" ng-click="filterLiveChart('meds')">
+			<a href="" ng-click="filterLiveChart('med')">
 				<i class="md md-add-circle" style="color: brown;"></i> 
 				Medications
 			</a>
-			<a href="" ng-click="filterLiveChart('appointments')">
+			<a href="" ng-click="filterLiveChart('appointment')">
 				<i class="md md-add-circle" style="color: red;"></i> 
 				Appointments
 			</a>
@@ -42,32 +42,47 @@
 
 	</div>
 
+<style>
+.t{ width:330px; }
+</style>
+
 	<div class="row">
 
-		<div class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == chartkey}">
+		<div >
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />L5 Disc Herniation
+			<div id="michellechart" class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == 0}">
+
+				<!-- Appointment - Jessie -->
+				<img src="/design/img/demoTemp/Appt1.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+				<!-- MS -->
+				<img src="/design/img/demoTemp/MultipleSclerosis.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Nighttime Asthma -->
+				<img src="/design/img/demoTemp/Asthma.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
+
+				<!-- Appointment - Britney -->
+				<img src="/design/img/demoTemp/Appt3.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
 			</div>
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />Appointment - Jessie
-			</div>
+			<div id="weschart" class="cardContainer col-md-8 col-md-offset-2" ng-class="{'hidden': hiddenChart == 1}">
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />Fenofibrate
-			</div>
+				<!-- Nighttime Asthma -->
+				<img src="/design/img/demoTemp/Asthma.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />Arthritis
-			</div>
+				<!-- Appointment - ? -->
+				<img src="/design/img/demoTemp/Appt2.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />Nighttime Asthma
-			</div>
+				<!-- L5 Disc Herniation -->
+				<img src="/design/img/demoTemp/BackPain.png" width="330" class="t block" ng-class="{'hidden': isHidden('condition')}" />
 
-			<div class="card card-wide live-chart-card">
-				<img src="/designs/img/back.png" />Appointment - Britney
+				<!-- Appointment - Jessie -->
+				<img src="/design/img/demoTemp/Appt1.png" width="330" class="t block" ng-class="{'hidden': isHidden('appointment')}" />
+
+				<!-- Fenofibrate -->
+				<img src="/design/img/demoTemp/BackPain.png" width="330" class="t block" ng-class="{'hidden': isHidden('med')}" />
+
 			</div>
 
 		</div>

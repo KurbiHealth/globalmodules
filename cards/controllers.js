@@ -456,15 +456,15 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.filterAddedSymptoms = function(symptom){
 		switch ($scope.filterType){
 			case 'added':
-				return ($scope.symsToAddList !== undefined && $scope.symsToAddList[symptom] !== undefined);
+				return ($scope.symsToAddList !== undefined && $scope.symsToAddList[symptom.name] !== undefined);
 				break;
 			case 'search':
-			console.log("Filter Search: ", $scope.symptomSearch === "");
+			//console.log("Filter Search: ", $scope.symptomSearch === "");
 			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length));
 			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
 			//console.log("Filter Search: ", symptom.toLowerCase() + " " + $scope.symptomSearch.toLowerCase());
 			//console.log("Filter Search: ", $scope.searchList);
-				return ($scope.symptomSearch === "" || symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
+				return ($scope.symptomSearch === "" || symptom.name.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
 				break;
 			default:
 				return false;
@@ -818,7 +818,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
-					$scope.searchList.push(key);
+					$scope.searchList.push({'name': key});
 					$scope.showPlus[key] = true;
 				}
 			}
