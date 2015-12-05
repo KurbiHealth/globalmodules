@@ -292,7 +292,7 @@ function ($http, $q, $log, user, config, $state) {
 	    	}
 	    }
 	};
-	symptomsObject.initSystemsObject();
+	//symptomsObject.initSystemsObject();
 
 	return {
 		// CORE QUERIES
