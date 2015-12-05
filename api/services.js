@@ -371,6 +371,7 @@ console.log('error in signUp function-api service: ',error);
 
 	function getList(promise,tableName) {
 		user.getUser();
+console.log(user);
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',
@@ -858,7 +859,7 @@ console.log('error in query function-api service: ',error);
 			returnPromise.resolve(list);
 		});
 		careTeamRequest.catch(function(error){
-			console.log('error in mainController',error);
+			console.log('error in api service: careTeamInit()',error);
 		});
 
 		return returnPromise.promise;
