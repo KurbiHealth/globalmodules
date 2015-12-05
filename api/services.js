@@ -22,12 +22,13 @@ function ($http, $q, $log, user, config, $state) {
 
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
-								var todaysDateObj = new Date();
-								var todaysYear = todaysDateObj.getFullYear().toString();
-								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-								var todaysDay = todaysDateObj.getDate().toString();
-								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
-
+								var todaysDateArray = _getArrayDate(new Date());
+								//var todaysDateObj = new Date();
+								var todaysDate = todaysDateArray[0].toString();
+								var todaysMonth = todaysDateArray[1].toString();
+								var todaysDay = todaysDateArray[2].toString();
+								var todaysYear = todaysDateArray[3].toString();
+								
 								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
 								var year = sympDate.substring(0,4);
 								var month = sympDate.substring(5,7);
@@ -53,11 +54,12 @@ function ($http, $q, $log, user, config, $state) {
 							}
 							else{
 								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
-									var todaysDateObj = new Date();
-									var todaysYear = todaysDateObj.getFullYear().toString();
-									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-									var todaysDay = todaysDateObj.getDate().toString();
-									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+									var todaysDateArray = _getArrayDate(new Date());
+									//var todaysDateObj = new Date();
+									var todaysDate = todaysDateArray[0].toString();
+									var todaysMonth = todaysDateArray[1].toString();
+									var todaysDay = todaysDateArray[2].toString();
+									var todaysYear = todaysDateArray[3].toString();
 
 									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
 									var year = sympDate.substring(0,4);
@@ -157,11 +159,12 @@ function ($http, $q, $log, user, config, $state) {
 
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
-								var todaysDateObj = new Date();
-								var todaysYear = todaysDateObj.getFullYear().toString();
-								var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-								var todaysDay = todaysDateObj.getDate().toString();
-								var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+								var todaysDateArray = _getArrayDate(new Date());
+								//var todaysDateObj = new Date();
+								var todaysDate = todaysDateArray[0].toString();
+								var todaysMonth = todaysDateArray[1].toString();
+								var todaysDay = todaysDateArray[2].toString();
+								var todaysYear = todaysDateArray[3].toString();
 
 								var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
 								var year = sympDate.substring(0,4);
@@ -185,11 +188,12 @@ function ($http, $q, $log, user, config, $state) {
 							}
 							else{
 								if(temp[journalArray[obj].symptoms.technical_name].date !== "Today"){
-									var todaysDateObj = new Date();
-									var todaysYear = todaysDateObj.getFullYear().toString();
-									var todaysMonth = (todaysDateObj.getMonth() + 1).toString();
-									var todaysDay = todaysDateObj.getDate().toString();
-									var todaysDate = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+									var todaysDateArray = _getArrayDate(new Date());
+									//var todaysDateObj = new Date();
+									var todaysDate = todaysDateArray[0].toString();
+									var todaysMonth = todaysDateArray[1].toString();
+									var todaysDay = todaysDateArray[2].toString();
+									var todaysYear = todaysDateArray[3].toString();
 
 									var sympDate = journalArray[obj].journal_entry_components.created.substring(0,10);
 									var year = sympDate.substring(0,4);
@@ -572,18 +576,25 @@ console.log('error in query function-api service: ',error);
 		return r;
 	}
 
-	/*function _getFixedStringDate(d){
-		// this converts a Time object into a y/m/d string
-		// that can be used in a mysql sql query
+	function _getArrayDate(d){
+		// this converts a Time object into a date array where
+		// date[0] = 'mm/dd/yyyy', date[1] = 'mm', date[2] = 'dd', date[3] = 'yyyy'
+		
 		var month = d.getMonth() + 1;
 		var day = d.getDate();
 		if(day < 10)
 			var day = '0' + day;
 		if(month < 10)
 			var month = '0' + month;
-		var r = month + '-' + day + '-' + d.getFullYear();
-		return r;
-	}*/
+		var year = d.getFullYear();
+		var fullDate = month + '/' + day + '/' + d.getFullYear();
+		var date = [];
+		date[0] = fullDate;
+		date[1] = month;
+		date[2] = day;
+		date[3] = year;
+		return date;
+	}
 
 	/*------------------------------------------------
 		SPECIAL QUERIES 
