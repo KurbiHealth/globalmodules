@@ -1,0 +1,139 @@
+<style>
+.path-header {
+	position: relative; 
+	background: url('/design/img/bike.png') no-repeat center center; 
+	-webkit-background-size: cover; 
+	-moz-background-size: cover; 
+	-o-background-size: cover; 
+	background-size: cover; 
+	min-height: 203px;
+}
+img.path-expert {
+	position: absolute;
+	bottom: -45px;
+	left: 50%;
+	margin-left: -45px;
+}
+.path-info-container {
+	padding: 60px 20px 20px 20px;
+	background: #ffffff;
+}
+.path-info {
+	margin: 0 auto;
+	max-width: 80%;
+	text-align: center;
+}
+.path-milestones {
+	margin-top: 20px;
+}
+.path-milestones .panel-heading {
+	padding: 8px;
+  border: none;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+.path-milestones .panel-default>.panel-heading {
+    color: #ffffff;
+    background-color: #337AB7;
+    border-color: transparent;
+}
+.path-milestones .panel-title a:hover,
+.path-milestones .panel-title a:active,
+.path-milestones .panel-title a:visited,
+.path-milestones .panel-title a:focus {
+	text-decoration: none;
+}
+.path-milestones .panel-body {
+	padding: 0px;
+}
+.path-milestones .panel-default {
+	border-color: transparent;
+}
+.path-milestones .table>tbody>tr>td, 
+.path-milestones .table>tbody>tr>th,
+.path-milestones .table>tfoot>tr>td,
+.path-milestones .table>tfoot>tr>th,
+.path-milestones.table>thead>tr>td, .table>thead>tr>th {
+	border-top: none; 
+}
+.path-milestones .panel-body button {
+	padding: 3px 10px;
+	font-size: 12px;
+	color: #ffffff;
+	background-color: #337AB7;
+	border: none;
+}
+.milestone-card {
+	margin-top: 40px;
+	text-align: center;
+}
+.milestone-card img {
+	max-width: 100%;
+	height: auto;
+}
+</style>
+
+<div class="row">
+	<div class="col-md-4" style="padding-left: 20px;">
+		<div class="path-header">
+			<img src="/design/img/Expert_ProfilePhoto.png" class="path-expert" />
+		</div><!--END .path-header-->
+		
+		<div class="path-info-container">
+			<div class="path-info">
+				<h2>Bike Lake Lamona</h2>
+				<p>This is a 11.11 mi bike ride in Madison, WI, United States.</p>
+			</div><!--END .path-info-->
+			
+			<div class="path-milestones">
+				<accordion close-others="closeOthers">
+					<accordion-group is-disabled=false is-open=false>
+						<accordion-heading>
+							<!--span-->
+							<h4 class="pull-left" style="padding-left: 5px; font-size: 14px;">Path Milestones</h4>
+							<i ng-class="{'fa fa-chevron-down':!status.open, 'fa fa-chevron-up':status.open}" class="pull-right"></i>
+							
+							<div class="clear"></div>
+							<!--/span-->
+						</accordion-heading>
+					  <table class="table table-striped">
+					  	<tr>
+					  		<td>Milestone 1</td>
+					  		<td><button class="pull-right">START</button></td>
+					  	</tr>
+					  	<tr>
+					  		<td>Milestone 2</td>
+					  		<td><button class="pull-right">START</button></td>
+					  	</tr>
+					  	<tr>
+					  		<td>Milestone 3</td>
+					  		<td><button class="pull-right">START</button></td>
+					  	</tr>
+					  	<tr>
+					  		<td>Milestone 4</td>
+					  		<td><button class="pull-right">START</button></td>
+					  	</tr>
+					  	<tr>
+					  		<td>Milestone 5</td>
+					  		<td><button class="pull-right">START</button></td>
+					  	</tr>
+					  </table>
+					</accordion-group>
+				</accordion>
+			</div><!--END /.path-milestones-->
+			
+		</div><!--END .path-info-container-->
+		
+	</div><!--END /.col-md-4-->
+	
+	<div class="col-md-8">
+		<div class="milestone-card">
+			<img src="/design/img/milestone-one.png" alt="" />
+		</div><!--END /.milestone-card-->
+		
+		<div class="milestone-card">
+			<img src="/design/img/milestone-two.png" alt="" />
+		</div><!--END /.milestone-card-->
+		
+	</div><!--END /.col-md-8-->
+</div><!--END /.row-->

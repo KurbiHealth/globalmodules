@@ -1,0 +1,54 @@
+<div class="row" ng-controller="GoalController">
+	<div class="col-md-12 path-details-container">
+		
+		<div class="path-details-header table">
+			<div class="table-center">
+				<h1><img src="/design/img/exercise.png" align="left" class="profile-small img-responsive" /><span style="position: relative; top: 5px;">Your Goal: <b>Build Endurance</b></span></h1>
+				<button class="btn btn-default" ng-click="cancel($event)" style="position: relative; top: 5px;">Cancel</button>
+			</div>
+			<div class="clear"></div>
+		</div><!--END /.path-details-header-->
+		
+		<a ui-sref="private.path" style="display: block;" ng-click="cancel($event)">
+			<div class="path-details-hero" style="background: url('/design/img/goal-detail.png') no-repeat left top; min-height: 223px;">
+			</div><!--END /.path-details-hero-->
+		</a>
+		
+		<div class="path-details-overview">
+			<span style="color: #51079B; font-size: 16px; font-weight: bold;" class="pull-left">Path Mate Check-in's</span>
+			<span style="font-weight: bold;" class="pull-right"><a href="#" style="color: #333333; text-decoration: underline;">254</a> others have checked in</span>
+			<div class="clear" style="height: 10px;"></div>
+			<table class="table table-striped">
+				<tr>
+					<td><img src="http://placehold.it/40x40" height="40" width="40" class="profile-small pull-left" /><b>Tymus Blake</b><br />2/3 this week</td>
+					<td style="vertical-align: middle;"><i class="fa fa-heart-o pull-right"></i></td>
+				</tr>
+				<tr>
+					<td><img src="http://placehold.it/40x40" height="40" width="40" class="profile-small pull-left" /><b>Steve Smith</b><br />2/3 this week</td>
+					<td style="vertical-align: middle;"><i class="fa fa-heart-o pull-right"></i></td>
+				</tr>
+				<tr>
+					<td><img src="http://placehold.it/40x40" height="40" width="40" class="profile-small pull-left" /><b>Jake Smith</b><br />2/3 this week</td>
+					<td style="vertical-align: middle;"><i class="fa fa-heart-o pull-right"></i></td>
+				</tr>
+				<tr>
+					<td><img src="http://placehold.it/40x40" height="40" width="40" class="profile-small pull-left" /><b>Jonas Mitchell</b><br />2/3 this week</td>
+					<td style="vertical-align: middle;"><i class="fa fa-heart-o pull-right"></i></td>
+				</tr>
+			</table>
+		</div>
+		
+		<div class="path-details-form">
+			<div class="form-row">
+				<label for="">Ask a Question</label>
+				<input name="" type="" value="" placeholder="What's on your mind?" />
+				<textarea style="margin-top: 8px;" placeholder="Add some details to make sure your question is super clear."></textarea>
+				<a href="#" style="padding-top: 5px; color: #333333; text-decoration: underline; font-weight: bold;" class="pull-left">Read previous questions</a>
+				<button class="pull-right" style="margin-top: 5px; padding: 2px 20px; background-color: transparent; border: 1px solid #51079B; color: #51079B;">Send It</button>
+				<div class="clear"></div>
+			</div>
+			
+		</div><!--END /.path-details-form-->
+		
+	</div><!--END /.path-details-container-->
+</div><!--END /.row-->
