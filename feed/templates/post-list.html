@@ -35,7 +35,9 @@
 	
 		<div id="post-list-innercontainer">
 			
-			<div class="card {{card.type}} block" ng-repeat="card in goalsForFeed | orderBy: '-created'" card="card" emit-when="{event: 'allRendered'}"></div>
+			<!--<div class="card {{card.type}} block" ng-repeat="card in goalsForFeed | orderBy: '-created'" card="card" emit-when="{event: 'allRendered'}"></div>-->
+			
+			<a role="button" ng-click="openAside('right',true,'modules/goal/templates/goal-detail.html')"><img src="design/img/demoTemp/demo-goal.png" style="margin-bottom: 8px; width: 100%; height: auto;" /></a>
 			
 			<div class="card {{card.type}} block" ng-repeat="card in feed | orderBy : '-created'" card="card" emit-when="{event: 'allRendered'}"></div>		
 		
