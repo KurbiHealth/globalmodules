@@ -280,6 +280,52 @@ function($scope, $locale, api){
 	//$scope.severityToAdd = {value: -1};
 	//$scope.directiveDelegate = {};
 
+	$scope.isEditable = function(cardCreated, cardDate){
+		if(cardCreated !== undefined){
+			var date = cardCreated;
+		}
+		else{
+			var date = cardDate;
+		}
+
+		var d = new Date();
+		var todaysMonth = d.getMonth() + 1;
+		var todaysDay = d.getDate();
+		if(todaysDay < 10)
+			var todaysDay = '0' + todaysDay;
+		if(todaysMonth < 10)
+			var todaysMonth = '0' + todaysMonth;
+		todaysDay = todaysDay.toString();
+		todaysMonth = todaysMonth.toString();
+		var todaysYear = d.getFullYear().toString();
+		var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
+
+		//var sympDate = cardDate.toString().substring(4,15);
+		//console.log("IsEditable: ", date);
+		var sympDate = new Date(date);
+		var month = sympDate.getMonth() + 1;
+		var day = sympDate.getDate();
+		if(day < 10)
+			day = '0' + day;
+		if(month < 10)
+			month = '0' + month;
+		month = month.toString();
+		day = day.toString();
+		var year = sympDate.getFullYear().toString();
+		var journalDate = (month + '/' + day + '/' + year).toString();
+
+		//console.log("IsEditable: ", todaysDate + " " + journalDate);
+		//var year = sympDate.substring(0,4);
+		//var month = sympDate.substring(5,7);
+		//var day = sympDate.substring(8,10);
+		//var journalDate = (month + "/" + day + "/" + year).toString();
+
+		if (todaysDate === journalDate || (todaysYear === year && todaysMonth === month && todaysDay === day)){
+			return true;
+		}
+		return false;
+	}
+
 	$scope.updateSeverity = function (severity) {
 		//
 	}

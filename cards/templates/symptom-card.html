@@ -16,7 +16,7 @@
 	<div class="card-reverse" ng-class="{ 'reversed': !reversed }">-->
 	<div class="card-front">	
 		<div class="card-title grey-text text-darken-4">
-			<span ng-show="reversed" class="card-title-text">{{card.title}}</span><i ng-show="reversed" class="md md-more-vert pull-right activator" ng-click="onEditClick(defaultSlider)"></i>
+			<span ng-show="reversed" class="card-title-text">{{card.title}}</span><div ng-if="isEditable(card.created, card.date)"><i ng-show="reversed" class="md md-more-vert pull-right activator" ng-click="onEditClick(defaultSlider)"></i></div>
 			<span ng-show="!reversed" class="card-title-text">Edit: {{card.title}}</span><i ng-show="!reversed" class="md md-close pull-right activator" ng-click="onEditClick(grabSlider)"></i>
 		</div>
 		<div class="card-content">
