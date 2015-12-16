@@ -19,7 +19,6 @@ function ($http, $q, $log, user, config, $state) {
 					function(journalArray){
 						var temp = {};
 						//var tempArray = [];
-
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
 								var todaysDateArray = _getArrayDate(new Date());
@@ -375,7 +374,6 @@ console.log('error in signUp function-api service: ',error);
 
 	function getList(promise,tableName) {
 		user.getUser();
-console.log(user);
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',

@@ -8,9 +8,7 @@ postDirectives.directive('postList', function(){
 		restrict: 'A',
 		templateUrl: '/modules/feed/templates/post-list.html',
 		controller: 'PostController',
-		link: function(scope, element, attr, ctrl){
-			ctrl.postsInit();
-		}
+		link: function(scope, element, attr, ctrl){  }
 	};
 });
 

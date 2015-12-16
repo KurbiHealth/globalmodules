@@ -4,7 +4,7 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 
 	var userObj = {
 
-		loggedIn: 		false,
+		loggedIn: undefined,
 		email: 			'',
 		firstName: 		'',
 		lastName: 		'',
@@ -55,15 +55,12 @@ kurbiApp.factory('user', ['$cookies', function ($cookies) {
 			if(this.imageFileName === '' || typeof this.imageFileName === 'undefined'){
 				this.imageFileName = $cookies.imageFileName;
 			}
-console.log(this);
 			// Logged In
 			if(this.loggedIn === '' || typeof this.loggedIn === 'undefined'){
-console.log(this);
 				if($cookies.loggedIn == 'true')
 					this.loggedIn = true;
 				else
 					this.loggedIn = false;
-console.log(this);
 			}
 		},
 

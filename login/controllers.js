@@ -4,8 +4,6 @@ function ($location, $scope, $q, api, user, $state) {
 	$scope.loginFormFields = {};
 
 	$scope.login = function(){
-console.log('in LoginController');
-console.log(user);
 		promise = $q.defer();
 		api.logIn(promise,$scope.loginFormFields.email,
 			$scope.loginFormFields.password).then(
