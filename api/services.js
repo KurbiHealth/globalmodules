@@ -19,7 +19,6 @@ function ($http, $q, $log, user, config, $state) {
 					function(journalArray){
 						var temp = {};
 						//var tempArray = [];
-
 						for (var obj in journalArray){
 							if (temp[journalArray[obj].symptoms.technical_name] === undefined){
 								var todaysDateArray = _getArrayDate(new Date());
@@ -869,7 +868,7 @@ console.log('error in query function-api service: ',error);
 			returnPromise.resolve(list);
 		});
 		careTeamRequest.catch(function(error){
-			console.log('error in mainController',error);
+			console.log('error in api service: careTeamInit()',error);
 		});
 
 		return returnPromise.promise;
