@@ -1332,6 +1332,10 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
+	function updateCard(id){
+		// use api.updateOne(promise,'journal_entry_components',id)
+	}
+
 	function deleteCard(id){
 		// use api.deleteOne(promise,'journal_entry_components',id)
 		
