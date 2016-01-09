@@ -256,12 +256,20 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 kurbiApp.controller('CardController', ['$scope', '$locale', 'api',
 function($scope, $locale, api){
-	/*$scope.addSymptomCard = function(api)
-	{
-		//$scope.showModal = true;
-	};*/
+	
+	$scope.checkIfEmpty = function(v){
 
-	// this is called in the directives.js file
+		if(typeof v == 'undefined'){
+			return true;
+		}
+		if(typeof v == 'object'){
+			if(v.length == 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	};
 
 }]);
 
