@@ -103,15 +103,46 @@ function ($http, $q, $log, user, config, $state) {
 							}
 						}
 
-						for (var t in temp) {
-							//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
-							symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+						if (symptomsObject.topSymptomsArray.length === 0){
+							for (var t in temp) {
+								//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+								symptomsObject.topSymptomsCountObj[t] = temp[t].id;
 
-							symptomsObject.topSymptomsArray.push({'name': t, 
-								'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
-								'date': temp[t].date, 'count': temp[t].count});
+								symptomsObject.topSymptomsArray.push({'name': t, 
+									'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
+									'date': temp[t].date, 'count': temp[t].count});
 
-							symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
+								symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
+							}							
+						}
+						else{
+							for(var t in temp){
+								found = false;
+								symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+								for(var symObj in symptomsObject.topSymptomsArray) {
+									//console.log("Update symObj: ", symObj.name + " " + t);
+									if(symptomsObject.topSymptomsArray[symObj].name === t){
+										//console.log("Update symObj name: TRUE");
+										symptomsObject.topSymptomsArray[symObj].avgSev = temp[t].avgSeverity/temp[t].count;
+										symptomsObject.topSymptomsArray[symObj].count = temp[t].count;
+										symptomsObject.topSymptomsArray[symObj].date = temp[t].date;
+										//symptomsObject.topSymptomsCountObj[t].count = temp[t].count;
+										found = true;
+										break;
+									}
+								}
+
+								if(!found){
+									//symptomsObject.topSymptomsCountObj[t] = {'id': temp[t].id, 'date': temp[t].date, 'count': temp[t].count};
+									//symptomsObject.topSymptomsCountObj[t] = temp[t].id;
+									
+									symptomsObject.topSymptomsArray.push({'name': t, 
+										'id': temp[t].id, 'avgSev': temp[t].avgSeverity/temp[t].count, 
+										'date': temp[t].date, 'count': temp[t].count});
+								}
+
+								symptomsObject.topSymptomsData[t] = {'avgSev': temp[t].avgSeverity, 'date': temp[t].date, 'count': temp[t].count};
+							}
 						}
 
 						symptomsObject.setTopSeverityStyles();
@@ -132,7 +163,7 @@ function ($http, $q, $log, user, config, $state) {
 								symptomsObject.topSymptomsArray[topSymptoms[symp].name] = {'id': topSymptoms[symp].id, 
 									'avgSev': topSymptoms[symp].avgSev, 'date': topSymptoms[symp].date, 'count': topSymptoms[symp].count};
 							}*/
-							//console.log("Top count: ", symptomsObject.topSymptomsArray);
+						//console.log("Top count array: ", symptomsObject.topSymptomsArray);
 					}
 				);
 			return;

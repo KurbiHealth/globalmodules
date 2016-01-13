@@ -207,12 +207,16 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		//console.log("cardObj: ", cardObj);
+		console.log("cardObj: ", cardObj);
+		console.log("journal entries: ", $scope.journalEntries[0].components);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
 
-		$scope.journalEntries[0].components.unshift(cardObj);		
+		//This unshift causes problems if reload is called since Main Controller is reloaded again
+			//and it wipes out anything here with another store of the cards
+		$scope.journalEntries[0].components.unshift(cardObj);	
+		//$state.reload();
 		//$scope.journalEntries[0].components.unshift(
 			//{id: newId, 'type': type, title: newTitle}
 		//);
@@ -222,7 +226,6 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			$('.journal-day').masonry('reloadItems');
 			$('.journal-day').masonry('layout');
 		},650);*/
-		$state.reload();	
 	};
 
 	/*$scope.open = function (size) {
@@ -423,22 +426,31 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.symptomIds = [];
 	//$scope.addSymptom = addSymptom;
 
-	$scope.addSymptom = function (symptom) {
+	$scope.addSymptom = function (symptom){
 		var severityToAdd = 0;
 
-		if(topSymptomsData[symptom].date !== "Today"){
-			for (var key in $scope.modalSeverities) {
-				if (key === symptom) {
+		if(topSymptomsData[symptom] === undefined || topSymptomsData[symptom].date !== "Today"){
+			for (var key in $scope.modalSeverities){
+				if (key === symptom){
 					severityToAdd = $scope.modalSeverities[key];
 				}
 			}
 
-			if (severityToAdd > 0) {
-				$scope.symsToAddList[symptom] = severityToAdd;
-				$scope.addedSymps[symptom] = "addedSymptom";
-				++$scope.addedSymptoms;
+			if (severityToAdd > 0){
+				if ($scope.addedSymps[symptom] === ""){
+					$scope.symsToAddList[symptom] = severityToAdd;
+					$scope.addedSymps[symptom] = "addedSymptom";
+					++$scope.addedSymptoms;
+
+					/*for (var key in $scope.clickedList) {
+						$scope.clickedList[key] = false;		
+					}*/
+				}
+				else{
+					alert("Symptom already added. To update severity move slider");
+				}
 			}
-			else {
+			else{
 				alert("Slider can't be at default position when adding");
 			}
 		}
