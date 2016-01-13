@@ -145,6 +145,17 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 .cardController{padding-left:0; padding-right:0}
 .journal-day{width:100%;}
 .journal-day-header{width:100%;}
+.journal-entry-reminder{
+	width: 200px;
+    margin: 10px 0 10px 10px;
+    background-color: white;
+    border-radius: 3px;
+    padding: 8px 0;
+    color: black;
+    font-size: 12px;
+    height: 30px;
+    text-align: center;
+}
 </style>
 
 	<div class="row">
@@ -153,6 +164,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 			<div ng-repeat="day in journalEntries" class="journal-day" style="margin: 0 auto; max-width: 610px;">
 				<div class="journal-day-header block">{{day.date}}</div>
+				<h3 ng-if="checkIfEmpty(day.components)" class="journal-entry-reminder block">Click above to add a new entry</h3>
 				<div class="card {{card.type}} block" ng-repeat="card in day.components" card="card" emit-when="{event: 'allRendered'}"></div><!--  -->
 			</div>
 
