@@ -1364,12 +1364,27 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function updateCard(id){
-		// use api.updateOne(promise,'journal_entry_components',id)
+		api.updateOne($q.defer,'journal_entry_components',id)
+			.then(
+				function(data){
+					console.log("Update Card: ", data);
+				},
+				function(error){
+					console.log("Update Card ERROR: ", error);
+				}
+			);
 	}
 
 	function deleteCard(id){
-		// use api.deleteOne(promise,'journal_entry_components',id)
-		
+		api.deleteOne($q.defer,'journal_entry_components',id)
+			.then(
+				function(data){
+					console.log("Delete Card: ", data);
+				},
+				function(error){
+					console.log("Delete Card ERROR: ", error);
+				}
+			);
 	}
 
 	/*function symptomsObject(){

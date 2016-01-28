@@ -100,12 +100,25 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 			    modalInstance.result.then(
 			    	function (dataObjList) {
+						var d = new Date();
+						var todaysMonth = d.getMonth() + 1;
+						var todaysDay = d.getDate();
+						if(todaysDay < 10)
+							var todaysDay = '0' + todaysDay;
+						if(todaysMonth < 10)
+							var todaysMonth = '0' + todaysMonth;
+						todaysDay = todaysDay.toString();
+						todaysMonth = todaysMonth.toString();
+						var todaysYear = d.getFullYear().toString();
+						var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
+
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
 							api.addSymptom($q.defer(),dataObjList[index]);
 							++$scope.idCount;
 							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, 
-											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id}};
+											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
+											created: todaysDate, date: todaysDate};
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
@@ -215,7 +228,10 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 		//This unshift causes problems if reload is called since Main Controller is reloaded again
 			//and it wipes out anything here with another store of the cards
-		$scope.journalEntries[0].components.unshift(cardObj);	
+		/*$scope.$apply(function(cardObj){
+			$scope.journalEntries[0].components.unshift(cardObj);
+		});*/
+		$scope.journalEntries[0].components.unshift(cardObj);
 		//$state.reload();
 		//$scope.journalEntries[0].components.unshift(
 			//{id: newId, 'type': type, title: newTitle}
@@ -325,7 +341,7 @@ function($scope, $locale, api){
 		var year = sympDate.getFullYear().toString();
 		var journalDate = (month + '/' + day + '/' + year).toString();
 
-		//console.log("IsEditable: ", todaysDate + " " + journalDate);
+		console.log("IsEditable: ", todaysDate + " " + journalDate);
 		//var year = sympDate.substring(0,4);
 		//var month = sympDate.substring(5,7);
 		//var day = sympDate.substring(8,10);
@@ -350,7 +366,7 @@ function($scope, $locale, api){
     	$scope.resetSeverity();
     };
 
-    $scope.saveSeverity = function() 
+    $scope.saveSeverity = function(cardToSave) 
     {
     	//$scope.card.severity = 7;
     	var sev = $scope.getSeverity();
@@ -374,6 +390,8 @@ function($scope, $locale, api){
 		//console.log('saving severity: ', $scope.card.severity);
 		$scope.card.severity = sev;
 		$scope.timeSaved = Date.now();
+
+		api.updateCard(cardToSave.journal_entry_id);
 		//$scope.directiveDelegate.invoke();
     };
 
@@ -388,6 +406,8 @@ function($scope, $locale, api){
     			}
     		}
     	}
+
+    	api.deleteCard(cardIdToDelete);
     	//Delete throws an error
     	$scope.journalEntries[entry].components[indexToDelete] = {};
     	//delete $scope.journalEntries[entry].components[indexToDelete];
