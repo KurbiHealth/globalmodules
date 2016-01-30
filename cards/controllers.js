@@ -114,12 +114,25 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 			    modalInstance.result.then(
 			    	function (dataObjList) {
+						var d = new Date();
+						var todaysMonth = d.getMonth() + 1;
+						var todaysDay = d.getDate();
+						if(todaysDay < 10)
+							var todaysDay = '0' + todaysDay;
+						if(todaysMonth < 10)
+							var todaysMonth = '0' + todaysMonth;
+						todaysDay = todaysDay.toString();
+						todaysMonth = todaysMonth.toString();
+						var todaysYear = d.getFullYear().toString();
+						var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
+
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
 							api.addSymptom($q.defer(),dataObjList[index]);
 							++$scope.idCount;
 							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, 
-											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id}};
+											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
+											created: todaysDate, date: todaysDate};
 							$scope.updateCardUI(cardObj);
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
@@ -221,12 +234,19 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		//console.log("cardObj: ", cardObj);
+		console.log("cardObj: ", cardObj);
+		console.log("journal entries: ", $scope.journalEntries[0].components);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
 
-		$scope.journalEntries[0].components.unshift(cardObj);		
+		//This unshift causes problems if reload is called since Main Controller is reloaded again
+			//and it wipes out anything here with another store of the cards
+		/*$scope.$apply(function(cardObj){
+			$scope.journalEntries[0].components.unshift(cardObj);
+		});*/
+		$scope.journalEntries[0].components.unshift(cardObj);
+		//$state.reload();
 		//$scope.journalEntries[0].components.unshift(
 			//{id: newId, 'type': type, title: newTitle}
 		//);
@@ -236,7 +256,6 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			$('.journal-day').masonry('reloadItems');
 			$('.journal-day').masonry('layout');
 		},650);*/
-		$state.reload();
 	};
 
 	/*$scope.open = function (size) {
@@ -271,12 +290,19 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 kurbiApp.controller('CardController', ['$scope', '$locale', 'api',
 function($scope, $locale, api){
 
-	/*$scope.addSymptomCard = function(api)
-	{
-		//$scope.showModal = true;
-	};*/
+	$scope.checkIfEmpty = function(v){
 
-	// this is called in the directives.js file
+		if(typeof v == 'undefined'){
+			return true;
+		}
+		if(typeof v == 'object'){
+			if(v.length == 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	};
 
 }]);
 
@@ -329,7 +355,7 @@ function($scope, $locale, api){
 		var year = sympDate.getFullYear().toString();
 		var journalDate = (month + '/' + day + '/' + year).toString();
 
-		//console.log("IsEditable: ", todaysDate + " " + journalDate);
+		console.log("IsEditable: ", todaysDate + " " + journalDate);
 		//var year = sympDate.substring(0,4);
 		//var month = sympDate.substring(5,7);
 		//var day = sympDate.substring(8,10);
@@ -354,7 +380,7 @@ function($scope, $locale, api){
     	$scope.resetSeverity();
     };
 
-    $scope.saveSeverity = function() 
+    $scope.saveSeverity = function(cardToSave) 
     {
     	//$scope.card.severity = 7;
     	var sev = $scope.getSeverity();
@@ -378,6 +404,8 @@ function($scope, $locale, api){
 		//console.log('saving severity: ', $scope.card.severity);
 		$scope.card.severity = sev;
 		$scope.timeSaved = Date.now();
+
+		api.updateCard(cardToSave.journal_entry_id);
 		//$scope.directiveDelegate.invoke();
     };
 
@@ -392,6 +420,8 @@ function($scope, $locale, api){
     			}
     		}
     	}
+
+    	api.deleteCard(cardIdToDelete);
     	//Delete throws an error
     	$scope.journalEntries[entry].components[indexToDelete] = {};
     	//delete $scope.journalEntries[entry].components[indexToDelete];
@@ -438,22 +468,31 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.symptomIds = [];
 	//$scope.addSymptom = addSymptom;
 
-	$scope.addSymptom = function (symptom) {
+	$scope.addSymptom = function (symptom){
 		var severityToAdd = 0;
 
-		if(topSymptomsData[symptom].date !== "Today"){
-			for (var key in $scope.modalSeverities) {
-				if (key === symptom) {
+		if(topSymptomsData[symptom] === undefined || topSymptomsData[symptom].date !== "Today"){
+			for (var key in $scope.modalSeverities){
+				if (key === symptom){
 					severityToAdd = $scope.modalSeverities[key];
 				}
 			}
 
-			if (severityToAdd > 0) {
-				$scope.symsToAddList[symptom] = severityToAdd;
-				$scope.addedSymps[symptom] = "addedSymptom";
-				++$scope.addedSymptoms;
+			if (severityToAdd > 0){
+				if ($scope.addedSymps[symptom] === ""){
+					$scope.symsToAddList[symptom] = severityToAdd;
+					$scope.addedSymps[symptom] = "addedSymptom";
+					++$scope.addedSymptoms;
+
+					/*for (var key in $scope.clickedList) {
+						$scope.clickedList[key] = false;		
+					}*/
+				}
+				else{
+					alert("Symptom already added. To update severity move slider");
+				}
 			}
-			else {
+			else{
 				alert("Slider can't be at default position when adding");
 			}
 		}
