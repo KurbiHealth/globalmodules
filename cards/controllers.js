@@ -39,6 +39,20 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		}		
 	};
 
+	$scope.checkIfEmpty = function(v){
+
+		if(typeof v == 'undefined'){
+			return true;
+		}
+		if(typeof v == 'object'){
+			if(v.length == 0){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	};
+
 	$scope.$on('allRendered', function(){
 		// the "allRendered" event is supposed to broadcast when the 
 		// cards are done being rendered, but there still is a brief
@@ -222,7 +236,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			$('.journal-day').masonry('reloadItems');
 			$('.journal-day').masonry('layout');
 		},650);*/
-		$state.reload();	
+		$state.reload();
 	};
 
 	/*$scope.open = function (size) {
@@ -256,6 +270,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 kurbiApp.controller('CardController', ['$scope', '$locale', 'api',
 function($scope, $locale, api){
+
 	/*$scope.addSymptomCard = function(api)
 	{
 		//$scope.showModal = true;

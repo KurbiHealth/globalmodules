@@ -51,8 +51,8 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 	<div id="journal-entry">
 		<span class="pull-left">ADD: &nbsp;</span>
-		<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
-		<i class="md md-camera-alt pull-left" ng-click="openAside('right',true,'modules/file-upload/templates/upload-image.html')"></i>
+		<!--<i class="md md-create pull-left" ng-click="addCard('text-card')"></i>
+		<i class="md md-camera-alt pull-left" ng-click="openAside('right',true,'modules/file-upload/templates/upload-image.html')"></i>-->
 		<i class="md md-healing pull-left" ng-click="addCard('symptom-card')"></i>
 		<!--i class="md md-healing pull-left" data-toggle="modal" href="#form-content" ng-click="addCard('symptom-card')"></i-->
 	</div>
@@ -149,7 +149,7 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 	<div class="row">
 
-		<div ng-controller="CardController" class="cardContainer col-md-8 col-md-offset-2">
+		<div class="cardContainer col-md-8 col-md-offset-2">
 
 			<div ng-repeat="day in journalEntries" class="journal-day" style="margin: 0 auto; max-width: 610px;">
 				<div class="journal-day-header block">{{day.date}}</div>
