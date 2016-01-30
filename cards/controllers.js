@@ -341,7 +341,7 @@ function($scope, $locale, api){
 		var year = sympDate.getFullYear().toString();
 		var journalDate = (month + '/' + day + '/' + year).toString();
 
-		console.log("IsEditable: ", todaysDate + " " + journalDate);
+		//console.log("IsEditable: ", todaysDate + " " + journalDate);
 		//var year = sympDate.substring(0,4);
 		//var month = sympDate.substring(5,7);
 		//var day = sympDate.substring(8,10);
