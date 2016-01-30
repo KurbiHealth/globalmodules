@@ -906,7 +906,6 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function getJournalCards(returnPromise,date){
-
 		// LOAD FOR 'date' OR FIRST RECORD OLDER THEN 'date'
 		// OR
 		// if blank, check if there is anything for today, and if there isn't, return the most recent date (this function would need to be called again)
@@ -1006,6 +1005,7 @@ console.log('error in query function-api service: ',error);
 				// go through all the entries
 				var data = that.tempData;
 				var components = [];
+
 				for(i in data){
 					promise = $q.defer();
 					components.push(query(promise,'journal_entry_components/journal_entries',{

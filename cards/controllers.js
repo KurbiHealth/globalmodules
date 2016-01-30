@@ -58,14 +58,14 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		// cards are done being rendered, but there still is a brief
 		// time between when the directive is done rendering and when
 		// the Masonry will work, hence the $timeout
-		$timeout(function(){
+		/*$timeout(function(){
 //console.log('allRendered detected');
 			$('.journal-day').masonry({
 				itemSelector: '.block',
 				columnWidth: .33
 			});
-		},50);
-
+		},500);
+*/
 		$scope.initCardService(); // what does this do?? -Matt, Grabs the next card Id - Andrew
 		//getSymptomsCount();
 	});
