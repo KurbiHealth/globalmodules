@@ -1093,7 +1093,8 @@ console.log('error in query function-api service: ',error);
 
 						// check for image type
 						if(data[i].image_id != null){
-							details.push(getOne(promise,'images',data[i].image_id)
+console.log(data[i].image_id);
+/*							details.push(getOne(promise,'images',data[i].image_id)
 							.then(function(detail){
 								// add detail to the component
 								that.tempComp = {
@@ -1107,6 +1108,7 @@ console.log('error in query function-api service: ',error);
 that.tempComp.details = detail.notes;
 								that.journalEntry.components.push(that.tempComp);
 							}));
+*/
 						}
 
 					}// end for(i in data)
@@ -1415,10 +1417,10 @@ that.tempComp.details = detail.notes;
 
 	}
 
-	function addImage(data){ // SEE LINE 1090 FOR FUNCTION THAT GETS IMAGE CARDS TO DISPLAY
+	function addImage(image){ // SEE LINE 1090 FOR FUNCTION THAT GETS IMAGE CARDS TO DISPLAY
 		var returnPromise = $q.defer();
 		
-		var imgUrl = 'v' + data.version + '/' + data.public_id + '.' + data.format;
+		var imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
 		var today = _getStringDate(new Date());
 
 // 1. get journal entry id
@@ -1426,9 +1428,9 @@ that.tempComp.details = detail.notes;
 // 3. use image id in adding a journal_entry_components record
 		
 		query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|eq|' + today,
-			orderBy: 'desc',
-			limit
+			field: 'journal_entries.created|has|' + today,
+			orderBy: 'journal_entries.created|desc',
+			limit: 1
 		})
 		.then(function(data){
 			if(data.length == 0){
@@ -1437,7 +1439,7 @@ that.tempComp.details = detail.notes;
 					wellness_score: 0
 				})
 				.then(function(data){
-					var journalEntryId = data;
+					var journalEntryId = data.insertId;
 					data = '';
 					addRecord($q.defer(),'images',{
 						'image_url': data.insertId,
@@ -1448,23 +1450,25 @@ that.tempComp.details = detail.notes;
 							'journal_entry_id': journalEntryId,
 							'image_id': data
 						})
-
-						returnPromise.resolve();
+						.then(function(data){
+							returnPromise.resolve();
+						});
 					});
 				});
 			}else{
-				var journalEntryId = data.id;
+				var journalEntryId = data[0].journal_entries.id;
 				addRecord($q.defer(),'images',{
-					'image_url': data.insertId,
+					'image_url': imgUrl,
 					'description': ''
 				})
 				.then(function(data){
 					addRecord($q.defer(),'journal_entry_components',{
 						'journal_entry_id': journalEntryId,
-						'image_id': data
+						'image_id': data.insertId
 					})
-
-					returnPromise.resolve();
+					.then(function(data){
+						returnPromise.resolve();
+					});
 				});
 			}
 		});
