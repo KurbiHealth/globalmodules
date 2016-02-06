@@ -69,16 +69,19 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 						<div class="col-md-6">
 							<a href="#" class="label" ng-click="clickBack()" style="color: #333333; font-size: 14px;"><i class="fa fa-angle-double-left"></i> Back</a>
 							<a href="#" class="label" ng-click="showSymptomsAdded()" style="color: #333333; font-size: 14px;">Symptoms Added: {{addedSymptoms}}</a>
+							<span class="pull-right hidden-md hidden-lg" style="font-weight:bold;">
+								<a href="#" ng-click="mobileBrowse()" style="color: #333333; font-size: 14px;">Browse</a> | <a href="#" ng-click="mobileSearch()" style="color: #333333; font-size: 14px;">Search</a>
+							</span>
 						</div><!-- END /.col -->
-						<div class="col-md-6">
-							<div class="input-group">
+						<div class="col-md-6 {{hideSearch}} {{showSearch}}">
+							<div class="input-group mobile-search-space">
 								<span class="input-group-addon"><i class="fa fa-search"></i></span>
 							  <input type="search" class="form-control" autocomplete="off" ng-model="symptomSearch" ng-change="modalSearchChange('search')" ng-blur="modalSearchChange('blur')" placeholder="Search by name"/>
 							</div><!-- END /.input-group -->
 						</div><!-- END /.col -->
 					</div><!-- END /.row -->
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-6 {{hideBrowse}} {{showBrowse}}">						
 							<ul class="symptom-cats">
 								<div ng-repeat="(ky, vl) in leftView">
 									<li>
