@@ -28,13 +28,13 @@
 				    <h5 ng-show="saved" >Symptom Saved!</h5>
 				  </div>
 				  <div class="pull-right" style="padding:0 5px 5px 0;">
-				  	<button type="" ng-show="!reversed" class="btn btn-default" ng-click="deleteSymptom(card.journal_entry_id)"><i class="fa fa-trash-o"></i></button>
+				  	<button type="" ng-show="!reversed" class="btn btn-default" ng-click="deleteSymptom(card.id)"><i class="fa fa-trash-o"></i></button>
 				  </div>
 			    <div class="clear"></div>
 			</div>
 		</div>
-		<div class="card-footer">
+		<!--div class="card-footer">
 			<p>{{card.created | date:'EEE MMM dd yyyy h:mm a'}}</p>
-		</div>
+		</div-->
 	</div>
 </div>

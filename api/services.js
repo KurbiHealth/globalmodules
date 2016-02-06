@@ -344,7 +344,10 @@ function ($http, $q, $log, user, config, $state) {
 		getGoalActivitiesList: getGoalActivitiesList,
 		saveGoal: saveGoal,
 		savePath: savePath,
-		symptomsObject: symptomsObject
+		//Utilities
+		symptomsObject: symptomsObject,
+		updateCard: updateCard,
+		deleteCard: deleteCard
 	};
 
 	/*------------------------------------------------
@@ -1363,8 +1366,8 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
-	function updateCard(id){
-		api.updateOne($q.defer,'journal_entry_components',id)
+	function updateCard(card, id){
+		updateOne($q.defer,'journal_entry_components', card, id)
 			.then(
 				function(data){
 					console.log("Update Card: ", data);
@@ -1376,7 +1379,7 @@ console.log('error in query function-api service: ',error);
 	}
 
 	function deleteCard(id){
-		api.deleteOne($q.defer,'journal_entry_components',id)
+		deleteOne($q.defer,'journal_entry_components',id)
 			.then(
 				function(data){
 					console.log("Delete Card: ", data);
