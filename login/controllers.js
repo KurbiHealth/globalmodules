@@ -13,7 +13,7 @@ function ($location, $scope, $q, api, user, $state) {
 					user.saveUser(result.user);
 					user.setToken(result.token);
 					// redirect to home
-					$state.go('private.home'); 
+					$state.go('private.journal'); 
 				}else{
 					// user service not available, means this needs to fail
 					// TODO add a flash message to appear to user
