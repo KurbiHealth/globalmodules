@@ -515,8 +515,7 @@ console.log('error in addRecord function-api service: ',error);
 			headers: {
 				'x-custom-username': user.email,
 				'x-custom-token': user.token
-			},
-			data: {deleteId: id}
+			}
 		}
 		$http(config)
 		.success(function(data){
