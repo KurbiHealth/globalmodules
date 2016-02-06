@@ -467,6 +467,20 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.searchList = [];
 	$scope.symptomIds = [];
 	//$scope.addSymptom = addSymptom;
+	
+	$scope.hideSearch = "hide-search";
+	
+	$scope.mobileBrowse = function() {
+		$scope.hideSearch = "hide-search";
+		$scope.hideBrowse = "";
+		$scope.symptomSearch = "";
+	};
+	
+	$scope.mobileSearch = function() {
+		$scope.hideSearch = "";
+		$scope.hideBrowse = "hide-browse";
+	};
+
 
 	$scope.addSymptom = function (symptom){
 		var severityToAdd = 0;
