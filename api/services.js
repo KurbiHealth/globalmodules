@@ -348,7 +348,10 @@ function ($http, $q, $log, user, config, $state) {
 		//Utilities
 		symptomsObject: symptomsObject,
 		updateSymptomCard: updateSymptomCard,
-		deleteCard: deleteCard
+		deleteCard: deleteCard,
+		addTextCard: addTextCard,
+		updateTextCard: updateTextCard,
+		deleteTextCard: deleteTextCard
 	};
 
 	/*------------------------------------------------
@@ -1297,6 +1300,79 @@ that.tempComp.details = detail.notes;
 		return returnPromise.promise;
 	}
 
+	function addTextCard(returnPromise, cardObj){
+		// SET VARIABLES
+		var today = _getStringDate(new Date);
+		console.log("Add Text date: ", today);
+		var that = this;
+		that.currJournalEntryId = '';
+
+		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
+		var checkEntry = $q.defer();
+		query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|eq|' + today
+		})
+		.then(function(data){
+			if(data.length == 0){
+				/*var dataObj = {
+					'wellness_score': 0
+				};*/
+				addRecord($q.defer(),'journal_entries',cardObj)
+				.then(
+					function(data) {
+						that.currJournalEntryId = data.insertId;
+						checkEntry.resolve();
+					},
+					function(error){
+						console.log("Add Text Card: addRecord ", error);
+					}
+				);
+			}else{
+				that.currJournalEntryId = data.id;
+				checkEntry.resolve();
+			}
+		});
+
+		// WHEN DONE ABOVE...
+
+		$q.all([
+			checkEntry.promise
+		]).then(
+			function(){
+		
+		// ADD A TEXT RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
+
+			var dataObj = {
+				//'title': cardObj.title,
+				'text': cardObj.text,
+			};
+			addRecord($q.defer(),'notes',dataObj)
+			.then(
+				function(data) {
+					var dataObj = {
+						'note_id': data
+					};	
+					addRecord($q.defer(),'journal_entry_components',dataObj)
+					.then(
+						function(data){
+							returnPromise.resolve(data);
+						},
+						function(error){
+							console.log("Add Text Card: journal entry components addRecord ", error);
+							returnPromise.reject(error);
+						}
+					);
+				},
+				function(error){
+					console.log("Add Text Card: notes addRecord ", error);
+					returnPromise.reject(error);
+				}
+			);
+		});
+
+		return returnPromise.promise;
+	}
+
 	function getSymptomList(){
 		var returnPromise = $q.defer();
 		
@@ -1412,11 +1488,44 @@ that.tempComp.details = detail.notes;
 		);
 	}
 
+	function updateTextCard(card){
+		updateOne($q.defer,'notes', card, card.id)
+			.then(
+				function(data){
+					console.log("Update Text Card: ", data);
+				},
+				function(error){
+					console.log("Update Text Card ERROR: ", error);
+				}
+			);		
+	}
+
 	function deleteCard(id){
 		deleteOne($q.defer(),'journal_entry_components',id)
 		.then(function(data){
 			console.log("Delete Card: ", data);
 		});
+	}
+
+	function deleteTextCard(id){
+		deleteOne($q.defer,'journal_entry_components',id)
+			.then(
+				function(data){
+					console.log("Delete Text Card: ", data);
+				},
+				function(error){
+					console.log("Delete Text Card ERROR: ", error);
+				}
+			);
+		deleteOne($q.defer,'notes',id)
+			.then(
+				function(data){
+					console.log("Delete Text Card: ", data);
+				},
+				function(error){
+					console.log("Delete Text Card ERROR: ", error);
+				}
+			);			
 	}
 
 }]);
