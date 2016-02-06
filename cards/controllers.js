@@ -78,6 +78,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				newTitle = "New Journal Entry";
 				++$scope.idCount;
 				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				api.addTextCard($q.defer(),cardObj);
 				$scope.updateCardUI(cardObj);
 				break;
 			case 'symptom-card':
@@ -409,6 +410,11 @@ function($scope, $locale, api){
 		//$scope.directiveDelegate.invoke();
     };
 
+    $scope.saveNote = function(cardToSave){
+		//$scope.timeSaved = Date.now();
+		api.updateTextCard(cardToSave);
+    };
+
     $scope.deleteSymptom = function(cardIdToDelete){
     	var indexToDelete = -1;
     	for(var entry in $scope.journalEntries){
@@ -426,6 +432,10 @@ function($scope, $locale, api){
     	$scope.journalEntries[entry].components[indexToDelete] = {};
     	//delete $scope.journalEntries[entry].components[indexToDelete];
     };
+
+    $scope.deleteNote = function(cardIdToDelete){
+    	//api.deleteTextCard(cardIdToDelete);
+    }
 
 	/*$scope.ok = function() {
 	  $scope.showModal = false;

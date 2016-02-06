@@ -17,7 +17,13 @@
 		</div>
 		<div class="card-content">
 			<textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
-			<input type="submit" name="submit" value="Save" />
+			<div class="pull-left" style="padding:0 0 5px 5px;">
+				<input type="submit" name="submit" value="Save" ng-click="saveNote(card)"/>
+			</div>
+			<div class="pull-right" style="padding:0 5px 5px 0;">
+				<button type="" ng-show="!reversed" class="btn btn-default" ng-click="deleteNote(card.id)"><i class="fa fa-trash-o"></i></button>
+			</div>
+			<div class="clear"></div>			
 		</div>
 		<div class="card-footer">
 			<p>9:45pm</p>
