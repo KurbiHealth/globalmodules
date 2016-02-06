@@ -11,7 +11,8 @@ $scope.myKurbiFile = '';
 	// WHAT WORKS
 	/*
 	$scope.$watch doesn't work on change, but works when the Submit button is hit
-	hitting the Submit button and triggering saveUploadedFile() works, the () gets both the passed param and the $scope variable
+	hitting the Submit button and triggering saveUploadedFile() works, the () gets both the passed param 
+	and the $scope variable
 	*/
 	$scope.saveUploadedFile = function(file){
 
