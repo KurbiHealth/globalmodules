@@ -16,8 +16,12 @@
 	<div class="card-reverse" ng-class="{ 'reversed': !reversed }">-->
 	<div class="card-front">	
 		<div class="card-title grey-text text-darken-4">
-			<span ng-show="reversed" class="card-title-text">{{card.title}}</span><div ng-show="isEditable(card.created, card.date)"><i ng-show="reversed" class="md md-more-vert pull-right activator" ng-click="onEditClick(defaultSlider)"></i></div>
-			<span ng-show="!reversed" class="card-title-text">Edit: {{card.title}}</span><i ng-show="!reversed" class="md md-close pull-right activator" ng-click="onEditClick(grabSlider)"></i>
+			<span ng-show="reversed" class="card-title-text">{{card.title}}</span>
+			<span ng-show="isEditable(card.created, card.date)">
+				<i ng-show="reversed" class="md md-more-vert pull-right activator" ng-click="onEditClick(defaultSlider)"></i>
+			</span>
+			<span ng-show="!reversed" class="card-title-text">Edit: {{card.title}}</span>
+			<i ng-show="!reversed" class="md md-close pull-right activator" ng-click="onEditClick(grabSlider)"></i>
 		</div>
 		<div class="card-content">
 			<!-- ng-controller="SymptomCardController" -->
@@ -25,7 +29,7 @@
 			    <div ring-slider cursor-attr="defaultSlider" severity-num="card.severity" display-only></div>
 			    <div class="pull-left" style="padding:0 0 5px 5px;">
 				    <button type="submit" ng-show="!reversed" class="btn btn-default" ng-click="saveSeverity(card)">Save Severity</button>
-				    <h5 ng-show="saved" >Symptom Saved!</h5>
+				    <h5 ng-show="saved">Symptom Saved!</h5>
 				  </div>
 				  <div class="pull-right" style="padding:0 5px 5px 0;">
 				  	<button type="" ng-show="!reversed" class="btn btn-default" ng-click="deleteSymptom(card.id)"><i class="fa fa-trash-o"></i></button>
