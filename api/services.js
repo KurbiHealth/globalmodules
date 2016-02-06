@@ -346,7 +346,7 @@ function ($http, $q, $log, user, config, $state) {
 		savePath: savePath,
 		//Utilities
 		symptomsObject: symptomsObject,
-		updateCard: updateCard,
+		updateSymptomCard: updateSymptomCard,
 		deleteCard: deleteCard
 	};
 
@@ -482,6 +482,7 @@ console.log('error in addRecord function-api service: ',error);
 	}
 
 	function updateOne(promise,tableName,obj,id){
+console.log(promise);
 		user.getUser();
 		config = {
 			method: 'PUT',
@@ -490,7 +491,7 @@ console.log('error in addRecord function-api service: ',error);
 				'x-custom-username': user.email,
 				'x-custom-token': user.token
 			},
-			data: obj
+			data: {fields: obj, updateId: id}
 		}
 		$http(config)
 		.success(function(data){
@@ -515,7 +516,7 @@ console.log('error in addRecord function-api service: ',error);
 				'x-custom-username': user.email,
 				'x-custom-token': user.token
 			},
-			data: {}
+			data: {deleteId: id}
 		}
 		$http(config)
 		.success(function(data){
@@ -1366,28 +1367,27 @@ console.log('error in query function-api service: ',error);
 		return returnPromise;
 	}
 
-	function updateCard(card, id){
-		updateOne($q.defer,'journal_entry_components', card, id)
-			.then(
-				function(data){
-					console.log("Update Card: ", data);
-				},
-				function(error){
-					console.log("Update Card ERROR: ", error);
-				}
-			);
+	function updateSymptomCard(card, id){
+		var data = {
+			severity: card.severity,
+			symptom_id: card.details.id
+		};
+		updateOne($q.defer(),'journal_entry_components', data, id)
+		.then(
+			function(data){
+				console.log("Update Card: ", data);
+			},
+			function(error){
+				console.log('error updating card: ', error);
+			}
+		);
 	}
 
 	function deleteCard(id){
-		deleteOne($q.defer,'journal_entry_components',id)
-			.then(
-				function(data){
-					console.log("Delete Card: ", data);
-				},
-				function(error){
-					console.log("Delete Card ERROR: ", error);
-				}
-			);
+		deleteOne($q.defer(),'journal_entry_components',id)
+		.then(function(data){
+			console.log("Delete Card: ", data);
+		});
 	}
 
 	/*function symptomsObject(){

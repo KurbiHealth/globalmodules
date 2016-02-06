@@ -405,7 +405,7 @@ function($scope, $locale, api){
 		$scope.card.severity = sev;
 		$scope.timeSaved = Date.now();
 
-		api.updateCard(cardToSave, cardToSave.id);
+		api.updateSymptomCard(cardToSave, cardToSave.id);
 		//$scope.directiveDelegate.invoke();
     };
 
