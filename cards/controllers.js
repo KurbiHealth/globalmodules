@@ -415,22 +415,31 @@ function($scope, $locale, api){
 		api.updateTextCard(cardToSave);
     };
 
-    $scope.deleteSymptom = function(cardIdToDelete){
+    $scope.deleteSymptom = function(cardToDelete){
     	var indexToDelete = -1;
+    	var entryToDelete = undefined;
+
     	for(var entry in $scope.journalEntries){
     		for(var component in $scope.journalEntries[entry].components){
     			//console.log($scope.journalEntries[entry].components[component]);
 
-    			if($scope.journalEntries[entry].components[component].journal_entry_id === cardIdToDelete){
+    			if($scope.journalEntries[entry].components[component].journal_entry_id === cardToDelete.journal_entry_id){
+    				//console.log("FOUND IT!");
+    				entryToDelete = entry;
     				indexToDelete = component;
     			}
     		}
     	}
 
-    	api.deleteCard(cardIdToDelete);
+    	api.deleteCard(cardToDelete.id);
     	//Delete throws an error
-    	$scope.journalEntries[entry].components[indexToDelete] = {};
-    	//delete $scope.journalEntries[entry].components[indexToDelete];
+    	//console.log("entryToDelete: ", entryToDelete);
+    	//console.log("components: ", $scope.journalEntries[entryToDelete].components);
+    	$scope.journalEntries[entryToDelete].components.splice(indexToDelete, 1);
+    	//$scope.$apply(function(){
+	    	//$scope.journalEntries[entry].components[indexToDelete] = {};
+	    	//delete $scope.journalEntries[entry].components[indexToDelete];    		
+    	//});
     };
 
     $scope.deleteNote = function(cardIdToDelete){
