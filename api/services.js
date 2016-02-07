@@ -344,6 +344,7 @@ function ($http, $q, $log, user, config, $state) {
 		getGoalActivitiesList: getGoalActivitiesList,
 		saveGoal: saveGoal,
 		savePath: savePath,
+		addImage: addImage,
 		//Utilities
 		symptomsObject: symptomsObject,
 		updateSymptomCard: updateSymptomCard,
@@ -1091,7 +1092,24 @@ console.log('error in query function-api service: ',error);
 						}
 
 						// check for image type
-						// COMING...
+						if(data[i].image_id != null){
+console.log(data[i].image_id);
+/*							details.push(getOne(promise,'images',data[i].image_id)
+							.then(function(detail){
+								// add detail to the component
+								that.tempComp = {
+									id: '',
+									type: '',
+									title: '',
+									details: {}
+								};
+								that.tempComp.title = 'Image';
+								that.tempComp.type = 'image-card';
+that.tempComp.details = detail.notes;
+								that.journalEntry.components.push(that.tempComp);
+							}));
+*/
+						}
 
 					}// end for(i in data)
 
@@ -1399,47 +1417,63 @@ console.log('error in query function-api service: ',error);
 
 	}
 
-	function addImage(data){
+	function addImage(image){ // SEE LINE 1090 FOR FUNCTION THAT GETS IMAGE CARDS TO DISPLAY
 		var returnPromise = $q.defer();
-		var imgUrl = 'v' + data.version + '/' + data.public_id + '.' + data.format;
-		var today = new Date();
-		today = _getStringDate(today);
+		
+		var imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
+		var today = _getStringDate(new Date());
+
 // 1. get journal entry id
 // 2. add an image record
 // 3. use image id in adding a journal_entry_components record
-		api.query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|eq|' + today,
-			orderBy: 'desc',
-			limit
+		
+		query($q.defer(),'journal_entries',{
+			field: 'journal_entries.created|has|' + today,
+			orderBy: 'journal_entries.created|desc',
+			limit: 1
 		})
 		.then(function(data){
 			if(data.length == 0){
 				// insert a record in journal_entries
 				addRecord($q.defer(),'journal_entries',{
-
+					wellness_score: 0
 				})
 				.then(function(data){
-					addRecord($q.defer(),'journal_entry_components',{
-						'journal_entry_id': data.insertId,
-						'image_id': ''
+					var journalEntryId = data.insertId;
+					data = '';
+					addRecord($q.defer(),'images',{
+						'image_url': data.insertId,
+						'description': ''
 					})
 					.then(function(data){
-						// insert
-
-						returnPromise.resolve();
+						addRecord($q.defer(),'journal_entry_components',{
+							'journal_entry_id': journalEntryId,
+							'image_id': data
+						})
+						.then(function(data){
+							returnPromise.resolve();
+						});
 					});
 				});
 			}else{
-				addRecord($q.defer(),'journal_entry_components',{
-					'image_id': data.id
+				var journalEntryId = data[0].journal_entries.id;
+				addRecord($q.defer(),'images',{
+					'image_url': imgUrl,
+					'description': ''
 				})
 				.then(function(data){
-					// insert
+					addRecord($q.defer(),'journal_entry_components',{
+						'journal_entry_id': journalEntryId,
+						'image_id': data.insertId
+					})
+					.then(function(data){
+						returnPromise.resolve();
+					});
 				});
 			}
 		});
 
-		return returnPromise;
+		return returnPromise.promise;
 	}
 
 	function updateSymptomCard(card, id){
@@ -1497,84 +1531,5 @@ console.log('error in query function-api service: ',error);
 				}
 			);			
 	}
-
-	/*function symptomsObject(){
-		//var symptomCountArray = [];
-		//var topSymptomsArray = {};
-		/*api.query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
-				count: 'journal_entry_components.symptom_id'}).then(
-					function(detail){
-						console.log("Symptoms count: ", detail);
-					});
-		query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
-			.then(
-					function(journalArray){
-						console.log("Symptoms count: ", journalArray);
-						var temp = {};
-						var idHolder = {};
-						for (var obj in journalArray){
-							//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
-							temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
-							idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
-							//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
-						}
-						for (var t in temp) {
-							symptomCountArray.push([[t, idHolder[t]], temp[t]]);
-						}
-						//console.log("Symptoms count: ", symptomCountDict);
-						symptomCountArray.sort(function(a, b){
-							if (a[1] > b[1]) //sort string descending
-								return -1;
-							if (a[1] < b[1])
-								return 1;
-							return 0; //default return value (no sorting)
-						});
-						//console.log("Symptoms count: ", symptomCountDict);						
-					}
-				);
-
-		return{
-			getTopSymptoms : function(numSymsToReturn){
-				var topSymptoms = [];
-				symptomCountArray.length > numSymsToReturn ? topSymptoms = symptomCountArray.slice(0,numSymsToReturn) : topSymptoms = symptomCountArray.slice(0,symptomCountArray.length);
-				for (var symp in topSymptoms) {
-					topSymptomsArray[topSymptoms[symp][0][0]] = topSymptoms[symp][0][1];
-				}
-
-				return topSymptomsArray;
-			},
-			getSymptomsCounts : function(){
-				return symptomCountArray;
-			},
-			update : function(){
-				query($q.defer(),'journal_entries/journal_entry_components/symptoms',{})
-					.then(
-							function(journalArray){
-								//console.log("Symptoms count: ", journalArray);
-								var temp = {};
-								var idHolder = {};
-								for (var obj in journalArray){
-									//symptomCountDict[journalArray[obj].symptoms.id] === undefined ? symptomCountDict.push([journalArray[obj].symptoms.id, 1]) : symptomCountDict[journalArray[obj].symptoms.id]+=1;
-									temp[journalArray[obj].symptoms.technical_name] === undefined ? temp[journalArray[obj].symptoms.technical_name] = 1 : temp[journalArray[obj].symptoms.technical_name]+=1;
-									idHolder[journalArray[obj].symptoms.technical_name] = journalArray[obj].symptoms.id;
-									//console.log("Symptoms count: ", journalArray[obj].symptoms.id + " " + symptomCountDict[journalArray[obj].symptoms.id]);
-								}
-								for (var t in temp) {
-									symptomCountArray.push([[t, idHolder[t]], temp[t]]);
-								}
-								//console.log("Symptoms count: ", symptomCountDict);
-								symptomCountArray.sort(function(a, b){
-									if (a[1] > b[1]) //sort string descending
-										return -1;
-									if (a[1] < b[1])
-										return 1;
-									return 0; //default return value (no sorting)
-								});
-								//console.log("Symptoms count: ", symptomCountDict);						
-							}
-						);
-			}
-		};
-	}*/
 
 }]);

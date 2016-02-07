@@ -1,9 +1,3 @@
-<!--<img cl-src="my_image_public_id"
-	width="100" height="100"
-	crop="fill"
-	dpr="auto"
-	fetch-format="auto"
-	alt="">-->
 	<div class="card-front" ng-class="{ 'hidden': reversed }">
 		<div class="card-title grey-text text-darken-4" >
 			<span class="card-title-text">{{card.title}}</span><i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
@@ -12,6 +6,13 @@
 		<div class="card-content">
 			<div class="card-image waves-effect waves-block waves-light">
 				<img class="activator" src="{{card.imageUrl}}">
+				<!-- HOW TO SHOW IMAGE FROM CLOUDINARY
+				<img cl-src="my_image_public_id"
+				width="100" height="100"
+				crop="fill"
+				dpr="auto"
+				fetch-format="auto"
+				alt="">-->
 			</div>
 		</div>
 		<div class="card-footer">

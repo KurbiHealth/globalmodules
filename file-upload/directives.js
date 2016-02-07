@@ -73,7 +73,8 @@ function inputTypeFileDirective () {
 					files = Array.prototype.slice.apply(files);
 				}
 				// ngModel.$setViewValue(files, event); // this line from author didn't work
-				scope.myKurbiFile = files; // I added this line on 11/6/2015, it's cheating becuase I hard-coded the $scope var name - Matt Eckman
+				scope.myKurbiFile = files; 	// I added this line on 11/6/2015, it's cheating becuase 
+											// I hard-coded the $scope var name - Matt Eckman
 			}
 		}
 	};
