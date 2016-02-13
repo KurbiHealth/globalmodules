@@ -131,7 +131,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
 							api.addSymptom(dataObjList[index]).then(function(data){
-								console.log("insertId: ", data);
+								//console.log("insertId: ", data);
 								cardObj = {id: data.insertId, 'type': type, title: dataObjList[index].symptomName, 
 											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
 											created: todaysDate, date: todaysDate};

@@ -1509,6 +1509,7 @@ that.tempComp.details = detail.notes;
 		deleteOne($q.defer(),'journal_entry_components',id)
 		.then(function(data){
 			console.log("Delete Card: ", data);
+			symptomsObject.update();
 		});
 	}
 
