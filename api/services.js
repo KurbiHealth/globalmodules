@@ -1233,9 +1233,9 @@ that.tempComp.details = detail.notes;
 		return returnLiveChartDataPromise.promise;
 	}
 
-	function addSymptom(returnPromise,symptomDataObj){
+	function addSymptom(symptomDataObj){
 		// SET VARIABLES
-
+		var returnPromise = $q.defer();
 		//var today = _getFixedStringDate(new Date());
 		var today = _getStringDate(new Date);
 		console.log("Add date: ", today);
@@ -1256,7 +1256,7 @@ that.tempComp.details = detail.notes;
 				.then(
 					function(data) {
 						that.currJournalEntryId = data.insertId;
-						checkEntry.resolve();
+						checkEntry.resolve(data);
 					},
 					function(error){
 						console.log(error);
@@ -1264,7 +1264,7 @@ that.tempComp.details = detail.notes;
 				);
 			}else{
 				that.currJournalEntryId = data.id;
-				checkEntry.resolve();
+				checkEntry.resolve(data);
 			}
 		});
 
@@ -1285,13 +1285,14 @@ that.tempComp.details = detail.notes;
 			addRecord($q.defer(),'journal_entry_components',dataObj)
 			.then(
 				function(data) {
-					query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
+						returnPromise.resolve(data);
+						symptomsObject.update();					
+					/*query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
 						field: 'symptoms.id|eq|' + data.insertId
 					})
 					.then(function(data){
-						returnPromise.resolve(data);
-						symptomsObject.update();
-					});
+
+					});*/
 				},
 				function(error){
 					returnPromise.reject(error);

@@ -18,7 +18,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		'Feet': {'Heel': {'Stinging':18}}
 	};*/
 	//$scope.cards = cardDataService.cardData;
-	$scope.idCount = 1;
+	//$scope.idCount = 1;
 
 	$scope.initCardService = function () {
 		for (var day in $scope.journalEntries) {
@@ -26,7 +26,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			//console.log("obj: ", obj);
 			for (var index in obj.components) {
 				var card = obj.components[index];
-				$scope.idCount = card.id;
+				//$scope.idCount = card.id;
 //console.log("card: ", card);
 				//for (var card in obj.components[index]) {
 					//console.log("id: ", card.id);
@@ -76,8 +76,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		switch (type) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
-				++$scope.idCount;
-				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				//++$scope.idCount;
+				var cardObj = {id: 0, 'type': type, title: newTitle};
 				api.addTextCard($q.defer(),cardObj);
 				$scope.updateCardUI(cardObj);
 				break;
@@ -126,15 +126,20 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 						todaysMonth = todaysMonth.toString();
 						var todaysYear = d.getFullYear().toString();
 						var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
+						var cardObj = undefined;
 
 			    		for (var index in dataObjList)  {
 					    	// save a new entry-type to db
-							api.addSymptom($q.defer(),dataObjList[index]);
-							++$scope.idCount;
-							var cardObj = {id: $scope.idCount, 'type': type, title: dataObjList[index].symptomName, 
+							api.addSymptom(dataObjList[index]).then(function(data){
+								console.log("insertId: ", data);
+								cardObj = {id: data.insertId, 'type': type, title: dataObjList[index].symptomName, 
 											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
 											created: todaysDate, date: todaysDate};
-							$scope.updateCardUI(cardObj);
+								$scope.updateCardUI(cardObj);
+							}, function(error){console.log("Error: ", error)});
+							//++$scope.idCount;
+
+							
 			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
 			    		}
 			    		//api.symptomsObject.update();
@@ -147,8 +152,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				break;
 			case 'image-card':
 				newTitle = "New Image";
-				++$scope.idCount;
-				var cardObj = {id: $scope.idCount, 'type': type, title: newTitle};
+				//++$scope.idCount;
+				var cardObj = {id: 0, 'type': type, title: newTitle};
 				$scope.updateCardUI(cardObj);				
 				//$scope.updateCardUI(100, type, newTitle);
 				break;
