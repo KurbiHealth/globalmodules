@@ -1313,13 +1313,13 @@ that.tempComp.details = detail.notes;
 		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
 		var checkEntry = $q.defer();
 		query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|eq|' + today
+			field: 'journal_entries.created|has|' + today
 		})
 		.then(function(data){
 			if(data.length == 0){
-				/*var dataObj = {
+				var dataObj = {
 					'wellness_score': 0
-				};*/
+				};
 				addRecord($q.defer(),'journal_entries',cardObj)
 				.then(
 					function(data) {
@@ -1331,7 +1331,7 @@ that.tempComp.details = detail.notes;
 					}
 				);
 			}else{
-				that.currJournalEntryId = data.id;
+				that.currJournalEntryId = data[0].journal_entries.id;
 				checkEntry.resolve();
 			}
 		});
@@ -1353,7 +1353,8 @@ that.tempComp.details = detail.notes;
 			.then(
 				function(data) {
 					var dataObj = {
-						'note_id': data
+						'note_id': data.insertId,
+						'journal_entry_id': that.currJournalEntryId
 					};	
 					addRecord($q.defer(),'journal_entry_components',dataObj)
 					.then(

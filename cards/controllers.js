@@ -77,7 +77,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
 				//++$scope.idCount;
-				var cardObj = {id: 0, 'type': type, title: newTitle};
+				var cardObj = {id: 0, 'type': type, title: newTitle, text: "What's on your mind?"};
 				api.addTextCard($q.defer(),cardObj);
 				$scope.updateCardUI(cardObj);
 				break;
