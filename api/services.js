@@ -1322,7 +1322,7 @@ that.tempComp.details = detail.notes;
 				};
 				addRecord($q.defer(),'journal_entries',dataObj)
 				.then(
-					function(data) {
+					function(data) { console.log('1325');
 						that.currJournalEntryId = data.insertId;
 						checkEntry.resolve();
 					},
@@ -1341,16 +1341,15 @@ that.tempComp.details = detail.notes;
 		$q.all([
 			checkEntry.promise
 		]).then(
-			function(){
-		
+			function(){		
 		// ADD A TEXT RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
-
 			var dataObj = {
 				//'title': cardObj.title,
 				'text': cardObj.text,
 			};
 			addRecord($q.defer(),'notes',dataObj)
 			.then(
+				// step 3
 				function(data) {
 					var dataObj = {
 						'note_id': data.insertId,
