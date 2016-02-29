@@ -1309,20 +1309,20 @@ that.tempComp.details = detail.notes;
 		console.log("Add Text date: ", today);
 		var that = this;
 		that.currJournalEntryId = '';
-
+console.log('1312');
 		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
 		var checkEntry = $q.defer();
 		query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|eq|' + today
+			field: 'journal_entries.created|has|' + today
 		})
-		.then(function(data){
-			if(data.length == 0){
-				/*var dataObj = {
+		.then(function(data){ console.log('1318');
+			if(data.length == 0){ console.log('1319');
+				var dataObj = {
 					'wellness_score': 0
-				};*/
-				addRecord($q.defer(),'journal_entries',cardObj)
+				};
+				addRecord($q.defer(),'journal_entries',dataObj)
 				.then(
-					function(data) {
+					function(data) { console.log('1325');
 						that.currJournalEntryId = data.insertId;
 						checkEntry.resolve();
 					},
@@ -1330,8 +1330,9 @@ that.tempComp.details = detail.notes;
 						console.log("Add Text Card: addRecord ", error);
 					}
 				);
-			}else{
-				that.currJournalEntryId = data.id;
+			}else{ console.log('1333');
+console.log(data);
+				that.currJournalEntryId = data[0].journal_entries.id;
 				checkEntry.resolve();
 			}
 		});
@@ -1342,18 +1343,21 @@ that.tempComp.details = detail.notes;
 			checkEntry.promise
 		]).then(
 			function(){
-		
+console.log('line 1345');		
 		// ADD A TEXT RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
-
+console.log(cardObj);
+cardObj.text = 'hello world';
 			var dataObj = {
 				//'title': cardObj.title,
 				'text': cardObj.text,
 			};
 			addRecord($q.defer(),'notes',dataObj)
 			.then(
+				// step 3
 				function(data) {
 					var dataObj = {
-						'note_id': data
+						'note_id': data.insertId,
+						'journal_entry_id': that.currJournalEntryId
 					};	
 					addRecord($q.defer(),'journal_entry_components',dataObj)
 					.then(
@@ -1509,6 +1513,7 @@ that.tempComp.details = detail.notes;
 		deleteOne($q.defer(),'journal_entry_components',id)
 		.then(function(data){
 			console.log("Delete Card: ", data);
+			symptomsObject.update();
 		});
 	}
 
