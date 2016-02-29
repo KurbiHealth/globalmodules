@@ -1320,7 +1320,7 @@ that.tempComp.details = detail.notes;
 				var dataObj = {
 					'wellness_score': 0
 				};
-				addRecord($q.defer(),'journal_entries',cardObj)
+				addRecord($q.defer(),'journal_entries',dataObj)
 				.then(
 					function(data) {
 						that.currJournalEntryId = data.insertId;
