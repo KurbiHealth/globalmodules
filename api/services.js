@@ -440,7 +440,9 @@ console.log('error in getList function-api service: ',error);
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/' + id,
+			//withCredentials: true,
 			headers: {
+				//'Content-Type': 'application/json; charset=utf-8',
 				'x-custom-username': user.email,
 				'x-custom-token': user.token
 			},
@@ -550,7 +552,9 @@ console.log('error in getOne function-api service: ',error);
 		config = {
 			method: 'POST',
 			url: urlRoot + 'query/' + tableName + '/',
+			//withCredentials: true,
 			headers: {
+				//'Content-Type': 'application/json; charset=utf-8',
 				'x-custom-username': user.email,
 				'x-custom-token': user.token
 			},
@@ -1040,7 +1044,7 @@ console.log('error in query function-api service: ',error);
 
 						// retrieve details for the different component types
 						var promise = $q.defer();
-
+//console.log("Data: ", data[i]);
 						// check for note type
 						if(data[i].note_id != null){
 							details.push(getOne(promise,'notes',data[i].note_id)
@@ -1322,7 +1326,7 @@ that.tempComp.details = detail.notes;
 				};
 				addRecord($q.defer(),'journal_entries',dataObj)
 				.then(
-					function(data) { console.log('1325');
+					function(data) {
 						that.currJournalEntryId = data.insertId;
 						checkEntry.resolve();
 					},
