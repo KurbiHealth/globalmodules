@@ -1249,7 +1249,7 @@ that.tempComp.details = detail.notes;
 		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
 		var checkEntry = $q.defer();
 		query($q.defer(),'journal_entries',{
-			field: 'journal_entries.created|eq|' + today
+			field: 'journal_entries.created|has|' + today
 		})
 		.then(function(data){
 			if(data.length == 0){
