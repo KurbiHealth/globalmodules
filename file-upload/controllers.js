@@ -1,12 +1,12 @@
 kurbiApp.controller('UploadController', ['$state','$rootScope','$scope', 'posts', 
-	'api', 'user', '$q','cloudinary',
-function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary) {
+	'api', 'user', '$q','cloudinary','$modalInstance',
+function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInstance) {
 
 	// =====================
 	// UPLOADING FILES (IMG)
 	// =====================
 
-$scope.myKurbiFile = '';
+	$scope.myKurbiFile = '';
 
 	// WHAT WORKS
 	/*
@@ -33,6 +33,9 @@ $scope.myKurbiFile = '';
 				$scope.reload();
 			});
 
+			$modalInstance.close(dataObjList);
+			// $modalInstance.dismiss('cancel');
+
 			// update the card in the UI (an img card)
 			// 1) may need to start with a function in CardController which triggers off the flyout
 			// 2) here, set a $rootScope value for currentImageCloudinaryPublicId, then pass controll back to CardController
@@ -42,6 +45,14 @@ $scope.myKurbiFile = '';
 			
 		});
 	};
+
+	$scope.closeModalOnSave = function(){
+		// do I need this function???
+	}
+
+	$scope.updateImage = function(file,imageId){
+
+	}
 
 	$scope.$watch('myFile', function(myFile) { 	
 		// 'myFile' is not an event, it's a scope variable, which apparently is being set by ng-file-upload (?)

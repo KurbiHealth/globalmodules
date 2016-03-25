@@ -151,11 +151,36 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			    );
 				break;
 			case 'image-card':
-				newTitle = "New Image";
-				//++$scope.idCount;
-				var cardObj = {id: 0, 'type': type, title: newTitle};
-				$scope.updateCardUI(cardObj);				
-				//$scope.updateCardUI(100, type, newTitle);
+				// save a new entry to db
+				var modalInstance = $modal.open({
+					animation: true,
+					templateUrl: 'modules/file-upload/templates/upload-image.html',
+					//controller: 'ModalInstanceCtrl',
+					//size: size,
+					resolve: {
+						symptoms: function () {
+							return $scope.symptoms;
+						},
+						topSymptoms: function () {
+							return api.symptomsObject.topSymptomsCountObj;
+						},
+						topSymptomsData: function(){
+							return api.symptomsObject.topSymptomsData;
+						}
+					}
+				});
+				modalInstance.result.then(
+			    	function (dataObjList) {
+			    		newTitle = "New Image";
+						//++$scope.idCount;
+						var cardObj = {id: 0, 'type': type, title: newTitle};
+						$scope.updateCardUI(cardObj);				
+						//$scope.updateCardUI(100, type, newTitle);
+			    	}, 
+			    	function () {
+			      		console.log('Modal dismissed at: ' + new Date());
+			      	}
+			    );
 				break;
 			default:
 				break;

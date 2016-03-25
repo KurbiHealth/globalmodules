@@ -1044,7 +1044,7 @@ console.log('error in query function-api service: ',error);
 
 						// retrieve details for the different component types
 						var promise = $q.defer();
-//console.log("Data: ", data[i]);
+
 						// check for note type
 						if(data[i].note_id != null){
 							details.push(getOne(promise,'notes',data[i].note_id)
@@ -1097,9 +1097,9 @@ console.log('error in query function-api service: ',error);
 
 						// check for image type
 						if(data[i].image_id != null){
-console.log(data[i].image_id);
-/*							details.push(getOne(promise,'images',data[i].image_id)
+							details.push(getOne(promise,'images',data[i].image_id)
 							.then(function(detail){
+console.log(detail.images);
 								// add detail to the component
 								that.tempComp = {
 									id: '',
@@ -1109,10 +1109,10 @@ console.log(data[i].image_id);
 								};
 								that.tempComp.title = 'Image';
 								that.tempComp.type = 'image-card';
-that.tempComp.details = detail.notes;
+								that.tempComp.details.notes = detail.images.description;
+								that.tempComp.details.cloudinaryPublicId = detail.images.cloudinary_public_id;
 								that.journalEntry.components.push(that.tempComp);
 							}));
-*/
 						}
 
 					}// end for(i in data)
@@ -1382,19 +1382,45 @@ that.tempComp.details = detail.notes;
 
 	function getSymptomList(){
 		var returnPromise = $q.defer();
+		var self = this;
+		self.returnObj = {};
 		
-		query($q.defer(),'symptom_categories/symptoms',{})
+		query($q.defer(),'symptom_categories',{
+			field: 'symptom_categories.disease_id|eq|3'
+		})
 		.then(function(data){
-			var returnObj = {};
+console.log(data);
 			for(var i in data){
+				if(!data[i].symptom_categories.category in self.returnObj){
+					self.returnObj[data[i].symptom_categories.category] = {};
+				}
+				var parentCategoryId = data[i].symptom_categories.id;
+				query($q.defer(),'symptom_categories',{
+					field: 'symptom_categories.parent_id|eq|' + parentCategoryId
+				})
+				.then(function(data){
+console.log(data);
+					for(var j in data){
+						var categoryId = data[j].symptom_categories.id;
+						query($q.defer(),'symptoms',{
+							field: 'symptoms.symptom_category_id|eq|' + categoryId
+						})
+						.then(function(data){
+console.log(data);
+						});
+					}
+				});
+			}
+// returnObj = categoryName.technicalName = id
+			/*for(var i in data){
 				if(data[i].symptom_categories.category in returnObj){
 					
 				}else{
 					returnObj[data[i].symptom_categories.category] = {};
 				}
 				returnObj[data[i].symptom_categories.category][data[i].symptoms.technical_name] = data[i].symptoms.id;
-			}
-			returnPromise.resolve(returnObj);
+			}*/
+			returnPromise.resolve(self.returnObj);
 		});
 
 		return returnPromise.promise;
@@ -1424,8 +1450,9 @@ that.tempComp.details = detail.notes;
 
 	function addImage(image){ // SEE LINE 1090 FOR FUNCTION THAT GETS IMAGE CARDS TO DISPLAY
 		var returnPromise = $q.defer();
-		
-		var imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
+		var that = this;
+		that.imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
+		that.cloudinaryPublicId = image.public_id;
 		var today = _getStringDate(new Date());
 
 // 1. get journal entry id
@@ -1447,7 +1474,8 @@ that.tempComp.details = detail.notes;
 					var journalEntryId = data.insertId;
 					data = '';
 					addRecord($q.defer(),'images',{
-						'image_url': data.insertId,
+						'image_url': that.imgUrl,
+						'cloudinary_public_id': that.cloudinaryPublicId,
 						'description': ''
 					})
 					.then(function(data){
@@ -1463,7 +1491,8 @@ that.tempComp.details = detail.notes;
 			}else{
 				var journalEntryId = data[0].journal_entries.id;
 				addRecord($q.defer(),'images',{
-					'image_url': imgUrl,
+					'image_url': that.imgUrl,
+					'cloudinary_public_id': that.cloudinaryPublicId,
 					'description': ''
 				})
 				.then(function(data){
