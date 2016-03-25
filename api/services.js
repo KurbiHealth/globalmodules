@@ -1310,7 +1310,7 @@ that.tempComp.details = detail.notes;
 	function addTextCard(returnPromise, cardObj){
 		// SET VARIABLES
 		var today = _getStringDate(new Date);
-		console.log("Add Text date: ", today);
+		//console.log("Add Text date: ", today);
 		var that = this;
 		that.currJournalEntryId = '';
 
@@ -1358,11 +1358,12 @@ that.tempComp.details = detail.notes;
 					var dataObj = {
 						'note_id': data.insertId,
 						'journal_entry_id': that.currJournalEntryId
-					};	
+					};
+					that.tempNotesId = data.insertId;
 					addRecord($q.defer(),'journal_entry_components',dataObj)
 					.then(
 						function(data){
-							returnPromise.resolve(data);
+							returnPromise.resolve(that.tempNotesId);
 						},
 						function(error){
 							console.log("Add Text Card: journal entry components addRecord ", error);
@@ -1498,7 +1499,7 @@ that.tempComp.details = detail.notes;
 	}
 
 	function updateTextCard(card){
-		updateOne($q.defer,'notes', card, card.id)
+		updateOne($q.defer(),'notes', card, card.id)
 			.then(
 				function(data){
 					console.log("Update Text Card: ", data);

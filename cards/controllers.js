@@ -77,8 +77,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
 				//++$scope.idCount;
-				var cardObj = {id: 0, 'type': type, title: newTitle, text: "What's on your mind?"};
-				api.addTextCard($q.defer(),cardObj);
+				var cardObj = {id: -1, 'type': type, title: newTitle, details: {id: -1, text: "What's on your mind?"}};
+				//api.addTextCard($q.defer(),cardObj);
 				$scope.updateCardUI(cardObj);
 				break;
 			case 'symptom-card':
@@ -240,8 +240,8 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 
 	$scope.updateCardUI = function (cardObj) {
 		// add new card to UI
-		console.log("cardObj: ", cardObj);
-		console.log("journal entries: ", $scope.journalEntries[0].components);
+		//console.log("cardObj: ", cardObj);
+		//console.log("journal entries: ", $scope.journalEntries[0].components);
 		if ($scope.journalEntries[0].components === undefined) {
 			$scope.journalEntries[0]['components'] = [];
 		}
@@ -312,6 +312,59 @@ function($scope, $locale, api){
 
 }]);
 
+kurbiApp.controller('TextCardController', ['$scope', '$locale','api', '$q',
+	function($scope, $locale, api, $q){
+		//$scope.noteText = 
+	    $scope.onNoteEditClick = function(){
+	    	//console.log("Symptom Controller: ", $scope.cards);
+	    	$scope.saved = false;
+	    	$scope.reversed = !$scope.reversed;
+	    };
+
+	    $scope.saveNote = function(cardToSave){
+	    	$scope.onNoteEditClick();
+	    	$scope.saved = true;	    	
+			//$scope.timeSaved = Date.now();
+console.log("Save Note: ", cardToSave);
+			if(cardToSave.id === -1){
+				var cardObj = {'type': cardToSave.type, title: cardToSave.title, text: cardToSave.details.text};
+				api.addTextCard($q.defer(),cardObj).then(
+					function(data){
+						cardToSave.details.id = data;
+						//console.log("Add Text Return Promise: ", data);
+					});
+			}
+			else{
+				console.log("Controller Update Note: ", cardToSave);
+				var cardObj = {id: cardToSave.details.id, 'type': cardToSave.type, title: cardToSave.title, text: cardToSave.details.text};
+				api.updateTextCard(cardObj);
+			}
+	    };
+
+	    $scope.deleteNote = function(cardToDelete){
+	    	var indexToDelete = -1;
+	    	var entryToDelete = undefined;
+
+	    	for(var entry in $scope.journalEntries){
+	    		for(var component in $scope.journalEntries[entry].components){
+	    			//console.log($scope.journalEntries[entry].components[component]);
+
+	    			if($scope.journalEntries[entry].components[component].details.id === cardToDelete.details.id){
+	    				//console.log("FOUND IT!");
+	    				entryToDelete = entry;
+	    				indexToDelete = component;
+	    			}
+	    		}
+	    	}
+
+	    	api.deleteTextCard(cardToDelete.details.id);
+	    	//Delete throws an error
+	    	//console.log("entryToDelete: ", entryToDelete);
+	    	//console.log("components: ", $scope.journalEntries[entryToDelete].components);
+	    	$scope.journalEntries[entryToDelete].components.splice(indexToDelete, 1);
+	    };
+	}
+]);
 
 kurbiApp.controller('SymptomCardController', ['$scope', '$locale','api',
 function($scope, $locale, api){
