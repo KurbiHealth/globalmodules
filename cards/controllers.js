@@ -76,8 +76,9 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 		switch (type) {
 			case 'text-card':
 				newTitle = "New Journal Entry";
+				newNote = "What's on your mind?";
 				//++$scope.idCount;
-				var cardObj = {id: -1, 'type': type, title: newTitle, details: {id: -1, text: "What's on your mind?"}};
+				var cardObj = {id: -1, 'type': type, title: newTitle, details: {id: -1, title: newTitle, text: newNote}};
 				//api.addTextCard($q.defer(),cardObj);
 				$scope.updateCardUI(cardObj);
 				break;
@@ -352,7 +353,7 @@ kurbiApp.controller('TextCardController', ['$scope', '$locale','api', '$q',
 			//$scope.timeSaved = Date.now();
 console.log("Save Note: ", cardToSave);
 			if(cardToSave.id === -1){
-				var cardObj = {'type': cardToSave.type, title: cardToSave.title, text: cardToSave.details.text};
+				var cardObj = {'type': cardToSave.type, title: cardToSave.details.title, text: cardToSave.details.text};
 				api.addTextCard($q.defer(),cardObj).then(
 					function(data){
 						//console.log("card in promise: ", cardToSave);
@@ -362,7 +363,7 @@ console.log("Save Note: ", cardToSave);
 			}
 			else{
 				console.log("Controller Update Note: ", cardToSave);
-				var cardObj = {id: cardToSave.details.id, 'type': cardToSave.type, title: cardToSave.title, text: cardToSave.details.text};
+				var cardObj = {id: cardToSave.details.id, 'type': cardToSave.type, title: cardToSave.details.title, text: cardToSave.details.text};
 				api.updateTextCard(cardObj);
 			}
 	    };

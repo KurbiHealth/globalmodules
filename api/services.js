@@ -1348,7 +1348,7 @@ console.log(detail.images);
 			function(){		
 		// ADD A TEXT RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
 			var dataObj = {
-				//'title': cardObj.title,
+				'title': cardObj.title,
 				'text': cardObj.text,
 			};
 			addRecord($q.defer(),'notes',dataObj)
@@ -1547,7 +1547,7 @@ console.log(detail.images);
 	}
 
 	function updateTextCard(card){
-		var fields = {text: card.text}
+		var fields = {title: card.title, text: card.text}
 		updateOne($q.defer(),'notes', fields, card.id)
 			.then(
 				function(data){
