@@ -504,7 +504,7 @@ console.log(promise);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in addRecord function-api service: ',error);
+console.log('error in updateOne function-api service: ',error);
 			if(error == 'Unauthorized'){
 				// Redirect user to our login page
     			$state.go('public.logInPage');
@@ -1499,7 +1499,8 @@ that.tempComp.details = detail.notes;
 	}
 
 	function updateTextCard(card){
-		updateOne($q.defer(),'notes', card, card.id)
+		var fields = {text: card.text}
+		updateOne($q.defer(),'notes', fields, card.id)
 			.then(
 				function(data){
 					console.log("Update Text Card: ", data);
