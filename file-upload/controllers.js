@@ -1,6 +1,6 @@
 kurbiApp.controller('UploadController', ['$state','$rootScope','$scope', 'posts', 
-	'api', 'user', '$q','cloudinary','$modalInstance',
-function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInstance) {
+	'api', 'user', '$q','cloudinary',
+function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary) {
 
 	// =====================
 	// UPLOADING FILES (IMG)
@@ -50,8 +50,9 @@ function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInst
 		// do I need this function???
 	}
 
-	$scope.updateImage = function(file,imageId){
-
+	$scope.updateImage = function(file,reversed){
+console.log(reversed);
+		reversed = !reversed;
 	}
 
 	$scope.$watch('myFile', function(myFile) { 	

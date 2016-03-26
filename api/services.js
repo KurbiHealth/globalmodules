@@ -1381,46 +1381,65 @@ console.log(detail.images);
 	}
 
 	function getSymptomList(){
+		/* have a look up hash of categories/id, everytime a symptom is pulled back, the returnObj needs
+		the category name, which won't exist on the symptom cause it only has the id, so use the ,
+		the symptom  */
 		var returnPromise = $q.defer();
 		var self = this;
 		self.returnObj = {};
-		
+		self.catLookupList = {};
+		self.topCatsList = {};
+
+		// GET TOP LEVEL CATEGORIES
 		query($q.defer(),'symptom_categories',{
 			field: 'symptom_categories.disease_id|eq|3'
 		})
 		.then(function(data){
-console.log(data);
+			// FOR EACH TOP LEVEL CATEGORY
+			var subCatsPromises = [];
 			for(var i in data){
-				if(!data[i].symptom_categories.category in self.returnObj){
-					self.returnObj[data[i].symptom_categories.category] = {};
-				}
-				var parentCategoryId = data[i].symptom_categories.id;
-				query($q.defer(),'symptom_categories',{
-					field: 'symptom_categories.parent_id|eq|' + parentCategoryId
-				})
-				.then(function(data){
-console.log(data);
-					for(var j in data){
-						var categoryId = data[j].symptom_categories.id;
+				var prom = $q.defer();
+				// add to catLookupList
+				self.catLookupList[data[i].symptom_categories.id] = data[i].symptom_categories;
+				// add to returnObj
+				self.returnObj[data[i].symptom_categories.category] = {};
+				// add to topCatsList
+				self.topCatsList[data[i].symptom_categories.id] = data[i].symptom_categories.category;
+
+				// GET SUB-CATEGORIES
+				subCatsPromises.push(
+					query(prom,'symptom_categories',{
+						field: 'symptom_categories.parent_id|eq|' + data[i].symptom_categories.id
+					})
+					.then(function(data){
+						for(var j in data){
+							// add to catLookupList
+							self.catLookupList[data[j].symptom_categories.id] = data[j].symptom_categories;
+							// add to returnObj
+							self.returnObj[self.topCatsList[data[j].symptom_categories.parent_id]][data[j].symptom_categories.category] = data[j].symptom_categories.id;
+						}
+					})
+				);
+			}
+			$q.all(subCatsPromises)
+			.then(function(){
+				for(var i in self.returnObj){
+					for(var j in self.returnObj[i]){
 						query($q.defer(),'symptoms',{
-							field: 'symptoms.symptom_category_id|eq|' + categoryId
+							field: 'symptoms.symptom_category_id|eq|' + self.returnObj[i][j]
 						})
 						.then(function(data){
-console.log(data);
+							for(var k in data){
+								self.returnObj
+								[self.catLookupList[self.catLookupList[data[k].symptoms.symptom_category_id].parent_id].category]
+								[self.catLookupList[data[k].symptoms.symptom_category_id].category]
+								[data[k].symptoms.technical_name] = data[k].symptoms.id;
+							}
+							returnPromise.resolve(self.returnObj);
 						});
 					}
-				});
-			}
-// returnObj = categoryName.technicalName = id
-			/*for(var i in data){
-				if(data[i].symptom_categories.category in returnObj){
-					
-				}else{
-					returnObj[data[i].symptom_categories.category] = {};
 				}
-				returnObj[data[i].symptom_categories.category][data[i].symptoms.technical_name] = data[i].symptoms.id;
-			}*/
-			returnPromise.resolve(self.returnObj);
+			});
 		});
 
 		return returnPromise.promise;
