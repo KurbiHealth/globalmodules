@@ -536,6 +536,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.historyStack = [];
 	$scope.lastClick = ""; //Should get rid of this and use clickStack
 	$scope.showSearchView = false;
+	$scope.showParentCats = false;
 	$scope.clickStack = [];
 	//$scope.severityToAdd = {value: -1};
 	$scope.symsToAddList = {};
@@ -667,6 +668,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.clickLeftView = function(index, category) {
 		//$scope.backClicked = false;
 		$scope.showSearchView = false;
+		$scope.showParentCats = true;
 		var tempHistory = [];
 		var historyCopy = [];
 		var lastView = [];
@@ -932,6 +934,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		var historyCopy = [];
 		var clickCopy = [];
 		$scope.showSearchView = false;
+		$scope.showParentCats = false;
 
 		if ($scope.historyStack.length > 1) {
 			//if (!$scope.backClicked) {
