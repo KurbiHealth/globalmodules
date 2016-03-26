@@ -15,7 +15,7 @@ https://github.com/danialfarid/ng-file-upload
 			<div class="clear"></div>
 		</div><!--END /.path-details-header-->
 
-		<input type="file" ng-model="myKurbiFile" accept="image/*">
+		<input style="border:none;margin:20px 0 0 20px;" type="file" ng-model="myKurbiFile" accept="image/*">
 
 		<img ngf-thumbnail="myKurbiFile || '/thumb.jpg'" ng-model="myKurbiFile">
 
@@ -49,7 +49,7 @@ form .progress {
     width: 0;
 }
 </style>
-		<form name="myForm">
+<!--		<form name="myForm">
 	        <div>Crop Image and Upload</div>
 	        <button ngf-select ng-model="picFile" accept="image/*">
 	            Select Picture</button>

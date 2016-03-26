@@ -1044,7 +1044,7 @@ console.log('error in query function-api service: ',error);
 
 						// retrieve details for the different component types
 						var promise = $q.defer();
-//console.log("Data: ", data[i]);
+
 						// check for note type
 						if(data[i].note_id != null){
 							details.push(getOne(promise,'notes',data[i].note_id)
@@ -1097,9 +1097,9 @@ console.log('error in query function-api service: ',error);
 
 						// check for image type
 						if(data[i].image_id != null){
-console.log(data[i].image_id);
-/*							details.push(getOne(promise,'images',data[i].image_id)
+							details.push(getOne(promise,'images',data[i].image_id)
 							.then(function(detail){
+console.log(detail.images);
 								// add detail to the component
 								that.tempComp = {
 									id: '',
@@ -1109,10 +1109,10 @@ console.log(data[i].image_id);
 								};
 								that.tempComp.title = 'Image';
 								that.tempComp.type = 'image-card';
-that.tempComp.details = detail.notes;
+								that.tempComp.details.notes = detail.images.description;
+								that.tempComp.details.cloudinaryPublicId = detail.images.cloudinary_public_id;
 								that.journalEntry.components.push(that.tempComp);
 							}));
-*/
 						}
 
 					}// end for(i in data)
@@ -1382,20 +1382,65 @@ that.tempComp.details = detail.notes;
 	}
 
 	function getSymptomList(){
+		/* have a look up hash of categories/id, everytime a symptom is pulled back, the returnObj needs
+		the category name, which won't exist on the symptom cause it only has the id, so use the ,
+		the symptom  */
 		var returnPromise = $q.defer();
-		
-		query($q.defer(),'symptom_categories/symptoms',{})
+		var self = this;
+		self.returnObj = {};
+		self.catLookupList = {};
+		self.topCatsList = {};
+
+		// GET TOP LEVEL CATEGORIES
+		query($q.defer(),'symptom_categories',{
+			field: 'symptom_categories.disease_id|eq|3'
+		})
 		.then(function(data){
-			var returnObj = {};
+			// FOR EACH TOP LEVEL CATEGORY
+			var subCatsPromises = [];
 			for(var i in data){
-				if(data[i].symptom_categories.category in returnObj){
-					
-				}else{
-					returnObj[data[i].symptom_categories.category] = {};
-				}
-				returnObj[data[i].symptom_categories.category][data[i].symptoms.technical_name] = data[i].symptoms.id;
+				var prom = $q.defer();
+				// add to catLookupList
+				self.catLookupList[data[i].symptom_categories.id] = data[i].symptom_categories;
+				// add to returnObj
+				self.returnObj[data[i].symptom_categories.category] = {};
+				// add to topCatsList
+				self.topCatsList[data[i].symptom_categories.id] = data[i].symptom_categories.category;
+
+				// GET SUB-CATEGORIES
+				subCatsPromises.push(
+					query(prom,'symptom_categories',{
+						field: 'symptom_categories.parent_id|eq|' + data[i].symptom_categories.id
+					})
+					.then(function(data){
+						for(var j in data){
+							// add to catLookupList
+							self.catLookupList[data[j].symptom_categories.id] = data[j].symptom_categories;
+							// add to returnObj
+							self.returnObj[self.topCatsList[data[j].symptom_categories.parent_id]][data[j].symptom_categories.category] = data[j].symptom_categories.id;
+						}
+					})
+				);
 			}
-			returnPromise.resolve(returnObj);
+			$q.all(subCatsPromises)
+			.then(function(){
+				for(var i in self.returnObj){
+					for(var j in self.returnObj[i]){
+						query($q.defer(),'symptoms',{
+							field: 'symptoms.symptom_category_id|eq|' + self.returnObj[i][j]
+						})
+						.then(function(data){
+							for(var k in data){
+								self.returnObj
+								[self.catLookupList[self.catLookupList[data[k].symptoms.symptom_category_id].parent_id].category]
+								[self.catLookupList[data[k].symptoms.symptom_category_id].category]
+								[data[k].symptoms.technical_name] = data[k].symptoms.id;
+							}
+							returnPromise.resolve(self.returnObj);
+						});
+					}
+				}
+			});
 		});
 
 		return returnPromise.promise;
@@ -1425,8 +1470,9 @@ that.tempComp.details = detail.notes;
 
 	function addImage(image){ // SEE LINE 1090 FOR FUNCTION THAT GETS IMAGE CARDS TO DISPLAY
 		var returnPromise = $q.defer();
-		
-		var imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
+		var that = this;
+		that.imgUrl = 'v' + image.version + '/' + image.public_id + '.' + image.format;
+		that.cloudinaryPublicId = image.public_id;
 		var today = _getStringDate(new Date());
 
 // 1. get journal entry id
@@ -1448,7 +1494,8 @@ that.tempComp.details = detail.notes;
 					var journalEntryId = data.insertId;
 					data = '';
 					addRecord($q.defer(),'images',{
-						'image_url': data.insertId,
+						'image_url': that.imgUrl,
+						'cloudinary_public_id': that.cloudinaryPublicId,
 						'description': ''
 					})
 					.then(function(data){
@@ -1464,7 +1511,8 @@ that.tempComp.details = detail.notes;
 			}else{
 				var journalEntryId = data[0].journal_entries.id;
 				addRecord($q.defer(),'images',{
-					'image_url': imgUrl,
+					'image_url': that.imgUrl,
+					'cloudinary_public_id': that.cloudinaryPublicId,
 					'description': ''
 				})
 				.then(function(data){
