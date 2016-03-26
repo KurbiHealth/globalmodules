@@ -1,8 +1,8 @@
+<div ng-controller="TextCardController">	
 	<div class="card-front" ng-class="{ 'hidden': reversed }">
 		<div class="card-title grey-text text-darken-4">
 			<span class="card-title-text">{{card.title}}</span>
-			<i class="md md-more-vert pull-right activator" ng-click="reversed = ! reversed"></i>
-
+			<i class="md md-more-vert pull-right activator" ng-click="onNoteEditClick()"></i>
 		</div>
 		<div class="card-content">
 			<p>{{card.details.text}}</p>
@@ -13,15 +13,15 @@
 	</div>
 	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
 		<div class="card-title grey-text text-darken-4">
-			<span class="card-title-text">Edit: {{card.title}}</span><i class="md md-close pull-right activator" ng-click="reversed = ! reversed"></i>
+			<span class="card-title-text"><textarea maxlength="20" ng-model="card.title">Edit: {{card.title}}</textarea></span><i class="md md-close pull-right activator" ng-click="onNoteEditClick()"></i>
 		</div>
 		<div class="card-content">
-			<textarea>{{card.details.text}}</textarea>
+			<textarea ng-model="card.details.text">{{card.details.text}}</textarea>
 			<div class="pull-left" style="padding:0 0 5px 5px;">
 				<input type="submit" name="submit" value="Save" ng-click="saveNote(card)"/>
 			</div>
 			<div class="pull-right" style="padding:0 5px 5px 0;">
-				<button type="" ng-show="!reversed" class="btn btn-default" ng-click="deleteNote(card.id)"><i class="fa fa-trash-o"></i></button>
+				<button type="" class="btn btn-default" ng-click="deleteNote(card)"><i class="fa fa-trash-o"></i></button>
 			</div>
 			<div class="clear"></div>			
 		</div>
@@ -29,3 +29,4 @@
 			<!--p>{{card.date}}</p-->
 		</div>
 	</div>
+</div>
