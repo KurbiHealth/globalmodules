@@ -504,7 +504,7 @@ console.log(promise);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in addRecord function-api service: ',error);
+console.log('error in updateOne function-api service: ',error);
 			if(error == 'Unauthorized'){
 				// Redirect user to our login page
     			$state.go('public.logInPage');
