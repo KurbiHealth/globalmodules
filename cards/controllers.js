@@ -330,8 +330,9 @@ console.log("Save Note: ", cardToSave);
 				var cardObj = {'type': cardToSave.type, title: cardToSave.title, text: cardToSave.details.text};
 				api.addTextCard($q.defer(),cardObj).then(
 					function(data){
+						//console.log("card in promise: ", cardToSave);
+						cardToSave.id = data;
 						cardToSave.details.id = data;
-						//console.log("Add Text Return Promise: ", data);
 					});
 			}
 			else{
