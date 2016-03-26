@@ -1568,7 +1568,31 @@ console.log(detail.images);
 	}
 
 	function deleteTextCard(id){
-		deleteOne($q.defer,'journal_entry_components',id)
+		//Need to get journal entry id in order to delete from it. Using the note
+		//id to find the journal entry id
+		//query(promise,'journal_entry_components/journal_entries',{
+			//field: 'journal_entry_components.journal_entry_id|eq|' + data[i].journal_entries.id
+			//})
+		query($q.defer(),'journal_entries/journal_entry_components',{
+			field: 'journal_entry_components.note_id|eq|' + id
+			}).then(function(data){
+				if(data.length > 0 && data[0].journal_entry_components !== undefined){
+					console.log("Delete Note: ", data[0].journal_entry_components.id);
+					deleteCard(data[0].journal_entry_components.id);
+					deleteOne($q.defer(),'notes',id)
+						.then(
+							function(data){
+								console.log("Delete Text Card: ", data);
+							},
+							function(error){
+								console.log("Delete Text Card ERROR: ", error);
+							}
+						);					
+				}
+				
+			});
+		
+		/*deleteOne($q.defer,'journal_entry_components',id)
 			.then(
 				function(data){
 					console.log("Delete Text Card: ", data);
@@ -1576,16 +1600,7 @@ console.log(detail.images);
 				function(error){
 					console.log("Delete Text Card ERROR: ", error);
 				}
-			);
-		deleteOne($q.defer,'notes',id)
-			.then(
-				function(data){
-					console.log("Delete Text Card: ", data);
-				},
-				function(error){
-					console.log("Delete Text Card ERROR: ", error);
-				}
-			);			
+			);*/
 	}
 
 }]);
