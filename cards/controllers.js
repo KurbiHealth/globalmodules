@@ -543,7 +543,7 @@ function($scope, $locale, api){
 
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
 function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
-	console.log("ModalInstanceCtrl: ", topSymptoms);
+	//console.log("ModalInstanceCtrl: ", topSymptoms);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
