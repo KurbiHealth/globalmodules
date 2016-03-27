@@ -1,7 +1,7 @@
 <div ng-controller="TextCardController">	
 	<div class="card-front" ng-class="{ 'hidden': reversed }">
 		<div class="card-title grey-text text-darken-4">
-			<span class="card-title-text">{{card.title}}</span>
+			<span class="card-title-text">{{card.details.title}}</span>
 			<i class="md md-more-vert pull-right activator" ng-click="onNoteEditClick()"></i>
 		</div>
 		<div class="card-content">
@@ -13,7 +13,7 @@
 	</div>
 	<div class="card-reverse" ng-class="{ 'reversed': reversed }">
 		<div class="card-title grey-text text-darken-4">
-			<span class="card-title-text"><textarea maxlength="20" ng-model="card.title">Edit: {{card.title}}</textarea></span><i class="md md-close pull-right activator" ng-click="onNoteEditClick()"></i>
+			<span class="card-title-text"><textarea maxlength="25" ng-model="card.details.title">Edit: {{card.details.title}}</textarea></span><i class="md md-close pull-right activator" ng-click="onNoteEditClick()"></i>
 		</div>
 		<div class="card-content">
 			<textarea ng-model="card.details.text">{{card.details.text}}</textarea>
