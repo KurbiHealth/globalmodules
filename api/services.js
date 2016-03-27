@@ -1099,7 +1099,6 @@ console.log('error in query function-api service: ',error);
 						if(data[i].image_id != null){
 							details.push(getOne(promise,'images',data[i].image_id)
 							.then(function(detail){
-console.log(detail.images);
 								// add detail to the component
 								that.tempComp = {
 									id: '',
@@ -1396,14 +1395,16 @@ console.log(detail.images);
 			field: 'symptom_categories.disease_id|eq|3'
 		})
 		.then(function(data){
-			// FOR EACH TOP LEVEL CATEGORY
 			var subCatsPromises = [];
+			var finalPromise = [];
+
+			// FOR EACH TOP LEVEL CATEGORY
 			for(var i in data){
 				var prom = $q.defer();
 				// add to catLookupList
 				self.catLookupList[data[i].symptom_categories.id] = data[i].symptom_categories;
 				// add to returnObj
-				self.returnObj[data[i].symptom_categories.category] = {};
+				self.returnObj[data[i].symptom_categories.category] = data[i].symptom_categories.id;
 				// add to topCatsList
 				self.topCatsList[data[i].symptom_categories.id] = data[i].symptom_categories.category;
 
@@ -1413,34 +1414,67 @@ console.log(detail.images);
 						field: 'symptom_categories.parent_id|eq|' + data[i].symptom_categories.id
 					})
 					.then(function(data){
-						for(var j in data){
-							// add to catLookupList
-							self.catLookupList[data[j].symptom_categories.id] = data[j].symptom_categories;
-							// add to returnObj
-							self.returnObj[self.topCatsList[data[j].symptom_categories.parent_id]][data[j].symptom_categories.category] = data[j].symptom_categories.id;
+						if(data.length > 0){
+							var tempObj = {};
+							for(var j in data){
+								// add to catLookupList
+								self.catLookupList[data[j].symptom_categories.id] = data[j].symptom_categories;
+								// add to returnObj
+								tempObj[data[j].symptom_categories.category] = data[j].symptom_categories.id;
+							}
+							self.returnObj[self.topCatsList[data[j].symptom_categories.parent_id]] = tempObj;
 						}
 					})
 				);
 			}
+
 			$q.all(subCatsPromises)
 			.then(function(){
 				for(var i in self.returnObj){
-					for(var j in self.returnObj[i]){
-						query($q.defer(),'symptoms',{
-							field: 'symptoms.symptom_category_id|eq|' + self.returnObj[i][j]
-						})
-						.then(function(data){
-							for(var k in data){
-								self.returnObj
-								[self.catLookupList[self.catLookupList[data[k].symptoms.symptom_category_id].parent_id].category]
-								[self.catLookupList[data[k].symptoms.symptom_category_id].category]
-								[data[k].symptoms.technical_name] = data[k].symptoms.id;
-							}
-							returnPromise.resolve(self.returnObj);
-						});
+					if(typeof self.returnObj[i] == 'object'){
+						for(var j in self.returnObj[i]){
+							finalPromise.push(
+								query($q.defer(),'symptoms',{
+									field: 'symptoms.symptom_category_id|eq|' + self.returnObj[i][j]
+								})
+								.then(function(data){
+									if(data.length > 0){
+										var tempObj = {};
+										for(var k in data){
+											tempObj[data[k].symptoms.technical_name] = data[k].symptoms.id;
+										}
+										self.returnObj
+										[self.catLookupList[self.catLookupList[data[k].symptoms.symptom_category_id].parent_id].category]
+										[self.catLookupList[data[k].symptoms.symptom_category_id].category] = tempObj;
+									}
+								})
+							);
+						}
+					}else{
+						finalPromise.push(
+							query($q.defer(),'symptoms',{
+								field: 'symptoms.symptom_category_id|eq|' + self.returnObj[i]
+							})
+							.then(function(data){
+								if(data.length > 0){
+									var tempObj = {};
+									for(var k in data){
+										tempObj[data[k].symptoms.technical_name] = data[k].symptoms.id;
+									}
+									self.returnObj
+									[self.catLookupList[data[k].symptoms.symptom_category_id].category] = tempObj;
+								}
+							})
+						);
 					}
 				}
+
+				$q.all(finalPromise)
+				.then(function(){
+					returnPromise.resolve(self.returnObj);
+				});
 			});
+
 		});
 
 		return returnPromise.promise;

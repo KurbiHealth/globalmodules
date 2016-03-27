@@ -1,6 +1,6 @@
 kurbiApp.controller('UploadController', ['$state','$rootScope','$scope', 'posts', 
-	'api', 'user', '$q','cloudinary',
-function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary) {
+	'api', 'user', '$q','cloudinary','$modalInstance',
+function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInstance) {
 
 	// =====================
 	// UPLOADING FILES (IMG)
@@ -24,17 +24,9 @@ function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary) {
 			// save the response to db with api.addRecord()
 			api.addImage(resp.data)
 			.then(function(data){
-				// add to $scope.journalEntries
-				$scope.journalEntries[0].push({
-					'title': 'Image',
-					'imageUrl': data
-				});
-				// refresh $state.reload()
-				$scope.reload();
+				// close modal after doing db insert
+				$modalInstance.close(resp.data);
 			});
-
-			$modalInstance.close(dataObjList);
-			// $modalInstance.dismiss('cancel');
 
 			// update the card in the UI (an img card)
 			// 1) may need to start with a function in CardController which triggers off the flyout
@@ -46,13 +38,13 @@ function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary) {
 		});
 	};
 
-	$scope.closeModalOnSave = function(){
-		// do I need this function???
+	$scope.cancelModal = function(event){
+		$modalInstance.dismiss('cancel');
 	}
 
 	$scope.updateImage = function(file,reversed){
+console.log(file);
 console.log(reversed);
-		reversed = !reversed;
 	}
 
 	$scope.$watch('myFile', function(myFile) { 	
