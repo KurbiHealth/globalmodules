@@ -155,27 +155,23 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				var modalInstance = $modal.open({
 					animation: true,
 					templateUrl: 'modules/file-upload/templates/upload-image.html',
-					//controller: 'ModalInstanceCtrl',
+					controller: 'UploadController'
 					//size: size,
-					resolve: {
+					/*resolve: {
 						symptoms: function () {
 							return $scope.symptoms;
-						},
-						topSymptoms: function () {
-							return api.symptomsObject.topSymptomsCountObj;
-						},
-						topSymptomsData: function(){
-							return api.symptomsObject.topSymptomsData;
 						}
-					}
+					}*/
 				});
 				modalInstance.result.then(
-			    	function (dataObjList) {
+			    	function (img) {
 			    		newTitle = "New Image";
-						//++$scope.idCount;
-						var cardObj = {id: 0, 'type': type, title: newTitle};
+						var cardObj = {id: 0, 'type': type, title: newTitle, 
+							details: {
+								cloudinaryPublicId: img.public_id
+							}
+						};
 						$scope.updateCardUI(cardObj);				
-						//$scope.updateCardUI(100, type, newTitle);
 			    	}, 
 			    	function () {
 			      		console.log('Modal dismissed at: ' + new Date());
