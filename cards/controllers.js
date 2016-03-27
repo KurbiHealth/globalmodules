@@ -543,7 +543,7 @@ function($scope, $locale, api){
 
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
 function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
-	//console.log("ModalInstanceCtrl: ", topSymptomsData);
+	console.log("ModalInstanceCtrl: ", topSymptoms);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
 	//$scope.backClicked = false;
@@ -1056,7 +1056,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		//$scope.leftView = $scope.getSymCategories(symptomObj);
 		var topLevel = $scope.getSymCategories(symptomObj);
 		$scope.leftView = symptomObj;
-		$scope.rightView = topSymptoms;
+		$scope.rightView = getTopNSymptoms(5);
 		$scope.selectedCategory.value = -1;
 		//$scope.rightView = symptomObj[topLevel[0]];
 		//$scope.selectedCategory.value = topLevel[0];
@@ -1070,6 +1070,49 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		//$scope.clickStack.push(topLevel[0]);
 		//console.log("Build History: ", $scope.historyStack);
 	};
+
+	getTopNSymptoms = function(n){
+		//var topCount = 0;
+		var topNSymptoms = [];
+		var topNObj = {};
+
+		for(var top in topSymptomsData){
+			if(topNSymptoms.length >= n){
+				if(topSymptomsData[top].count > topNSymptoms[0].count){
+					topNSymptoms.splice(0,1);
+					var obj = {symptom: top, count: topSymptomsData[top].count}
+					topNSymptoms.push(obj);
+
+					topNSymptoms.sort(function(a, b){
+					 var catA=a.count, catB=b.count;
+					 if (catA < catB) //sort string ascending
+					  return -1;
+					 if (catA > catB)
+					  return 1;
+					 return 0; //default return value (no sorting)
+					});					
+				}
+			}
+			else{
+				var obj = {symptom: top, count: topSymptomsData[top].count}
+				topNSymptoms.push(obj);
+
+				topNSymptoms.sort(function(a, b){
+				 var catA=a.count, catB=b.count;
+				 if (catA < catB) //sort string ascending
+				  return -1;
+				 if (catA > catB)
+				  return 1;
+				 return 0; //default return value (no sorting)
+				});				
+			}
+		}
+
+		for(var t in topNSymptoms){
+			topNObj[topNSymptoms[t].symptom] = topSymptoms[topNSymptoms[t].symptom];
+		}
+		return topNObj;
+	}
 
 	$scope.getSymCategories = function(symObj) {
 		if (Object.keys(symObj).length > 0 || Array.isArray(symObj)) {
