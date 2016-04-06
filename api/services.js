@@ -1407,21 +1407,25 @@ console.log('error in query function-api service: ',error);
 				self.returnObj[data[i].symptom_categories.category] = data[i].symptom_categories.id;
 				// add to topCatsList
 				self.topCatsList[data[i].symptom_categories.id] = data[i].symptom_categories.category;
-
+//console.log("Top Level: ", data[i]);
 				// GET SUB-CATEGORIES
 				subCatsPromises.push(
 					query(prom,'symptom_categories',{
 						field: 'symptom_categories.parent_id|eq|' + data[i].symptom_categories.id
 					})
 					.then(function(data){
+//console.log("Sub Categories: ", data);						
 						if(data.length > 0){
 							var tempObj = {};
 							for(var j in data){
 								// add to catLookupList
+//console.log("Sub Cats Data: ", data[j]);
 								self.catLookupList[data[j].symptom_categories.id] = data[j].symptom_categories;
 								// add to returnObj
 								tempObj[data[j].symptom_categories.category] = data[j].symptom_categories.id;
 							}
+//console.log("Top Level: ", self.topCatsList[data[j].symptom_categories.parent_id]);
+//console.log("Sub Cats: ", tempObj);
 							self.returnObj[self.topCatsList[data[j].symptom_categories.parent_id]] = tempObj;
 						}
 					})

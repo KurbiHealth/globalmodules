@@ -539,35 +539,30 @@ function($scope, $locale, api){
 
 kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
 function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
-	//console.log("ModalInstanceCtrl: ", topSymptoms);
+	//console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
-	//$scope.backClicked = false;
 	$scope.closeOthers = true;
-	//$scope.disable = {value:true};
-	//$scope.status = {open:false};
 	$scope.showPlus = {};
 	$scope.clickedList = {};
-	//$scope.currentCat = "";
-	//$scope.showCategory = false;
 	$scope.selectedCategory = {value: ""};
-	$scope.rightView = {};
-	$scope.leftView = {};
+	$scope.symptomsView = {};
+	$scope.categoryView = {};
+	$scope.topSymps = {};
 	$scope.catArray = []; //Should get rid of this and return/use local variable
 	$scope.symList = [];
 	$scope.historyStack = [];
 	$scope.lastClick = ""; //Should get rid of this and use clickStack
 	$scope.showSearchView = false;
-	$scope.showParentCats = false;
+	$scope.showCategories = true;
+	$scope.showTopSymptoms = true;
 	$scope.clickStack = [];
-	//$scope.severityToAdd = {value: -1};
 	$scope.symsToAddList = {};
 	$scope.modalSeverities = {};
 	$scope.addedSymptoms = 0;
 	$scope.addedSymps = {};
 	$scope.searchList = [];
 	$scope.symptomIds = [];
-	//$scope.addSymptom = addSymptom;
 	
 	$scope.hideSearch = "hide-search";
 	
@@ -598,10 +593,6 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 					$scope.symsToAddList[symptom] = severityToAdd;
 					$scope.addedSymps[symptom] = "addedSymptom";
 					++$scope.addedSymptoms;
-
-					/*for (var key in $scope.clickedList) {
-						$scope.clickedList[key] = false;		
-					}*/
 				}
 				else{
 					alert("Symptom already added. To update severity move slider");
@@ -614,7 +605,6 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		else{
 			alert("Sorry, you've already added this symptom today. If you would like to update it, go back to your journal and edit it on the card.");
 		}
-		//console.log("Add List: ", $scope.symsToAddList);
 	};
 
 	$scope.removeSymptom = function(symptom){
@@ -622,50 +612,23 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		$scope.addedSymps[symptom] = "";
 		--$scope.addedSymptoms;
 
-		//var tempList = [];
-
-		/*for(var s in $scope.searchList){
-			if($scope.searchList[s] === symptom){
-				delete $scope.searchList[s];
-			}
-		}*/
-		/*for (var added in $scope.addedSymps) {
-				if ($scope.addedSymps[added] === "addedSymptom") {
-					tempList.push(added);
-				
-					if()
-				}
-			}
-		}
-
-		$scope.searchList = [];
-		$scope.searchList = tempList.slice();*/
-
 		for (var key in $scope.clickedList) {
 			$scope.clickedList[key] = false;
-		}		
-		//console.log("Remove Symptom: ", $scope.symsToAddList);
+		}
 	};
 
 	$scope.updateSeverity = function (severity) {
 		var focusSymptom = undefined;
 		for (var key in $scope.clickedList) {
-			//console.log("Save: ", $scope.clickedList[key]);
 			if ($scope.clickedList[key] === true) {
 				focusSymptom = key;
 				break;
 			}			
 		}
 
-		//console.log("Print symp: ", focusSymptom);
-		//console.log("Print sev: ", severity);		
-		//console.log("Before update: ", $scope.modalSeverities[focusSymptom]);
-
 		if (focusSymptom !== undefined) {
 			$scope.modalSeverities[focusSymptom] = severity;
 		}
-		//console.log("Focused: ", focusSymptom);
-		//console.log("After Update: ", $scope.modalSeverities[focusSymptom]);
 	};
 
 	$scope.filterAddedSymptoms = function(symptom){
@@ -674,11 +637,6 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				return ($scope.symsToAddList !== undefined && $scope.symsToAddList[symptom.name] !== undefined);
 				break;
 			case 'search':
-			//console.log("Filter Search: ", $scope.symptomSearch === "");
-			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length));
-			//console.log("Filter Search: ", symptom.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
-			//console.log("Filter Search: ", symptom.toLowerCase() + " " + $scope.symptomSearch.toLowerCase());
-			//console.log("Filter Search: ", $scope.searchList);
 				return ($scope.symptomSearch === "" || symptom.name.toLowerCase().slice(0,$scope.symptomSearch.length) === $scope.symptomSearch.toLowerCase());
 				break;
 			default:
@@ -687,126 +645,89 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		};
 	};
 
-	$scope.clickLeftView = function(index, category) {
-		//$scope.backClicked = false;
+	$scope.clickCategoryView = function(index, category) {
 		$scope.showSearchView = false;
-		$scope.showParentCats = true;
-		var tempHistory = [];
+		$scope.showCategories = true;
+		$scope.showTopSymptoms = false;
+		var tempNext = {};
+		var tempKeys = undefined;
 		var historyCopy = [];
-		var lastView = [];
-		var lastLeft = {};
-		var lastRight = {};
-		//console.log("rightView: ", $scope.currentRightView);
-		//console.log("leftView: ", $scope.currentLeftView);	
-		
+		var lastView = {};
+		//var lastView = [];
+		//var lastLeft = {};
+		//var lastRight = {};	
+//console.log("Click Category: ", $scope.historyStack);		
 		$scope.selectedCategory.value = category;
-		//$scope.showCategory = true;
-		//$scope.currentCat = category;
 
 		for (var key in $scope.clickedList) {
-			$scope.clickedList[key] = false;		
+			$scope.clickedList[key] = false;
 		}		
-		//$scope.status = {open:false};
-		//$scope.symptomClicked = "";
-		//var newView = $scope.getSymCategories($scope.currentLeftView[category]);
-		//$scope.rightView = $scope.currentLeftView[category];
-		if ($scope.lastClick !== category) {
-			$scope.lastClick = category;
+
+		//if ($scope.lastClick !== category) {
+			//$scope.lastClick = category;
 			historyCopy = $scope.historyStack.slice();
 			lastView = historyCopy.pop();
-			lastLeft = lastView[0];
-			lastRight = lastView[1];
-			$scope.rightView = lastLeft[category];
-			/*if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
-				//$scope.showPlus = true;
-				$scope.disable.value = false;
-			}
-			else {
-				//$scope.showPlus = false;
-				$scope.disable.value = true;
-			}*/
-			//$scope.rightView = newView;
-			//$scope.currentRightView = $scope.currentLeftView[category];
-
-			tempHistory.push($scope.leftView);
-			tempHistory.push($scope.rightView);
-			$scope.historyStack.push(tempHistory);
+			//lastLeft = lastView[0];
+			//lastRight = lastView[1];
+			tempNext = lastView[category];
+			tempKeys = Object.keys(tempNext);
 			$scope.clickStack.push(category);
-			//$scope.$apply();
-			//$scope.nextleftView = $scope.currentLeftView[category];
-			//console.log("Left History: ", $scope.historyStack);
-			//console.log("Left: ", $scope.leftView);
-			//console.log("Right: ", $scope.rightView);
-			//console.log("Left Click: ", $scope.clickStack);			
-			//console.log("rightView: ", $scope.currentRightView);
-			//console.log("leftView: ", $scope.currentLeftView);
-		}
+//console.log("Keys: ", tempKeys);
+			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && typeof tempNext[tempKeys[0]] !== 'number'){
+				$scope.categoryView = tempNext;
+
+				//tempHistory.push($scope.categoryView);
+				//tempHistory.push($scope.symptomView);
+				//$scope.historyStack.push(tempHistory);
+				$scope.historyStack.push(tempNext);
+			}
+			else{
+				$scope.symptomsView = tempNext;
+				$scope.showCategories = false;
+			}
+		//}
 	};
 
-	$scope.clickRightView = function(index, symptom) {
-		//console.log("rightView: ", $scope.currentRightView);
-		//console.log("leftView: ", $scope.currentLeftView);		
-		//var newView = $scope.getSymCategories($scope.currentRightView);
-		//$scope.backClicked = false;
-		var currentView = $scope.rightView;
-		var newView = $scope.rightView[symptom];
-		var tempHistory = [];
-		var historyCopy = [];
-		var lastView = [];
-		var lastLeft = {};
-		var lastRight = {};
-		$scope.lastClick = symptom;
+	$scope.clickSymptomsView = function(index, symptom) {
+		var currentView = $scope.symptomsView;
+		var newView = $scope.symptomsView[symptom];
+		//var tempHistory = [];
+		//var historyCopy = [];
+		//var lastView = [];
+		//var lastLeft = {};
+		//var lastRight = {};
+		//$scope.lastClick = symptom;
 
-		/*if (typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string'
-			&& typeof $scope.currentRightView[symptom] !== undefined 
-			&& typeof $scope.currentRightView[symptom] !== 'number' && typeof $scope.currentRightView[symptom] !== 'string') {*/
-		if (typeof currentView !== undefined && typeof currentView !== 'number' && typeof currentView !== 'string'
-			&& typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string') {	
-			$scope.leftView = currentView;
+		//if (typeof currentView !== undefined && typeof currentView !== 'number' && typeof currentView !== 'string'
+			//&& typeof newView !== undefined && typeof newView !== 'number' && typeof newView !== 'string') {	
+			//$scope.categoryView = currentView;
 			$scope.selectedCategory.value = symptom;
-			//$scope.currentCat = symptom;
-			//$scope.currentLeftView = $scope.currentRightView;
 
-			//newView = $scope.getSymCategories($scope.currentRightView[symptom]);
-			//newView = $scope.currentRightView[symptom];
-			//console.log("IF1");
-			//if (newView !== undefined) {
-				//console.log("IF2");
-				$scope.rightView = newView;
+				//$scope.symptomView = newView;
 
-				tempHistory.push($scope.leftView);
-				tempHistory.push($scope.rightView);
-				$scope.historyStack.push(tempHistory);
-				$scope.clickStack.push(symptom);
-				//console.log("Right History: ", $scope.historyStack);
-				//console.log("Left: ", $scope.leftView);
-				//console.log("Right: ", $scope.rightView);
-				//console.log("Right Click: ", $scope.clickStack);
-			/*}
-			else if ($scope.currentRightView[symptom] !== undefined) {
-				console.log("ELSEIF1");
-				//console.log("current left: ", $scope.currentRightView[symptom]);
-				$scope.rightView = $scope.currentRightView[symptom];
-				$scope.currentRightView = $scope.currentLeftView[symptom];
-			}*/
+				//tempHistory.push($scope.categoryView);
+				//tempHistory.push($scope.symptomView);
+				//$scope.historyStack.push(tempHistory);
+				//$scope.clickStack.push(symptom);
+			for (var key in $scope.clickedList) {
+				if (key !== symptom) {
+					$scope.clickedList[key] = false;
+				}
+				
+			}
+			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
 
-			if ($scope.isThingInObj($scope.rightView, $scope.symList)) {
+			/*if ($scope.isThingInObj(newView, $scope.symList)) {
 				//console.log("IF3");
-				//$scope.showPlus = true;
-				//$scope.disable.value = false;
 				if ($scope.firstClicked) {
 					//console.log("IF4");
 					for (var key in $scope.clickedList) {
-						//console.log("key: ", key);
-						//console.log("value: ", $scope.clickedList[key]);
 						if (key !== symptom) {
 							$scope.clickedList[key] = false;
 						}
 						
 					}
 					$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-					//$scope.symptomClicked = symptom;
-					//$scope.open = !$scope.open;
 				}
 				else {
 					//console.log("ELSE3");
@@ -815,42 +736,11 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}
 			else {
 				//console.log("ELSE2");
-				//$scope.showPlus = false;
-				//$scope.disable.value = true;
 			}
 		}
 		else {
-			/*for (var ky in clickList) {
-				console.log("ngrepeat ky: ", ky);
-				console.log("ngrepeat value: ", clickList[ky]);
-				clickList[ky] = false;
-			}*/
-			//clickList[symptom] = !clickList[symptom];
 
-			for (var key in $scope.clickedList) {
-				//console.log("key: ", key);
-				//console.log("value: ", $scope.clickedList[key]);
-				if (key !== symptom) {
-					$scope.clickedList[key] = false;
-				}
-				
-			}
-			$scope.clickedList[symptom] = !$scope.clickedList[symptom];
-			//console.log("ELSE1: ", symptom);
-
-			//closed.value = !closed.value;
-			//console.log("ELSE1: ", closed.value);
-			//$scope.showPlus = true;
-			//$scope.disable.value = false;
-			//$scope.symptomClicked = symptom;
-			//$scope.open = !$scope.open;
-		}
-
-		//$scope.$apply();
-		//console.log("open: ", $scope.status.open);
-		//console.log("disable: ", $scope.disable.value);
-		//$scope.rightSideObj = $scope.rightSideObj[symptom];
-		//$scope.leftSide = [];
+		}*/
 	};
 
 	$scope.clickSearchView = function (index, symptom) {
@@ -864,12 +754,10 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	};
 
 	$scope.showSymptomsAdded = function () {
-		//var tempList = [];
 		var found = false;
 		
 		for (var added in $scope.addedSymps) {
 			if ($scope.addedSymps[added] === "addedSymptom") {
-				//tempList.push(added);
 				found = true;
 			}
 		}
@@ -877,8 +765,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		if (found) {
 			$scope.symptomSearch = "";
 			$scope.filterType = 'added';
-			//$scope.searchList = [];
-			//$scope.searchList = tempList.slice();
+
 			$scope.showSearchView = true;
 
 			for (var key in $scope.clickedList) {
@@ -887,22 +774,10 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 	};
 
-	$scope.ok = function () {
-		/*var focusSymptom = undefined;
-		for (var key in $scope.clickedList) {
-			//console.log("Save: ", $scope.clickedList[key]);
-			if ($scope.clickedList[key] === true) {
-				focusSymptom = key;
-				break;
-			}			
-		}*/
-
-		//if (focusSymptom !== undefined) {
-		//console.log("Add List: ", Object.keys($scope.symsToAddList).length);
+	$scope.saveSymptom = function () {
 		if (Object.keys($scope.symsToAddList).length > 0) {
-			//console.log("Add List: ", $scope.symsToAddList);
 			var dataObjList = [];
-			//var symNameList = [];
+
 			var timeSaved = Date.now();
 
 			for (var key in $scope.symsToAddList) {
@@ -914,28 +789,14 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 						'journal_entry_id': 1,
 						'date': timeSaved
 					};
-					//symNameList.push(key);
+
 					dataObjList.push(dataObj);					
 				}
 				else{
 					console.log("ERROR Save Symptom: Trying to add undefined symptom object!");
 				}
 			}
-			//console.log("symNameList: ", symNameList);
-	    	//var sev = $scope.symsToAddList.pop();
-	    	//var sev = $scope.pray;
-	    	//console.log("Modal severity: ", sev);
-	    	//$scope.saveSliderPosition(); // ???
-	    	//$scope.onEditClick("default");
-	    	//$scope.saved = true;    	
-	    	//console.log("Directive sev: ", sev);
-			//console.log('saving severity: ', $scope.card.severity);
-			//$scope.card.severity = sev;
-			//$scope.$apply();
-			// get values from edit form
-			//var symName = focusSymptom;
-			//console.log("Saved symptom: ", symName);
-			//$scope.addSymptom(tableName, dataObj, symName);
+
 			if(dataObjList.length > 0){
 				$modalInstance.close(dataObjList);
 			}
@@ -954,84 +815,91 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 
 	$scope.clickBack = function () {
 		var historyCopy = [];
+		var lastView = {};
 		var clickCopy = [];
+		var currentView = {};
+		var currentClick = "";		
 		$scope.showSearchView = false;
-		$scope.showParentCats = false;
+		$scope.showCategories = true;
+//console.log("Click back: ", $scope.clickStack);
 
-		if ($scope.historyStack.length > 1) {
-			//if (!$scope.backClicked) {
-				var lastView = $scope.historyStack.pop();
-				var lastClick = $scope.clickStack.pop();
-				//$scope.backClicked = true;
-				historyCopy = $scope.historyStack.slice();
+		if($scope.historyStack.length > 1){
+			historyCopy = $scope.historyStack.slice();
+			currentView = historyCopy.pop();
+			currentClick = $scope.clickStack.pop();
+
+			var categories = Object.keys(currentView);
+			if(categories.indexOf(currentClick) === -1){
+				currentView = $scope.historyStack.pop();
+				currentView = historyCopy.pop();
+			}
+
+			if($scope.clickStack.length !== 0){
 				clickCopy = $scope.clickStack.slice();
-				var currentView = historyCopy.pop();
-				var currentClick = clickCopy.pop();
-
-				/*if ($scope.historyStack.length > 1) {
-					lastView = $scope.historyStack.pop();
-				}
-				else {
-					historyCopy = $scope.historyStack.slice();
-					lastView = historyCopy.pop();
-				}*/
-			/*}
-			else {
-
-			}*/
+				var lastClick = clickCopy.pop();				
+			}
 
 			for (var key in $scope.clickedList) {
 				$scope.clickedList[key] = false;
 			}
 
-			//console.log("Current Click: ", currentClick);
-			//console.log("Last Left: ", currentView[0]);
-			//console.log("Last Right: ", currentView[1]);
+			//if (currentView[1] !== undefined) {
+				//$scope.categoryView = currentView[0];
+				//$scope.symptomsView = currentView[1];
+				//$scope.selectedCategory.value = currentClick;
+			//}
+			$scope.categoryView = currentView;
+			$scope.selectedCategory.value = currentClick;
+			$scope.lastClick = lastClick;
 
-			if (currentView[1] !== undefined) {
-				$scope.leftView = currentView[0];
-				$scope.rightView = currentView[1];
-				$scope.selectedCategory.value = currentClick;
-			}			
+			if(lastClick === "Top 5"){
+				$scope.showTopSymptoms = true;
+			}
 		}
+		else if($scope.clickStack.length > 1){
+			//historyCopy = $scope.historyStack.slice();
+			//lastView = historyCopy.pop();	
+			//$scope.categoryView = lastView;
+
+			currentClick = $scope.clickStack.pop();
+			$scope.selectedCategory.value = currentClick;
+			clickCopy = $scope.clickStack.slice();
+			$scope.lastClick = clickCopy.pop();
+			$scope.showTopSymptoms = true;
+		}
+		else{
+			//Do nothing, no where to go but a black hole
+		}
+//console.log("Click back: ", $scope.clickStack);		
+//console.log("Last click: ", $scope.lastClick);
 	};
 
 	$scope.modalSearchChange = function (change) {
-		if ($scope.symptomSearch.length > 0 && change !== "blur") {
-			//$scope.searchList = [];
-			//$scope.searchList = $scope.symList.slice();
+		if($scope.symptomSearch.length > 0 && change !== "blur"){
 			$scope.showSearchView = true;
 			$scope.filterType = 'search';
 
-			for (var key in $scope.clickedList) {
+			for(var key in $scope.clickedList){
 				$scope.clickedList[key] = false;
 			}			
 		}
-		/*else {
+		else if($scope.symptomSearch.length <= 0){
 			$scope.showSearchView = false;
-		}*/
+		}
 	};
 
-	$scope.convertObjToArray = function(objToIterate) {
+	convertObjToArray = function(objToIterate) {
 		for (var key in objToIterate) {
-			//console.log("Key: ", key);
 			if (typeof key === undefined)
 				return;
 			else if (objToIterate.hasOwnProperty(key)) {
-				//console.log("Value: ", objToIterate[key]);
-
-				//if (typeof objToIterate[key] === 'number') {
-					//console.log("End of the line");
-					//$scope.catArray.push(objToIterate[key]);
-				//}
-				//else {
 				$scope.clickedList[key] = false;
 				$scope.showPlus[key] = false;
 				$scope.addedSymps[key] = "";
 				$scope.modalSeverities[key] = 0;
 				$scope.catArray.push(key);
-				$scope.convertObjToArray(objToIterate[key]);					
-				//}
+				convertObjToArray(objToIterate[key]);					
+
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
@@ -1045,30 +913,26 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 	};
 
-	$scope.buildSearchList = function(symptomObj) {
+	initModal = function(symptomObj) {
 		var tempHistory = [];
-		$scope.convertObjToArray(symptomObj);
-		//console.log("Symptom List: ", $scope.symList);
-		//$scope.leftView = $scope.getSymCategories(symptomObj);
-		var topLevel = $scope.getSymCategories(symptomObj);
-		$scope.leftView = symptomObj;
-		$scope.rightView = getTopNSymptoms(5);
+		convertObjToArray(symptomObj);
+
+		var topLevel = getSymCategories(symptomObj);
+		$scope.categoryView = symptomObj;
+		$scope.topSymps = getTopNSymptoms(5);
 		$scope.selectedCategory.value = -1;
-		//$scope.rightView = symptomObj[topLevel[0]];
-		//$scope.selectedCategory.value = topLevel[0];
-		//console.log("leftView: ", $scope.leftView);
-		$scope.deleteListFromList($scope.catArray, topLevel);
-		//console.log("Full List: ", $scope.catArray);
-		tempHistory.push($scope.leftView);		
-		tempHistory.push($scope.rightView);
-		$scope.historyStack.push(tempHistory);
+
+		deleteListFromList($scope.catArray, topLevel);
+
+		//tempHistory.push($scope.categoryView);		
+		//tempHistory.push($scope.symptomView);
+		//$scope.historyStack.push(tempHistory);
+		$scope.historyStack.push($scope.categoryView);
+		
 		$scope.clickStack.push("Top 5");
-		//$scope.clickStack.push(topLevel[0]);
-		//console.log("Build History: ", $scope.historyStack);
 	};
 
 	getTopNSymptoms = function(n){
-		//var topCount = 0;
 		var topNSymptoms = [];
 		var topNObj = {};
 
@@ -1110,15 +974,12 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		return topNObj;
 	}
 
-	$scope.getSymCategories = function(symObj) {
+	getSymCategories = function(symObj) {
 		if (Object.keys(symObj).length > 0 || Array.isArray(symObj)) {
 			var tempList = [];
 
 			if (Array.isArray(symObj) && typeof symObj[0] !== undefined) {
 				return undefined;
-				/*for (var key in symObj) {
-					tempList.push(symObj[key]);
-				}*/
 			}
 			else {
 				for (var key in symObj) {
@@ -1142,7 +1003,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 	};
 
-	$scope.deleteListFromList = function(sourceList, deletionList) {
+	deleteListFromList = function(sourceList, deletionList) {
 		for (var index in deletionList) {
 			var idx = sourceList.indexOf(deletionList[index]);
 			if (idx >= 0) {
@@ -1151,28 +1012,22 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 	};
 
-	$scope.isThingInObj = function (objToCheck, listOfThings) {
-		//console.log("Object To Check: ", objToCheck);
+	isThingInObj = function (objToCheck, listOfThings) {
 		for (var index in listOfThings) {
-			//console.log("Thing: ", listOfThings[index]);
 			if (typeof objToCheck !== undefined && typeof listOfThings[index] !== undefined && typeof index !== undefined &&
 				objToCheck !== undefined && listOfThings[index] !== undefined && index !== undefined) {
 				if (objToCheck.hasOwnProperty(listOfThings[index])) {
 					return true;
-					//console.log("Has own property: TRUE, ", listOfThings[index]);
 				}
-				/*if (listOfThings[index] in objToCheck) {
-					console.log("Thing in Object: TRUE, ", listOfThings[index]);
-				}*/
 			}
 		}
 		return false;
 	};
 
-	$scope.getSymptomId = function (symptom) {
+	getSymptomId = function (symptom) {
 		return $scope.symptomIds[symptom];
 	};
 
-	$scope.buildSearchList($scope.symptoms);
+	initModal($scope.symptoms);
 
 }]);
