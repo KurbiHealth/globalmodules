@@ -553,6 +553,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.symList = [];
 	$scope.historyStack = [];
 	$scope.lastClick = ""; //Should get rid of this and use clickStack
+	$scope.currentClick = "Search by Category";
 	$scope.showSearchView = false;
 	$scope.showCategories = true;
 	$scope.showTopSymptoms = true;
@@ -653,6 +654,9 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		var tempKeys = undefined;
 		var historyCopy = [];
 		var lastView = {};
+		var clickCopy = [];
+		var clickArray = [];
+		var click = "";
 		//var lastView = [];
 		//var lastLeft = {};
 		//var lastRight = {};	
@@ -672,6 +676,22 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			tempNext = lastView[category];
 			tempKeys = Object.keys(tempNext);
 			$scope.clickStack.push(category);
+
+			clickCopy = $scope.clickStack.slice();
+			click = clickCopy.pop();
+			clickArray.push(click);
+			
+			while(clickCopy.length > 1){
+				click = clickCopy.pop();
+				clickArray.push(click);
+				
+			}
+			click = clickArray.pop();
+			$scope.currentClick = click;
+			while(clickArray.length > 0){
+				click = clickArray.pop();
+				$scope.currentClick = $scope.currentClick + " > " + click;
+			}
 //console.log("Keys: ", tempKeys);
 			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && typeof tempNext[tempKeys[0]] !== 'number'){
 				$scope.categoryView = tempNext;
@@ -818,7 +838,8 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		var lastView = {};
 		var clickCopy = [];
 		var currentView = {};
-		var currentClick = "";		
+		var currentClick = "";	
+		var click = "";	
 		$scope.showSearchView = false;
 		$scope.showCategories = true;
 //console.log("Click back: ", $scope.clickStack);
@@ -852,7 +873,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			$scope.selectedCategory.value = currentClick;
 			$scope.lastClick = lastClick;
 
-			if(lastClick === "Top 5"){
+			if(lastClick === "Search by Category"){
 				$scope.showTopSymptoms = true;
 			}
 		}
@@ -870,6 +891,14 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		else{
 			//Do nothing, no where to go but a black hole
 		}
+
+		clickCopy = $scope.clickStack.slice();
+		click = clickCopy.pop();
+		$scope.currentClick = click;
+		while(clickCopy.length > 1){
+			click = clickCopy.pop();
+			$scope.currentClick = $scope.currentClick + " > " + click;
+		}		
 //console.log("Click back: ", $scope.clickStack);		
 //console.log("Last click: ", $scope.lastClick);
 	};
@@ -929,7 +958,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		//$scope.historyStack.push(tempHistory);
 		$scope.historyStack.push($scope.categoryView);
 		
-		$scope.clickStack.push("Top 5");
+		$scope.clickStack.push($scope.currentClick);
 	};
 
 	getTopNSymptoms = function(n){

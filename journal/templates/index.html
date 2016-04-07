@@ -108,21 +108,24 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <div style="padding-top: 10px;">
-									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)">Add</button>
-									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)"><i class="fa fa-trash-o"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 									    </div>
 									</accordion-group>
 								</div>
 							</accordion>
 						</div><!-- END /.col -->
 					</div><!-- END /.row -->
+
+					<div class="modal-cat" style="margin:0 0 10px 0;" ng-show="!showSearchView">{{currentClick}}</div>
+
 					<div class="row" ng-show="!showSearchView && showCategories">
 						<div class="col-md-12 {{hideBrowse}} {{showBrowse}}">
-							<div class="modal-cat" style="margin:0 0 5px 0;">Search by Category</div>
+							<!--div class="modal-cat" style="margin:0 0 5px 0;">{{currentClick}}</div-->
 							<ul class="symptom-cats"  style="padding:0 15px;">
 								<div ng-repeat="(ky, vl) in categoryView">
 									<li>
-									<a href="#" class="label" ng-click="clickCategoryView($index, ky)" style="color: #333333; font-size: 14px;">{{ky}}</a>
+									<a href="#" class="label" ng-click="clickCategoryView($index, ky)" style="color: #333333; font-size: 14px;">{{ky}} <i class="fa fa-chevron-right pull-right" style="color: #410E7E;"></i></a>
 									</li>
 								</div>
 							</ul>			
@@ -142,8 +145,8 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <div style="padding-top: 10px;">
-									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)">Add</button>
-									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)"><i class="fa fa-trash-o"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 									    </div>
 									</accordion-group>
 								</div>
@@ -160,8 +163,8 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val.name]"></div>
 									    <div style="padding-top: 10px;">
-										    <button type="button" class="btn btn-default" ng-click="addSymptom(val.name)">Add</button>
-										    <button type="button" class="btn btn-default" ng-click="removeSymptom(val.name)"><i class="fa fa-trash-o"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="addSymptom(val.name)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
+									      <button type="button" class="btn btn-default" ng-click="removeSymptom(val.name)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 										  </div>
 									</accordion-group>
 								</div>
