@@ -1,7 +1,11 @@
 <style>
+#add-btns-container {
+	position: relative;
+}
+
 #add-btns {
-	position: absolute;
-	top: -44px;
+	position: fixed;
+	top: 80px;
 	z-index: 9999;
 }
 .journal-day{padding:0;}
@@ -66,12 +70,14 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 
 <div ng-controller="CardControllerInit">
 
-	<div id="add-btns">
-		<!--<span class="pull-left">ADD: &nbsp;</span>-->
-		<button class="btn btn-default" ng-click="addCard('text-card')"><i class="md md-create"></i></button>
-		<button class="btn btn-default" ng-click="addCard('image-card')"><i class="md md-camera-alt"></i></button>
-		<button class="btn btn-default" ng-click="addCard('symptom-card')"><i class="md md-healing"></i></button>
-		<!--i class="md md-healing pull-left" data-toggle="modal" href="#form-content" ng-click="addCard('symptom-card')"></i-->
+	<div id="add-btns-container">
+		<div id="add-btns">
+			<!--<span class="pull-left">ADD: &nbsp;</span>-->
+			<button class="btn btn-default" ng-click="addCard('text-card')"><i class="md md-create"></i></button>
+			<button class="btn btn-default" ng-click="addCard('image-card')"><i class="md md-camera-alt"></i></button>
+			<button class="btn btn-default" ng-click="addCard('symptom-card')"><i class="md md-healing"></i></button>
+			<!--i class="md md-healing pull-left" data-toggle="modal" href="#form-content" ng-click="addCard('symptom-card')"></i-->
+		</div>
 	</div>
 
     <script type="text/ng-template" id="myModalContent.html">
