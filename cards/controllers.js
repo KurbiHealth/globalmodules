@@ -566,6 +566,7 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 	$scope.addedSymps = {};
 	$scope.searchList = [];
 	$scope.symptomIds = [];
+	$scope.modCatSymObj = {};
 	
 	$scope.hideSearch = "hide-search";
 	
@@ -596,6 +597,19 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 					$scope.symsToAddList[symptom] = severityToAdd;
 					$scope.addedSymps[symptom] = "addedSymptom";
 					++$scope.addedSymptoms;
+
+					for(var symKey in $scope.searchList){
+						$scope.searchList[symKey].open = false;
+					}
+					for(var symKey in $scope.topSymps){
+						$scope.topSymps[symKey].open = false;
+					}
+					for(var symKey in $scope.symptomsView){
+						$scope.symptomsView[symKey].open = false;
+					}					
+					for (var key in $scope.clickedList) {
+						$scope.clickedList[key] = false;
+					}
 				}
 				else{
 					alert("Symptom already added. To update severity move slider");
@@ -695,7 +709,7 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 				$scope.currentClick = $scope.currentClick + " > " + click;
 			}
 //console.log("Keys: ", tempKeys);
-			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && typeof tempNext[tempKeys[0]] !== 'number'){
+			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && tempNext[tempKeys[0]].id === undefined){
 				$scope.categoryView = tempNext;
 
 				//tempHistory.push($scope.categoryView);
@@ -934,7 +948,7 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
-					$scope.searchList.push({'name': key});
+					$scope.searchList.push({name: key, open: false});
 					$scope.showPlus[key] = true;
 				}
 			}
@@ -944,12 +958,58 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 		}
 	};
 
+	/*modifyCategorySymptomObj = function(symObj, lastKey){
+		for (var key in symObj){
+			if(lastKey === undefined || lastKey === ""){
+				//first iteration
+				$scope.modCatSymObj[key] = {};
+			}
+			var newObj = {};
+			if (typeof key === undefined)
+				return;
+			else if (symObj.hasOwnProperty(key)) {
+				$scope.modCatSymObj[key] = {};
+				modifyCategorySymptomObj(symObj[key], key);
+
+				if (typeof symObj[key] === 'number') {
+					//
+				}
+			}
+			else {
+				//$scope.catArray.push(key);
+			}
+		}
+	}*/
+
+	modifyCategorySymptomObj = function(symObj){
+		for (var key in symObj){
+			if (typeof key === undefined){
+				return;
+			}
+			else if (symObj.hasOwnProperty(key)) {
+				if (typeof symObj[key] === 'number') {
+					symObj[key] = {id: symObj[key], open: false};
+				}
+				else{
+					modifyCategorySymptomObj(symObj[key]);
+				}
+			}
+			else {
+				console.log("Do we ever get here? ", key);
+			}
+		}
+	}	
+
 	initModal = function(symptomObj) {
 		var tempHistory = [];
 		convertObjToArray(symptomObj);
 
 		var topLevel = getSymCategories(symptomObj);
-		$scope.categoryView = symptomObj;
+		$scope.modCatSymObj = symptomObj;
+//console.log("Mod CatSympObj: ", $scope.modCatSymObj);
+		modifyCategorySymptomObj($scope.modCatSymObj);
+//console.log("Mod CatSympObj: ", $scope.modCatSymObj);
+		$scope.categoryView = $scope.modCatSymObj;
 		$scope.topSymps = getTopNSymptoms(5);
 		$scope.selectedCategory.value = -1;
 
@@ -1000,7 +1060,7 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 		}
 
 		for(var t in topNSymptoms){
-			topNObj[topNSymptoms[t].symptom] = topSymptoms[topNSymptoms[t].symptom];
+			topNObj[topNSymptoms[t].symptom] = {id: topSymptoms[topNSymptoms[t].symptom], open: false};
 		}
 		return topNObj;
 	}
