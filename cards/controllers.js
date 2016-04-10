@@ -129,19 +129,21 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 						var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
 						var cardObj = undefined;
 
-			    		for (var index in dataObjList)  {
+			    		for (var index in dataObjList){
 					    	// save a new entry-type to db
-							api.addSymptom(dataObjList[index]).then(function(data){
-								//console.log("insertId: ", data);
-								cardObj = {id: data.insertId, 'type': type, title: dataObjList[index].symptomName, 
-											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
-											created: todaysDate, date: todaysDate};
-								$scope.updateCardUI(cardObj);
-							}, function(error){console.log("Error: ", error)});
-							//++$scope.idCount;
-
-							
-			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
+							api.addSymptom(dataObjList[index]).then(
+								function(data){
+									//console.log("insertId: ", data);
+									cardObj = {id: data.insertId, 'type': type, title: data.symptomName, 
+												severity: data.severity, details: {id: data.symptomId},
+												created: todaysDate, date: todaysDate};
+									$scope.updateCardUI(cardObj);
+console.log("Modal Result: ", cardObj);
+								},
+								function(error){
+									console.log("Error: ", error)
+								}
+							);
 			    		}
 			    		//api.symptomsObject.update();
 						//$scope.selected = selectedItem;

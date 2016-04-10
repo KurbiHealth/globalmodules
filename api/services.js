@@ -1244,7 +1244,7 @@ console.log('error in query function-api service: ',error);
 		console.log("Add date: ", today);
 		var that = this;
 		that.currJournalEntryId = '';
-
+console.log("API Add Symptom Data1: ", symptomDataObj);
 		// CHECKING FOR EXISTENCE OF A JOURNAL ENTRY FOR TODAY
 		var checkEntry = $q.defer();
 		query($q.defer(),'journal_entries',{
@@ -1255,9 +1255,11 @@ console.log('error in query function-api service: ',error);
 				var dataObj = {
 					'wellness_score': 0
 				};
+console.log("API Add Symptom Data2: ", data);				
 				addRecord($q.defer(),'journal_entries',dataObj)
 				.then(
 					function(data) {
+console.log("API Add Symptom Data3: ", data);						
 						that.currJournalEntryId = data.insertId;
 						checkEntry.resolve(data);
 					},
@@ -1266,6 +1268,7 @@ console.log('error in query function-api service: ',error);
 					}
 				);
 			}else{
+console.log("API Add Symptom Data4: ", data);				
 				that.currJournalEntryId = data.id;
 				checkEntry.resolve(data);
 			}
@@ -1287,8 +1290,14 @@ console.log('error in query function-api service: ',error);
 			};
 			addRecord($q.defer(),'journal_entry_components',dataObj)
 			.then(
-				function(data) {
-						returnPromise.resolve(data);
+				function(data){
+					var dObj = {
+						'symptomName': symptomDataObj.symptomName,
+						'severity': symptomDataObj.severity,
+						'symptomId': symptomDataObj.symptom_id,
+						'insertId': data.insertId
+					};
+						returnPromise.resolve(dObj);
 						symptomsObject.update();					
 					/*query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
 						field: 'symptoms.id|eq|' + data.insertId
