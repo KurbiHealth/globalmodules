@@ -107,24 +107,24 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 					
 					<div class="row" style="padding:0 15px;">	       
 						<div class="col-md-12">
-							<accordion close-others="closeOthers" ng-show="!showSearchView && showTopSymptoms">
+							<uib-accordion close-others="closeOthers" ng-show="!showSearchView && showTopSymptoms">
 								<div ng-repeat="(key, val) in topSymps" style="margin-top:5px;">
-									<accordion-group is-disabled=false is-open=false>
-										<accordion-heading>
+									<uib-accordion-group is-disabled=false is-open=false>
+										<uib-accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{key}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[key]" ng-click="clickSymptomsView($index, key)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
-										</accordion-heading>
+										</uib-accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <div style="padding-top: 10px;">
 									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
 									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 									    </div>
-									</accordion-group>
+									</uib-accordion-group>
 								</div>
-							</accordion>
+							</uib-accordion>
 						</div><!-- END /.col -->
 					</div><!-- END /.row -->
 
@@ -144,42 +144,42 @@ a.accordion-toggle:hover, a.accordion-toggle:active, a.accordion-toggle:focus, a
 					</div>
 					<div class="row" style="padding:0 15px;">	       
 						<div class="col-md-12">
-							<accordion close-others="closeOthers" ng-show="!showSearchView && !showCategories">
+							<uib-accordion close-others="closeOthers" ng-show="!showSearchView && !showCategories">
 								<div ng-repeat="(key, val) in symptomsView" style="margin-top:5px;">
-									<accordion-group is-disabled=false is-open=false>
-										<accordion-heading>
+									<uib-accordion-group is-disabled=false is-open=false>
+										<uib-accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{key}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[key], 'fa fa-minus-circle':clickedList[key]}" ng-show="showPlus[key]" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[key]" ng-click="clickSymptomsView($index, key)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
-										</accordion-heading>
+										</uib-accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[key]"></div>
 									    <div style="padding-top: 10px;">
 									      <button type="button" class="btn btn-default" ng-click="addSymptom(key)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
 									      <button type="button" class="btn btn-default" ng-click="removeSymptom(key)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 									    </div>
-									</accordion-group>
+									</uib-accordion-group>
 								</div>
-							</accordion>
-							<accordion close-others="closeOthers" ng-show="showSearchView">
+							</uib-accordion>
+							<uib-accordion close-others="closeOthers" ng-show="showSearchView">
 								<div ng-repeat="(key, val) in searchList | filter:filterAddedSymptoms" style="margin-top:5px">
-									<accordion-group is-disabled=false is-open=false>
-										<accordion-heading>
+									<uib-accordion-group is-disabled=false is-open=false>
+										<uib-accordion-heading>
 											<h4 style="float:left; padding:8px 0 8px 10px; font-size:14px;">{{val.name}}</h4>
 											<i ng-class="{'fa fa-plus-circle':!clickedList[val.name], 'fa fa-minus-circle':clickedList[val.name]}" style="float:right; padding:10px 10px 7px 0; font-size:14px;"></i>
 											<div class="clear"></div>
 											<div ng-class="addedSymps[val.name]" ng-click="clickSearchView($index, val.name)" style="position:absolute; top:0; right:0; bottom:0; left:0;"></div>
-										</accordion-heading>
+										</uib-accordion-heading>
 									    <p>Use the slider to record severity of symptom</p>
 									    <div ring-slider cursor-attr="grab" severity-num="modalSeverities[val.name]"></div>
 									    <div style="padding-top: 10px;">
 									      <button type="button" class="btn btn-default" ng-click="addSymptom(val.name)" style="width: 49%; color:#ffffff; background:#136FE2; border-radius:0px; font-weight:bold;"><i class="fa fa-plus fa-2x"></i></button>
 									      <button type="button" class="btn btn-default" ng-click="removeSymptom(val.name)" style="width: 49%; color:#ffffff; background:#FF0000; border-radius:0px; font-weight:bold;"><i class="fa fa-trash-o fa-2x"></i></button>
 										  </div>
-									</accordion-group>
+									</uib-accordion-group>
 								</div>
-							</accordion>
+							</uib-accordion>
 						</div>
 					</div><!-- END /.row -->
 				</div>

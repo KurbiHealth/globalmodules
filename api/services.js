@@ -1289,42 +1289,39 @@ query($q.defer(),'journal_entries/journal_entry_components',{}).then(
 
 		// WHEN DONE ABOVE...
 
-		$q.all([
-			checkEntry.promise
-		]).then(
+		$q.all([checkEntry.promise]).then(
 			function(){
-		
-			// ADD A SYMPTOM RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
-
+				// ADD A SYMPTOM RECORD IN TABLE "JOURNAL_ENTRY_COMPONENTS"
 				var dataObj = {
 					'severity': symptomDataObj.severity,
 					'symptom_id': symptomDataObj.symptom_id,
 					'journal_entry_id': that.currJournalEntryId
 				};
-				addRecord($q.defer(),'journal_entry_components',dataObj)
-					.then(
-						function(data){
+
+				addRecord($q.defer(),'journal_entry_components',dataObj).then(
+					function(data){
 //console.log("Add Record Journal Entry Components: ", data);							
-							var dObj = {
-								'symptomName': symptomDataObj.symptomName,
-								'severity': symptomDataObj.severity,
-								'symptomId': symptomDataObj.symptom_id,
-								'insertId': data.insertId
-							};
-								returnPromise.resolve(dObj);
-								symptomsObject.update();					
+						var dObj = {
+							'symptomName': symptomDataObj.symptomName,
+							'severity': symptomDataObj.severity,
+							'symptomId': symptomDataObj.symptom_id,
+							'insertId': data.insertId
+						};
+						returnPromise.resolve(dObj);
+						symptomsObject.update();					
 							/*query($q.defer(),'journal_entries/journal_entry_components/symptoms',{
 								field: 'symptoms.id|eq|' + data.insertId
 							})
 							.then(function(data){
 
 							});*/
-						},
-						function(error){
-							returnPromise.reject(error);
-						}
-					);
-		});
+					},
+					function(error){
+						returnPromise.reject(error);
+					}
+				);
+			}
+		);
 
 		return returnPromise.promise;
 	}

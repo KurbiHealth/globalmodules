@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal','$state','cloudinary',
-function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
+	'$timeout','$q','$element','$uibModal','$state','cloudinary',
+function(api,$scope,$timeout,$q,$element,$uibModal,$state,cloudinary) {
 	/*$scope.symptoms = {
 		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
 				'Ears': {'Ear Ache':6},
@@ -96,7 +96,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				//var topSymsLimit = 5;
 
 				// save a new entry to db
-				var modalInstance = $modal.open({
+				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: 'myModalContent.html',
 					controller: 'ModalInstanceCtrl',
@@ -155,7 +155,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				break;
 			case 'image-card':
 				// save a new entry to db
-				var modalInstance = $modal.open({
+				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: 'modules/file-upload/templates/upload-image.html',
 					controller: 'UploadController'
@@ -539,8 +539,8 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
-function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$uibModalInstance', 'topSymptoms', 'topSymptomsData',
+function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsData){
 	//console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
@@ -820,19 +820,19 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}
 
 			if(dataObjList.length > 0){
-				$modalInstance.close(dataObjList);
+				$uibModalInstance.close(dataObjList);
 			}
 			else{
-				$modalInstance.dismiss('cancel');
+				$uibModalInstance.dismiss('cancel');
 			}
 		}
 		else {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		}
 	};
 
 	$scope.cancel = function () {
-	  $modalInstance.dismiss('cancel');
+	  $uibModalInstance.dismiss('cancel');
 	};
 
 	$scope.clickBack = function () {
