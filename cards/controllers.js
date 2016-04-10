@@ -138,7 +138,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 												severity: data.severity, details: {id: data.symptomId},
 												created: todaysDate, date: todaysDate};
 									$scope.updateCardUI(cardObj);
-console.log("Modal Result: ", cardObj);
+//console.log("Modal Result: ", cardObj);
 								},
 								function(error){
 									console.log("Error: ", error)
