@@ -1002,14 +1002,17 @@ function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsD
 
 	initModal = function(symptomObj) {
 		var tempHistory = [];
-		convertObjToArray(symptomObj);
+		var symptomObjCopy = {};
+		symptomObjCopy = angular.copy(symptomObj);
 
+		convertObjToArray(symptomObjCopy);
+//console.log($scope.showPlus);
 		var topLevel = getSymCategories(symptomObj);
-		$scope.modCatSymObj = symptomObj;
+		$scope.modCatSymObj = angular.copy(symptomObj);
 //console.log("Mod CatSympObj: ", $scope.modCatSymObj);
 		modifyCategorySymptomObj($scope.modCatSymObj);
 //console.log("Mod CatSympObj: ", $scope.modCatSymObj);
-		$scope.categoryView = $scope.modCatSymObj;
+		$scope.categoryView = angular.copy($scope.modCatSymObj);
 		$scope.topSymps = getTopNSymptoms(5);
 		$scope.selectedCategory.value = -1;
 
