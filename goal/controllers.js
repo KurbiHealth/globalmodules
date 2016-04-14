@@ -79,10 +79,9 @@ function ($scope,$rootScope,api,$q,$state,user,cloudinary) {
 			$scope.goal.id = data.insertId;
 
 	// 2. use new id from 'goals' to add a 'paths' record
-			user.getUser();
 			api.addRecord($q.defer(),'paths',{
 				name: path.name,
-				user_id: Number(user.id),
+				user_id: Number(user.get('id')),
 				goal_id: $scope.currentGoalId,
 				overview: path.overview,
 				full_description: path.fullDescription,
