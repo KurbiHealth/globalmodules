@@ -488,7 +488,7 @@ console.log('error in addRecord function-api service: ',error);
 	}
 
 	function updateOne(promise,tableName,obj,id){
-console.log(promise);
+console.log("Update one: ", promise);
 		user.getUser();
 		config = {
 			method: 'PUT',
