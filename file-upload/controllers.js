@@ -1,6 +1,6 @@
 kurbiApp.controller('UploadController', ['$state','$rootScope','$scope', 'posts', 
-	'api', 'user', '$q','cloudinary','$modalInstance',
-function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInstance) {
+	'api', 'user', '$q','cloudinary','$uibModalInstance',
+function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $uibModalInstance) {
 
 	// =====================
 	// UPLOADING FILES (IMG)
@@ -25,7 +25,7 @@ function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInst
 			api.addImage(resp.data)
 			.then(function(data){
 				// close modal after doing db insert
-				$modalInstance.close(resp.data);
+				$uibModalInstance.close(resp.data);
 			});
 
 			// update the card in the UI (an img card)
@@ -39,7 +39,7 @@ function ($state,$rootScope,$scope, posts, api, user, $q, cloudinary, $modalInst
 	};
 
 	$scope.cancelModal = function(event){
-		$modalInstance.dismiss('cancel');
+		$uibModalInstance.dismiss('cancel');
 	}
 
 	$scope.updateImage = function(file,reversed){

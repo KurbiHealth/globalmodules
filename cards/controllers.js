@@ -1,6 +1,6 @@
 kurbiApp.controller('CardControllerInit', ['api','$scope',
-	'$timeout','$q','$element','$modal','$state','cloudinary',
-function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
+	'$timeout','$q','$element','$uibModal','$state','cloudinary',
+function(api,$scope,$timeout,$q,$element,$uibModal,$state,cloudinary) {
 	/*$scope.symptoms = {
 		'Head': {'Eyes': {'Blurry Vision':1, 'Double Vision':2, 'Uncontrolled Watering':3, 'Dry Eyes':4, 'Itchy Eyes':5},
 				'Ears': {'Ear Ache':6},
@@ -96,7 +96,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				//var topSymsLimit = 5;
 
 				// save a new entry to db
-				var modalInstance = $modal.open({
+				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: 'myModalContent.html',
 					controller: 'ModalInstanceCtrl',
@@ -129,19 +129,21 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 						var todaysDate = (todaysMonth + '/' + todaysDay + '/' + todaysYear).toString();
 						var cardObj = undefined;
 
-			    		for (var index in dataObjList)  {
+			    		for (var index in dataObjList){
 					    	// save a new entry-type to db
-							api.addSymptom(dataObjList[index]).then(function(data){
-								//console.log("insertId: ", data);
-								cardObj = {id: data.insertId, 'type': type, title: dataObjList[index].symptomName, 
-											severity: dataObjList[index].severity, details: {id: dataObjList[index].symptom_id},
-											created: todaysDate, date: todaysDate};
-								$scope.updateCardUI(cardObj);
-							}, function(error){console.log("Error: ", error)});
-							//++$scope.idCount;
-
-							
-			    			//$scope.updateCardUI(100+index, type, dataObjList[index].symptomName);
+							api.addSymptom(dataObjList[index]).then(
+								function(data){
+									//console.log("insertId: ", data);
+									cardObj = {id: data.insertId, 'type': type, title: data.symptomName, 
+												severity: data.severity, details: {id: data.symptomId},
+												created: todaysDate, date: todaysDate};
+									$scope.updateCardUI(cardObj);
+//console.log("Modal Result: ", cardObj);
+								},
+								function(error){
+									console.log("Error: ", error)
+								}
+							);
 			    		}
 			    		//api.symptomsObject.update();
 						//$scope.selected = selectedItem;
@@ -153,7 +155,7 @@ function(api,$scope,$timeout,$q,$element,$modal,$state,cloudinary) {
 				break;
 			case 'image-card':
 				// save a new entry to db
-				var modalInstance = $modal.open({
+				var modalInstance = $uibModal.open({
 					animation: true,
 					templateUrl: 'modules/file-upload/templates/upload-image.html',
 					controller: 'UploadController'
@@ -537,8 +539,8 @@ function($scope, $locale, api){
 
 }]);
 
-kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$modalInstance', 'topSymptoms', 'topSymptomsData',
-function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData){
+kurbiApp.controller('ModalInstanceCtrl', ['$scope', '$locale', 'symptoms', '$uibModalInstance', 'topSymptoms', 'topSymptomsData',
+function($scope, $locale, symptoms, $uibModalInstance, topSymptoms, topSymptomsData){
 	//console.log("ModalInstanceCtrl: ", topSymptomsData);
 	$scope.symptoms = symptoms;
 	$scope.firstClicked = false;
@@ -564,6 +566,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 	$scope.addedSymps = {};
 	$scope.searchList = [];
 	$scope.symptomIds = [];
+	$scope.modCatSymObj = {};
 	
 	$scope.hideSearch = "hide-search";
 	
@@ -594,6 +597,19 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 					$scope.symsToAddList[symptom] = severityToAdd;
 					$scope.addedSymps[symptom] = "addedSymptom";
 					++$scope.addedSymptoms;
+
+					for(var symKey in $scope.searchList){
+						$scope.searchList[symKey].open = false;
+					}
+					for(var symKey in $scope.topSymps){
+						$scope.topSymps[symKey].open = false;
+					}
+					for(var symKey in $scope.symptomsView){
+						$scope.symptomsView[symKey].open = false;
+					}					
+					for (var key in $scope.clickedList) {
+						$scope.clickedList[key] = false;
+					}
 				}
 				else{
 					alert("Symptom already added. To update severity move slider");
@@ -693,7 +709,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				$scope.currentClick = $scope.currentClick + " > " + click;
 			}
 //console.log("Keys: ", tempKeys);
-			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && typeof tempNext[tempKeys[0]] !== 'number'){
+			if(tempKeys[0] !== undefined && tempNext[tempKeys[0]] !== undefined && tempNext[tempKeys[0]].id === undefined){
 				$scope.categoryView = tempNext;
 
 				//tempHistory.push($scope.categoryView);
@@ -818,19 +834,19 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 			}
 
 			if(dataObjList.length > 0){
-				$modalInstance.close(dataObjList);
+				$uibModalInstance.close(dataObjList);
 			}
 			else{
-				$modalInstance.dismiss('cancel');
+				$uibModalInstance.dismiss('cancel');
 			}
 		}
 		else {
-			$modalInstance.dismiss('cancel');
+			$uibModalInstance.dismiss('cancel');
 		}
 	};
 
 	$scope.cancel = function () {
-	  $modalInstance.dismiss('cancel');
+	  $uibModalInstance.dismiss('cancel');
 	};
 
 	$scope.clickBack = function () {
@@ -932,7 +948,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 				if (typeof objToIterate[key] === 'number' || typeof objToIterate[key] === 'string') {
 					$scope.symList.push(key);
 					$scope.symptomIds[key] = objToIterate[key];
-					$scope.searchList.push({'name': key});
+					$scope.searchList.push({name: key, open: false});
 					$scope.showPlus[key] = true;
 				}
 			}
@@ -942,12 +958,61 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 	};
 
+	/*modifyCategorySymptomObj = function(symObj, lastKey){
+		for (var key in symObj){
+			if(lastKey === undefined || lastKey === ""){
+				//first iteration
+				$scope.modCatSymObj[key] = {};
+			}
+			var newObj = {};
+			if (typeof key === undefined)
+				return;
+			else if (symObj.hasOwnProperty(key)) {
+				$scope.modCatSymObj[key] = {};
+				modifyCategorySymptomObj(symObj[key], key);
+
+				if (typeof symObj[key] === 'number') {
+					//
+				}
+			}
+			else {
+				//$scope.catArray.push(key);
+			}
+		}
+	}*/
+
+	modifyCategorySymptomObj = function(symObj){
+		for (var key in symObj){
+			if (typeof key === undefined){
+				return;
+			}
+			else if (symObj.hasOwnProperty(key)) {
+				if (typeof symObj[key] === 'number') {
+					symObj[key] = {id: symObj[key], open: false};
+				}
+				else{
+					modifyCategorySymptomObj(symObj[key]);
+				}
+			}
+			else {
+				console.log("Do we ever get here? ", key);
+			}
+		}
+	}	
+
 	initModal = function(symptomObj) {
 		var tempHistory = [];
-		convertObjToArray(symptomObj);
+		var symptomObjCopy = {};
+		symptomObjCopy = angular.copy(symptomObj);
 
+		convertObjToArray(symptomObjCopy);
+//console.log($scope.showPlus);
 		var topLevel = getSymCategories(symptomObj);
-		$scope.categoryView = symptomObj;
+		$scope.modCatSymObj = angular.copy(symptomObj);
+//console.log("Mod CatSympObj: ", $scope.modCatSymObj);
+		modifyCategorySymptomObj($scope.modCatSymObj);
+//console.log("Mod CatSympObj: ", $scope.modCatSymObj);
+		$scope.categoryView = angular.copy($scope.modCatSymObj);
 		$scope.topSymps = getTopNSymptoms(5);
 		$scope.selectedCategory.value = -1;
 
@@ -998,7 +1063,7 @@ function($scope, $locale, symptoms, $modalInstance, topSymptoms, topSymptomsData
 		}
 
 		for(var t in topNSymptoms){
-			topNObj[topNSymptoms[t].symptom] = topSymptoms[topNSymptoms[t].symptom];
+			topNObj[topNSymptoms[t].symptom] = {id: topSymptoms[topNSymptoms[t].symptom], open: false};
 		}
 		return topNObj;
 	}
