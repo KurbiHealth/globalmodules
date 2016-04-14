@@ -376,6 +376,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in logIn function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -399,6 +400,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in signUp function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -419,6 +421,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in getList function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -441,6 +444,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in getOne function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -461,6 +465,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in addRecord function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -481,6 +486,7 @@ function ($http, $q, $log, user, config, $state) {
 		})
 		.error(function(error){
 			console.log('error in updateOne function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
