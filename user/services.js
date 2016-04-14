@@ -1,73 +1,85 @@
 // GLOBAL USER OBJECT
 
-kurbiApp.factory('user', ['$cookies', function ($cookies) {
+kurbiApp.factory('user', ['$cookies','$http','config','$q','$state','$window',
+function ($cookies,$http,config,$q,$state,$window){
 
 	var userObj = {
 
-		loggedIn: undefined,
-		email: 			'',
-		firstName: 		'',
-		lastName: 		'',
-		id: 			'',
-		imageFileName: 	'',
-		token: 			'',
+		authenticated: function(){
+			var promise = $q.defer();
+			if(typeof config.apiUrl != 'undefined' && config.apiUrl != ''){
+				var urlRoot = config.apiUrl;
+				$cookies.apiUrl = config.apiUrl;
+			}else{
+				if(typeof $cookies.apiUrl != 'undefined' && $cookies.apiUrl != ''){
+					var urlRoot = $cookies.apiUrl;
+				}else{
+					promise.reject('could not access api due to blank url');
+				}
+			}
 
-		saveUser: function(user){
-			// set local values
-			this.email = user.email;
-			this.firstName = user.first_name;
-			this.lastName = user.last_name;
-			this.id = user.id;
-			this.imageFileName = user.image_file_name;
-			this.loggedIn = true;
+			// check that token is ok
+			if($cookies.token != '' && $cookies.email != ''){
+				var email = $cookies.email;
+				var token = $cookies.token;
+				config = {
+					method: 'GET',
+					url: urlRoot + 'checktoken/',
+					headers: {
+						'x-custom-username': email,
+						'x-custom-token': token
+					},
+					data: {}
+				}
+				
+				$http(config)
+				.success(function(data){
+					promise.resolve(data); 
+				})
+				.error(function(error){
+					console.log(error);
+					promise.reject(error);
+				});
+			}else{
+				promise.reject('no token found locally');
+			}
 
-			// set values in cookie
-			$cookies.userEmail = this.email;
-			$cookies.userFirstName = this.firstName;
-			$cookies.userLastName = this.lastName;
-			$cookies.userId = this.id.toString();
-			$cookies.imageFileName = this.imageFileName;
-			$cookies.loggedIn = 'true';
+
+			return( promise.promise );
 		},
 
-		getUser: function(){
-			// Email
-			if(this.email == '' || typeof this.email == 'undefined'){
-				this.email = $cookies.userEmail;
-			}
-			// First Name
-			if(this.firstName == '' || typeof this.firstName == 'undefined'){
-				this.firstName = $cookies.userFirstName;
-			}
-			// Last Name
-			if(this.lastName == '' || typeof this.lastName == 'undefined'){
-				this.lastName = $cookies.userLastName;
-			}
-			// User ID
-			if(this.id == '' || typeof this.id == 'undefined'){
-				this.id = $cookies.userId;
-			}
-			// Token
-			if(this.token === '' || typeof this.token === 'undefined'){
-				this.token = $cookies.token;
-			}
-			// Image File Name
-			if(this.imageFileName === '' || typeof this.imageFileName === 'undefined'){
-				this.imageFileName = $cookies.imageFileName;
-			}
-			// Logged In
-			if(this.loggedIn === '' || typeof this.loggedIn === 'undefined'){
-				if($cookies.loggedIn == 'true')
-					this.loggedIn = true;
-				else
-					this.loggedIn = false;
+		logIn: function(user){
+			if(!user){
+				// user service not available, means this needs to fail
+				// TODO add a flash message to appear to user
+				$state.go('public.logInPage');
+			}else{		
+				// set values in cookie
+				$cookies.email = user.email;
+				$cookies.firstName = user.first_name;
+				$cookies.lastName = user.last_name;
+				$cookies.id = user.id.toString();
+				$cookies.imageFileName = user.image_file_name;
+				$cookies.token = user.auth_token;
+				$cookies.loggedIn = 'true';
+
+				// redirect to home
+				$state.go('private.journal');
 			}
 		},
 
-		setToken: function(token){
-			this.token = token;
-			$cookies.token = token;
-		}
+		get: function(key){
+			if(typeof $cookies[key] != 'undefined')
+				return $cookies[key];
+			else
+				return false;
+		},
+
+		logOut: function(){
+			$cookies = {};
+console.log($cookies);
+			$state.go('public.logInPage');
+		},
 
 	}
 

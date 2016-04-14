@@ -7,6 +7,7 @@ function ($http, $q, $log, user, config, $state) {
 	
 	// set up core configurations (root url, etc)
 	urlRoot = config.apiUrl;
+
 	//var initTopSymptomsLimit = 5;
 	var symptomsObject = {
 		topSymptomsCountObj: {},
@@ -374,11 +375,8 @@ function ($http, $q, $log, user, config, $state) {
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in logIn function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in logIn function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -401,23 +399,19 @@ console.log('error in logIn function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in signUp function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in signUp function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
 
 	function getList(promise,tableName) {
-		user.getUser();
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/',
 			headers: {
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			},
 			data: {}
 		}
@@ -426,25 +420,21 @@ console.log('error in signUp function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in getList function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in getList function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
 
 	function getOne(promise,tableName,id){
-		user.getUser();
 		config = {
 			method: 'GET',
 			url: urlRoot + 'db/' + tableName + '/' + id,
 			//withCredentials: true,
 			headers: {
 				//'Content-Type': 'application/json; charset=utf-8',
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			},
 			data: {}
 		}
@@ -453,23 +443,19 @@ console.log('error in getList function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in getOne function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in getOne function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
 
 	function addRecord(promise,tableName,obj){
-		user.getUser();
 		config = {
 			method: 'POST',
 			url: urlRoot + 'db/' + tableName + '/',
 			headers: {
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			},
 			data: obj
 		}
@@ -478,11 +464,8 @@ console.log('error in getOne function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in addRecord function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in addRecord function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -494,8 +477,8 @@ console.log("Update one: ", promise);
 			method: 'PUT',
 			url: urlRoot + 'db/' + tableName + '/',
 			headers: {
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			},
 			data: {fields: obj, updateId: id}
 		}
@@ -504,23 +487,19 @@ console.log("Update one: ", promise);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in updateOne function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in updateOne function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
 
 	function deleteOne(promise,tableName,id){
-		user.getUser();
 		config = {
 			method: 'DELETE',
 			url: urlRoot + 'db/' + tableName + '/' + id,
 			headers: {
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			}
 		}
 		$http(config)
@@ -528,11 +507,8 @@ console.log('error in updateOne function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in getOne function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in getOne function-api service: ',error);
+			promise.reject(error);
 		});
 		return( promise.promise );
 	}
@@ -548,15 +524,14 @@ console.log('error in getOne function-api service: ',error);
  * }
  */
 	function query(promise,tableName,obj){
-		user.getUser();
 		config = {
 			method: 'POST',
 			url: urlRoot + 'query/' + tableName + '/',
 			//withCredentials: true,
 			headers: {
 				//'Content-Type': 'application/json; charset=utf-8',
-				'x-custom-username': user.email,
-				'x-custom-token': user.token
+				'x-custom-username': user.get('email'),
+				'x-custom-token': user.get('token')
 			},
 			data: obj
 		}
@@ -565,11 +540,7 @@ console.log('error in getOne function-api service: ',error);
 			promise.resolve(data);
 		})
 		.error(function(error){
-console.log('error in query function-api service: ',error);
-			if(error == 'Unauthorized'){
-				// Redirect user to our login page
-    			$state.go('public.logInPage');
-			}
+			console.log('error in query function-api service: ',error);
 			promise.reject();
 		});
 		return( promise.promise );
@@ -646,7 +617,6 @@ console.log('error in query function-api service: ',error);
 		tempPosts2 = [];
 		currSymptoms = [];
 
-		user.getUser();
 		var that = this;
 
 		promise = $q.defer();
@@ -671,9 +641,9 @@ console.log('error in query function-api service: ',error);
 					temp.messageId = data[i].messages.id;
 					// MATCH UP USER DATA FOR THE MESSAGE
 					var uid = data[i].messages.user_id;
-					if(user.id == uid.toString()){
-						temp.author = user.firstName + ' ' + user.lastName;
-						temp.avatar = '/design/user_images/' + user.imageFileName;
+					if(user.get('id') == uid.toString()){
+						temp.author = user.get('firstName') + ' ' + user.get('lastName');
+						temp.avatar = '/design/user_images/' + user.get('imageFileName');
 					}else{
 						for(i in careTeam){
 							if(careTeam[i].userId == uid){
@@ -693,7 +663,7 @@ console.log('error in query function-api service: ',error);
 
 		promise = $q.defer();
 		messageRequest2 = query(promise,'message_recipients/messages',{
-			//field: 'message_recipients.user_id|eq|' + user.id,
+			//field: 'message_recipients.user_id|eq|' + user.get('id'),
 			orderBy: 'messages.created|desc' 
 		});
 		messageRequest2.then(function(data2){
@@ -992,7 +962,6 @@ query($q.defer(),'journal_entries/journal_entry_components',{}).then(
 			getDate
 		]).then(function(){
 			var dateString = that.date;
-			user.getUser();
 
 			if(dateString != ''){
 				var journalEntries = query($q.defer(),'journal_entries',{

@@ -4,7 +4,7 @@ function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 
 	$scope.addPost = function(){
 		newPost = {
-			user_id: user.id,
+			user_id: user.get('id'),
 			type: 'post',
 			text: $scope.message,
 			likes: 0
@@ -13,7 +13,7 @@ function ($scope, $q, posts, api, user, $rootScope, $timeout) {
 		newId = api.addRecord(promise,'messages',newPost);
 		$scope.feed.push({
 			id: newId,
-			author: user.firstName + ' ' + user.lastName,
+			author: user.get('firstName') + ' ' + user.get('lastName'),
 			message: $scope.message,
 			likes: 0,
 			comments: []
